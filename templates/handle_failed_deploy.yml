@@ -1,0 +1,11 @@
+on:
+  workflow_run:
+    workflows:
+      - deploy on pull
+    types: [ completed ]
+
+jobs:
+  comment-failure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quipper/comment-failure-action@v0.1.1

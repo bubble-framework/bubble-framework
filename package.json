@@ -1,0 +1,38 @@
+{
+  "name": "jjam-bubble",
+  "version": "1.0.3--beta",
+  "description": "Review Apps for Dynamic Frontend Applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "contributors": [
+    {
+      "name": "Jessica Chang",
+      "email": "jesschang77@gmail.com"
+    },
+    {
+      "name": "Missy Lovegren",
+      "email": "audrey.lovegren@gmail.com"
+    },
+    {
+      "name": "Andrew Moore",
+      "email": "andrewdmoore84@gmail.com"
+    },
+    {
+      "name": "Julia Shi",
+      "email": "julia.shi@nyu.edu"
+    }
+  ],
+  "keywords": [],
+  "author": "jjam bubble",
+  "license": "ISC",
+  "bin": {
+    "bubble": "bin/cli.js"
+  },
+  "preferGlobal": true,
+  "dependencies": {
+    "commander": "^6.2.0",
+    "prompts": "^2.4.0"
+  }
+}
