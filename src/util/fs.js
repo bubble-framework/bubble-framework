@@ -8,8 +8,10 @@ const {
   workflowFolderPath,
   userDeployReviewAppPath,
   userHandleFailedAppPath,
+  userRemoveAppPath,
   frameworkDeployReviewAppPath,
   frameworkHandleFailedAppPath,
+  frameworkRemoveAppPath,
   dataFolderPath,
   configPath,
   gitPath
@@ -38,7 +40,11 @@ const copyGithubActions = () => {
 
   fs.copyFileSync(frameworkHandleFailedAppPath, userHandleFailedAppPath);
 
-  bubbleSuccess("created", "handle failed review app Github action: ");
+  bubbleSuccess("created", "Handle failed review app Github action: ");
+
+  fs.copyFileSync(frameworkRemoveAppPath, userRemoveAppPath);
+
+  bubbleSuccess("created", "Remove preview app Github action: ");
 };
 
 const addToken = async () => {

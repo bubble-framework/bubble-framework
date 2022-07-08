@@ -1,0 +1,45 @@
+name: Remove Peview App
+
+on:
+  workflow_dispatch:
+    inputs:
+      bucket-name:
+        required: true
+        type: string
+      aws-cf-dis-id:
+        require: true
+        type: string
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+    steps:
+      - name: Missing AWS Credentials
+        if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
+        run: exit 1
+      - name: Missing CloudFront Distribution ID
+        if: ${{ !inputs.aws-cf-dis-id }}
+        run: exit 1
+      - name: Missing S3 Bucket name
+        if: ${{ !inputs.bucket-name }}
+        run: exit 1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Remove Review Apps from S3
+        run: aws s3 rm s3://${{ inputs.bucket-name }} --recursive
+      - name: Delete Cloudfront
+        run: |
+          sudo apt-get -y install jq
+          aws cloudfront get-distribution-config --id ${{ inputs.aws-cf-dis-id }} | jq .DistributionConfig.Enabled=false > tmp.json
+          jq -r .DistributionConfig tmp.json > tmp2.json
+          aws cloudfront update-distribution --id ${{ inputs.aws-cf-dis-id }} --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
+          echo q
+          aws cloudfront wait distribution-deployed --id ${{ inputs.aws-cf-dis-id }}
+          aws cloudfront delete-distribution --id ${{ inputs.aws-cf-dis-id }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.aws-cf-dis-id }} | jq .ETag -r)
