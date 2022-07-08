@@ -24,6 +24,15 @@ const frameworkHandleFailedAppPath = path.join(
   `/templates/handle_failed_deploy.yml`
 );
 
+const userPolicyPath = path.join(
+  rootFrameworkPath,
+  `/src/aws/userPolicy.json`
+);
+
+const dataFolderPath = path.join(process.env.HOME, "/.bubble");
+const configPath = path.join(process.env.HOME, "/.bubble/config.json");
+const gitPath = path.join(process.cwd(), "/.git");
+
 module.exports = {
   githubFolderPath,
   rootFrameworkPath,
@@ -31,5 +40,9 @@ module.exports = {
   userDeployReviewAppPath,
   userHandleFailedAppPath,
   frameworkDeployReviewAppPath,
-  frameworkHandleFailedAppPath
+  frameworkHandleFailedAppPath,
+  userPolicyPath,
+  dataFolderPath,
+  configPath,
+  gitPath
 };
