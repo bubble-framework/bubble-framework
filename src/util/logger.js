@@ -15,7 +15,12 @@ const bubbleErr = (text) => {
   console.log(`Error ${escape}${red}`, text, reset);
 };
 
+const bubbleWarn = (text) => {
+  console.log(`${escape}${yellow}`, text, reset);
+};
+
 module.exports = {
   bubbleSuccess,
   bubbleErr,
+  bubbleWarn
 };

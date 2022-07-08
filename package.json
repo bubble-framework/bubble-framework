@@ -32,7 +32,9 @@
   },
   "preferGlobal": true,
   "dependencies": {
+    "axios": "^0.27.2",
     "commander": "^6.2.0",
+    "libsodium-wrappers": "^0.7.10",
     "prompts": "^2.4.0"
   }
 }
