@@ -1,5 +1,5 @@
-const attachUserPolicy = (templatePath) => {
-  return `aws iam put-user-policy --user-name bubble-user --policy-name BubblePolicy --policy-document file://src/aws/userPolicy.json`;
+const attachUserPolicy = (templatePath, repo) => {
+  return `aws iam put-user-policy --user-name ${repo}-bubble-user --policy-name BubblePolicy --policy-document file://node_modules/jjam-bubble/src/aws/userPolicy.json`;
 };
 
 module.exports = {

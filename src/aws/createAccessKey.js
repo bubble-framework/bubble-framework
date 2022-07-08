@@ -1,5 +1,5 @@
-const createAccessKey = () => {
-  return `aws iam create-access-key --user-name bubble-user`;
+const createAccessKey = (repo) => {
+  return `aws iam create-access-key --user-name ${repo}-bubble-user`;
 };
 
 module.exports = {

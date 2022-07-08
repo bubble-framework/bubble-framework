@@ -5,6 +5,7 @@ const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
+const { getPublicKey } = require('../util/addGithubSecrets')
 
 const {
   addGithubSecrets,
@@ -23,6 +24,7 @@ const {
   bubbleErr,
   bubbleSuccess
 } = require("../util/logger");
+
 const { userPolicyPath } = require("../util/paths");
 
 const init = async (args) => {
@@ -34,20 +36,23 @@ const init = async (args) => {
     await createConfigFile();
     await validateGithubConnection();
 
+
     const awsSecretsCreated = await checkAwsSecretsCreated();
 
     if (!awsSecretsCreated) {
-      await wrapExecCmd(createUser());
+      const { repo } = await getPublicKey();
+
+      await wrapExecCmd(createUser(repo));
+
       bubbleSuccess("created", "IAM User: ");
 
-      const accessKeyInfo = await wrapExecCmd(createAccessKey());
+      const accessKeyInfo = await wrapExecCmd(createAccessKey(repo));
       bubbleSuccess("created", "IAM User Access Key: ");
       const accessKeyInfoObj = JSON.parse(accessKeyInfo);
       const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
       const secretKey = accessKeyInfoObj["AccessKey"]["SecretAccessKey"];
 
-      const attachPolicyCmd = attachUserPolicy(userPolicyPath);
-      await wrapExecCmd(attachPolicyCmd);
+      await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
       bubbleSuccess("saved", "IAM User Restrictions: ");
 
       const secrets = {

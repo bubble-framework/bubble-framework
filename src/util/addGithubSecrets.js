@@ -120,5 +120,5 @@ async function validateGithubConnection() {
     process.exit();
   }
 }
+module.exports = { getPublicKey, addGithubSecrets, validateGithubConnection, checkAwsSecretsCreated };
 
-module.exports = { addGithubSecrets, validateGithubConnection, checkAwsSecretsCreated };

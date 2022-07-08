@@ -1,5 +1,5 @@
-const createUser = () => {
-  return `aws iam create-user --user-name bubble-user`;
+const createUser = (repo) => {
+  return `aws iam create-user --user-name ${repo}-bubble-user`;
 };
 
 module.exports = {
