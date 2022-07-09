@@ -17,7 +17,7 @@ const deleteUser = async () => {
     const question = {
       type: "confirm",
       name: "deleteUser",
-      message: `Are you sure you want to delete this user? You will not be able to create more preview apps until a new user is created`,
+      message: `Are you sure you want to delete this user? You will not be able to create or delete preview apps under this user`,
       initial: true,
     };
 

@@ -14,6 +14,16 @@ const userHandleFailedAppPath = path.join(
   "/.github/workflows/handle_failed_deploy.yml"
 );
 
+const userRemoveAppPath = path.join(
+  process.cwd(),
+  "/.github/workflows/remove_preview_app.yml"
+);
+
+const frameworkRemoveAppPath = path.join(
+  rootFrameworkPath,
+  `/templates/delete_preview_app.yml`
+);
+
 const frameworkDeployReviewAppPath = path.join(
   rootFrameworkPath,
   `/templates/deploy.yml`
@@ -39,8 +49,10 @@ module.exports = {
   workflowFolderPath,
   userDeployReviewAppPath,
   userHandleFailedAppPath,
+  userRemoveAppPath,
   frameworkDeployReviewAppPath,
   frameworkHandleFailedAppPath,
+  frameworkRemoveAppPath,
   userPolicyPath,
   dataFolderPath,
   configPath,
