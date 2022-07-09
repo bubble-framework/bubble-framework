@@ -53,14 +53,14 @@ const addToken = async () => {
     name: "githubToken",
     message: `Please provide a valid github access token
  (https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
- Only permission for access token needed is repo.
+ Only 'repo' permission is needed for access token.
  Enter token: `,
   };
 
   const result = await prompts(question);
 
   writeToConfigFile({ github_access_token: result["githubToken"] });
-  bubbleSuccess("saved", "Bubble configuration: ");
+  bubbleSuccess(`saved in ${configPath}`, "Bubble configuration: ");
 };
 
 const createConfigFile = async () => {
@@ -69,8 +69,6 @@ const createConfigFile = async () => {
   if (!fs.existsSync(configPath)) {
     await addToken();
   } else {
-    let github_access_token = readConfigFile().github_access_token;
-
     const question = {
       type: "confirm",
       name: "useToken",

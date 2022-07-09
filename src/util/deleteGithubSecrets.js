@@ -38,8 +38,8 @@ async function deleteGithubSecrets() {
       const key_id = response.data.key_id;
 
       const secrets = [
-        "AWS_ACCESS_KEY_ID",
-        "AWS_SECRET_ACCESS_KEY",
+        "BUBBLE_AWS_ACCESS_KEY_ID",
+        "BUBBLE_AWS_SECRET_ACCESS_KEY",
       ];
 
       secrets.forEach((secret_name) => {

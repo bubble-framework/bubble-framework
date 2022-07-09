@@ -8,12 +8,12 @@ const {
 const { wrapExecCmd } = require("./wrapExecCmd");
 const process = require("process");
 
-const encrypt = async (public_key, secret_val) => {
+const encrypt = async (publicKey, secretVal) => {
   const sodium = require("libsodium-wrappers");
   await sodium.ready;
-  const key = public_key;
+  const key = publicKey;
 
-  const messageBytes = Buffer.from(secret_val);
+  const messageBytes = Buffer.from(secretVal);
   const keyBytes = Buffer.from(key, "base64");
 
   const encryptedBytes = sodium.crypto_box_seal(messageBytes, keyBytes);
@@ -23,12 +23,12 @@ const encrypt = async (public_key, secret_val) => {
 };
 
 const headerObj = () => {
-  const config_obj = readConfigFile();
-  const github_access_token = config_obj.github_access_token;
+  const configObj = readConfigFile();
+  const githubAccessToken = configObj.github_access_token;
 
   return (obj = {
     headers: {
-      Authorization: `token ${github_access_token}`,
+      Authorization: `token ${githubAccessToken}`,
       "Content-Type": "application/json",
       Accept: "application/vnd.github.v3+json",
     },
@@ -65,29 +65,29 @@ async function addGithubSecrets(secrets) {
   }
 
   bubbleSuccess("retrieved", "Public key:");
-  const public_key = response.data.key;
-  const key_id = response.data.key_id;
+  const publicKey = response.data.key;
+  const keyId = response.data.key_id;
 
   await Object.keys(secrets).map(async (key) => {
-    const secret_name = key;
-    const secret_val = secrets[key];
-    const encrypted_secret_val = await encrypt(public_key, secret_val);
-    bubbleWarn(`${secret_name} has been encrypted.`);
+    const secretName = key;
+    const secretVal = secrets[key];
+    const encryptedSecretVal = await encrypt(publicKey, secretVal);
+    bubbleWarn(`${secretName} has been encrypted.`);
 
-    url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secret_name}`;
+    url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
     const data = {
-      encrypted_value: encrypted_secret_val,
-      key_id: key_id,
+      encrypted_value: encryptedSecretVal,
+      key_id: keyId,
     };
 
     const obj = headerObj();
 
     await axios.put(url, data, obj);
-    bubbleSuccess("created", `${secret_name} secret has been:`);
+    bubbleSuccess("created", `${secretName} secret has been:`);
   });
 }
 
-async function checkAwsSecretsCreated() {
+async function retrieveCurrentSecrets() {
   try {
     var { owner, repo, response } = await getPublicKey();
     if (response.status !== 200) {
@@ -104,7 +104,18 @@ async function checkAwsSecretsCreated() {
   const obj = headerObj();
   const currentSecrets = await axios.get(url, obj);
 
-  return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'AWS_ACCESS_KEY_ID');
+  return currentSecrets;
+}
+
+function checkBubbleAwsSecretsAdded(currentSecrets) {
+  return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_ACCESS_KEY_ID') &&
+    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_SECRET_ACCESS_KEY');
+}
+
+function checkNonBubbleAwsSecretsAdded(currentSecrets) {
+  return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'AWS_ACCESS_KEY_ID') &&
+    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'AWS_SECRET_ACCESS_KEY') &&
+    !checkBubbleAwsSecretsAdded(currentSecrets);
 }
 
 async function validateGithubConnection() {
@@ -115,10 +126,10 @@ async function validateGithubConnection() {
     }
   } catch (e) {
     bubbleErr(
-      `Couldn't connect to Github due to: ${e}.\n Please validate your access key, git remote value, remote repo permissions, bubble arguments, etc.`
+      `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
     );
     process.exit();
   }
 }
-module.exports = { getPublicKey, addGithubSecrets, validateGithubConnection, checkAwsSecretsCreated };
+module.exports = { getPublicKey, addGithubSecrets, validateGithubConnection, retrieveCurrentSecrets, checkBubbleAwsSecretsAdded, checkNonBubbleAwsSecretsAdded };
 
