@@ -6,7 +6,7 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-const { getPublicKey } = require('../util/addGithubSecrets')
+const { getRepoInfo } = require('../util/addGithubSecrets')
 
 const {
   addGithubSecrets,
@@ -41,7 +41,7 @@ const init = async (args) => {
     const awsSecretsCreated = await checkAwsSecretsCreated();
 
     if (!awsSecretsCreated) {
-      const { repo } = await getPublicKey();
+      const { repo } = await getRepoInfo();
 
       await wrapExecCmd(createUser(repo));
 

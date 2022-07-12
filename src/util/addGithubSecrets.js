@@ -35,25 +35,33 @@ const headerObj = () => {
   });
 };
 
-async function getPublicKey() {
+async function getRepoInfo() {
   let remote = await wrapExecCmd("git config --get remote.origin.url");
 
   const parts = remote.split("/");
   const owner = parts[parts.length - 2];
   const repo = parts[parts.length - 1].slice(0, -5);
 
+  return { owner, repo };
+}
+
+async function getPublicKey() {
+  const { owner, repo } = await getRepoInfo();
   let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
 
   const obj = headerObj();
 
   let response = await axios.get(url, obj);
-
-  return { owner, repo, response };
+  return response;
 }
 
 async function addGithubSecrets(secrets) {
+  let owner, repo, response;
+
   try {
-    var { owner, repo, response } = await getPublicKey();
+    { owner, repo } = await getRepoInfo();
+    response = await getPublicKey();
+
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -131,5 +139,13 @@ async function validateGithubConnection() {
     process.exit();
   }
 }
-module.exports = { getPublicKey, addGithubSecrets, validateGithubConnection, retrieveCurrentSecrets, checkBubbleAwsSecretsAdded, checkNonBubbleAwsSecretsAdded };
+module.exports = {
+  getRepoInfo,
+  getPublicKey,
+  addGithubSecrets,
+  validateGithubConnection,
+  retrieveCurrentSecrets,
+  checkBubbleAwsSecretsAdded,
+  checkNonBubbleAwsSecretsAdded
+};
 

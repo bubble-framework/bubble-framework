@@ -6,7 +6,7 @@ const {
 
 const { wrapExecCmd } = require("./wrapExecCmd");
 
-const { getPublicKey } = require('../util/addGithubSecrets');
+const { getRepoInfo } = require('../util/addGithubSecrets');
 const { checkExistingUser } = require("../aws/checkExistingUser");
 const { validateGithubConnection } = require("../util/addGithubSecrets");
 const { deleteUser } = require("../aws/deleteUser");
@@ -16,7 +16,7 @@ const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey")
 
 const existingAwsUser = async () => {
   try {
-    const { repo } = await getPublicKey();
+    const { repo } = await getRepoInfo();
     await wrapExecCmd(checkExistingUser(repo));
     return true;
   } catch {
@@ -25,7 +25,7 @@ const existingAwsUser = async () => {
 }
 
 const deleteAwsUser = async () => {
-  const { repo } = await getPublicKey();
+  const { repo } = await getRepoInfo();
   await wrapExecCmd(deleteUserPolicy(repo))
   const { AccessKeyMetadata } = JSON.parse(await wrapExecCmd(getUserAccessKey(repo)))
   await wrapExecCmd(deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo))
