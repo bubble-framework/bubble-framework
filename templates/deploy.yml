@@ -8,7 +8,7 @@ env:
   AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
   PR_NAME: ${{ github.event.pull_request.title }}
   PR_NUMBER: ${{ github.event.number }}
-  REPO_NAME: ${{ github.repository }}
+  REPO_NAME: ${{ github.event.repository.name }}
   COMMIT_ID: ${{ github.event.pull_request.head.sha }}
   COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
@@ -20,7 +20,7 @@ jobs:
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.REPO_NAME }}
+          repository: ${{ github.repository }}
           number: ${{ env.PR_NUMBER }}
           id: deploy-preview
           message: "Starting deployment of this pull request."
@@ -28,7 +28,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ env.COMMIT_ID }}
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -67,20 +67,74 @@ jobs:
         with:
           path: "./.serverless/Template.myNextApplication.CloudFront.json"
           prop_path: "url"
+      - name: output the S3 bucket
+        id: bucket
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: "./.serverless/Template.myNextApplication.AwsS3.json"
+          prop_path: "name"
+      - name: output the CloudFront Distribution Id
+        id: distributionid
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: "./.serverless/Template.myNextApplication.CloudFront.json"
+          prop_path: "id"
       - name: output subdomain
         uses: satackey/action-js-inline@v0.0.2
         id: getsubdomain
         with:
           script: |
             const core = require('@actions/core')
-            const subdomain = ${{ steps.url.outputs.prop }}.split('.')[0].split('/')[2]
+            const subdomain = "${{ steps.url.outputs.prop }}".split('.')[0].split('/')[2]
             core.setOutput('subdomain', subdomain)
-      - run: echo "${{ steps.getsubdomain.outputs.subdomain }}"
+      - name: output timestamp
+        uses: satackey/action-js-inline@v0.0.2
+        id: gettimestamp
+        with:
+          script: |
+            const core = require('@actions/core')
+            const dateTimeNow = new Date()
+            const timestamp = dateTimeNow.toISOString()
+            core.setOutput('timestamp', timestamp)
+      - name: get preview app data from DynamoDB
+        uses: mathiasvr/command-output@v1
+        id: previewappdata
+        with:
+          run: |
+            aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
+      - name: output index of new commit
+        uses: satackey/action-js-inline@v0.0.2
+        id: getindex
+        with:
+          script: |
+            const core = require('@actions/core')
+            let commitsArray
+            let index
+            if (${{ !steps.previewappdata.outputs.stdout }}) {
+              index = 0
+            } else {
+              commitsArray = ${{ fromJson(steps.previewappdata.outputs.stdout).Item.Commits.L }}
+              index = commitsArray.length
+            }
+            core.setOutput('index', index)
+      - run: echo "${{ steps.getindex.outputs.index }}"
+      - name: create first-time entry for PR in DynamoDB
+        if: ${{ !steps.previewappdata.outputs.stdout }}
+        run: |
+          aws dynamodb put-item --table-name ${{ env.REPO_NAME }}-PreviewApps --item '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}" }}'
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET PRName = :newval" --expression-attribute-values '{":newval":{"S":"${{ env.PR_NAME }}"}}' --return-values ALL_NEW
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET IsActive = :newval" --expression-attribute-values '{":newval":{"BOOL":true}}' --return-values ALL_NEW
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET Commits = :newval" --expression-attribute-values '{":newval":{"L":[]}}' --return-values ALL_NEW
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET Commits[0] = :newval" --expression-attribute-values '{":newval":{"M":{"CommitId": {"S": "${{ env.COMMIT_ID }}"}, "CloudFrontDistroId": {"S": "${{ steps.distributionId.outputs.prop }}"}, "BucketId": {"S": "${{ steps.bucket.outputs.prop }}"}, "CommitMessageHeader": {"S": "${{ env.COMMIT_MESSAGE }}"}, "CloudfrontSubdomain": {"S": "${{ steps.getsubdomain.outputs.subdomain }}"}, "CreatedAt": {"S": "${{ steps.gettimestamp.outputs.timestamp }}"}}}}' --return-values ALL_NEW
+      - name: update PR in DynamoDB with new commit preview app data
+        if: ${{ steps.previewappdata.outputs.stdout }}
+        run: |
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET Commits[${{steps.getindex.outputs.index}}] = :newval" --expression-attribute-values '{":newval":{"M":{"CommitId": {"S": "${{ env.COMMIT_ID }}"}, "CloudFrontDistroId": {"S": "${{ steps.distributionId.outputs.prop }}"}, "BucketId": {"S": "${{ steps.bucket.outputs.prop }}"}, "CommitMessageHeader": {"S": "${{ env.COMMIT_MESSAGE }}"}, "CloudfrontSubdomain": {"S": "${{ steps.getsubdomain.outputs.subdomain }}"}, "CreatedAt": {"S": "${{ steps.gettimestamp.outputs.timestamp }}"}}}}' --return-values ALL_NEW
       - name: Notify about the result of this deployment
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ env.REPO_NAME }}
+          repository: ${{ github.repository }}
           number: ${{ env.PR_NUMBER }}
           id: deploy-preview
           message: |
