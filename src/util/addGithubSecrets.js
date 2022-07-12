@@ -59,7 +59,9 @@ async function addGithubSecrets(secrets) {
   let owner, repo, response;
 
   try {
-    { owner, repo } = await getRepoInfo();
+    const repoInfo = await getRepoInfo();
+    [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
+
     response = await getPublicKey();
 
     if (response.status !== 200) {
