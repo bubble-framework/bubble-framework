@@ -1,14 +1,27 @@
 name: Remove Peview App
 
 on:
-  workflow_dispatch:
-    inputs:
-      bucket-name:
-        required: true
-        type: string
-      aws-cf-dis-id:
-        require: true
-        type: string
+  pull_request:
+    types: [closed]
+
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+  PR_NUMBER: ${{ github.event.number }}
+  # workflow_dispatch:
+  #   inputs:
+  #     bucket-name:
+  #       required: true
+  #       type: string
+  #     aws-cf-dis-id:
+  #       required: true
+  #       type: string
+
+      # - name: Missing CloudFront Distribution ID
+      #   if: ${{ !inputs.aws-cf-dis-id }}
+      #   run: exit 1
+      # - name: Missing S3 Bucket name
+      #   if: ${{ !inputs.bucket-name }}
+      #   run: exit 1
 
 jobs:
   delete:
@@ -21,18 +34,41 @@ jobs:
       - name: Missing AWS Credentials
         if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
         run: exit 1
-      - name: Missing CloudFront Distribution ID
-        if: ${{ !inputs.aws-cf-dis-id }}
-        run: exit 1
-      - name: Missing S3 Bucket name
-        if: ${{ !inputs.bucket-name }}
-        run: exit 1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Remove Review Apps from S3
+      - name: Retrieve commits
+        uses: mathiasvr/command-output@v1
+        id: previewappdata
+        with:
+          run: |
+            aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
+      - name: Parse commits to get AWS Resource IDs
+        uses: satackey/action-js-inline@v0.0.2
+        id: getresourceids
+        with:
+          script: |
+            const core = require('@actions/core')
+
+            const pullRequestObj = ${{ steps.previewappdata.outputs.stdout }}
+            const commitsArray = commitsArray.Item.Commits.L
+
+            const [ buckets, distros, lambdas ] = [[], [], []]
+
+            commitsArray.forEach(commit => {
+              const bucketId = commit.M.BucketId.S
+
+              buckets.push(bucketId)
+              distros.push(commit.M.CloudFrontDistroId.S)
+              lambdas.push(bucketId.split('-')[0])
+            });
+
+            core.setOutput('buckets', buckets)
+            core.setOutput('distros', distros)
+            core.setOutput('lambdas', lambdas)
+      - name: Delete all s3 buckets
         run: aws s3 rm s3://${{ inputs.bucket-name }} --recursive
       - name: Delete Cloudfront
         run: |
@@ -43,3 +79,6 @@ jobs:
           echo q
           aws cloudfront wait distribution-deployed --id ${{ inputs.aws-cf-dis-id }}
           aws cloudfront delete-distribution --id ${{ inputs.aws-cf-dis-id }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.aws-cf-dis-id }} | jq .ETag -r)
+      - name: Delete Lambdas
+
+
