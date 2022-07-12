@@ -63,6 +63,7 @@ async function addGithubSecrets(secrets) {
     [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
 
     response = await getPublicKey();
+    console.log(response);
 
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
