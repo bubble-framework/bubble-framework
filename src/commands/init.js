@@ -90,6 +90,7 @@ const init = async (args) => {
     const repo = parts[parts.length - 1].slice(0, -5);
 
     await wrapExecCmd(createDynamoTable(`${repo}`));
+    bubbleSuccess("created", "Dynamo table created:");
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
   }
