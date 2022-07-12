@@ -98,7 +98,12 @@ async function addGithubSecrets(secrets) {
 }
 
 async function retrieveCurrentSecrets() {
+  let owner, repo;
+
   try {
+    const repoInfo = await getRepoInfo();
+    [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
+
     const response = await getPublicKey();
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
