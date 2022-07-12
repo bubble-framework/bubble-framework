@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { init } = require("../src/commands/init");
-const { deleteUser } = require('jjam-bubble/src/commands/deleteUser')
+const { destroy } = require('../src/commands/destroy')
 
 const prompts = require("prompts");
 const { program } = require("commander");
@@ -16,11 +16,11 @@ program
   .description("Create a bubble application")
   .action(init);
 
-// Destroy User
+// Destroy all
 program
-  .command("deleteUser")
-  .alias("du")
+  .command("destroy")
+  .alias("d")
   .description("Destroy AWS user and all attached preview apps")
-  .action(deleteUser);
+  .action(destroy);
 
 program.parse(process.argv);
