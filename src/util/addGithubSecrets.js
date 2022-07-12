@@ -63,7 +63,6 @@ async function addGithubSecrets(secrets) {
     [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
 
     response = await getPublicKey();
-    console.log(response);
 
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -131,7 +130,8 @@ function checkNonBubbleAwsSecretsAdded(currentSecrets) {
 
 async function validateGithubConnection() {
   try {
-    var { owner, repo, response } = await getPublicKey();
+    const response = await getPublicKey();
+
     if (response.status !== 200) {
       throw `HTTP error! status: ${response.status}`;
     }
@@ -139,9 +139,11 @@ async function validateGithubConnection() {
     bubbleErr(
       `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
     );
+    
     process.exit();
   }
 }
+
 module.exports = {
   getRepoInfo,
   getPublicKey,
