@@ -10,7 +10,6 @@ env:
   PR_NUMBER: ${{ github.event.number }}
   REPO_NAME: ${{ github.event.repository.name }}
   COMMIT_ID: ${{ github.event.pull_request.head.sha }}
-  COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 jobs:
   deploy:
@@ -24,7 +23,6 @@ jobs:
           number: ${{ env.PR_NUMBER }}
           id: deploy-preview
           message: "Starting deployment of this pull request."
-          reactions: rocket
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -96,28 +94,24 @@ jobs:
             const dateTimeNow = new Date()
             const timestamp = dateTimeNow.toISOString()
             core.setOutput('timestamp', timestamp)
+      - name: get commit message
+        run: echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})" >> $GITHUB_ENV
       - name: get preview app data from DynamoDB
         uses: mathiasvr/command-output@v1
         id: previewappdata
         with:
           run: |
             aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
-      - name: output index of new commit
+      - name: output index of new commit when pull request exists
         uses: satackey/action-js-inline@v0.0.2
+        if: ${{ steps.previewappdata.outputs.stdout }}
         id: getindex
         with:
           script: |
             const core = require('@actions/core')
-            let commitsArray
-            let index
-            if (${{ !steps.previewappdata.outputs.stdout }}) {
-              index = 0
-            } else {
-              commitsArray = ${{ fromJson(steps.previewappdata.outputs.stdout).Item.Commits.L }}
-              index = commitsArray.length
-            }
+            let commitsArray = ${{steps.previewappdata.outputs.stdout}}
+            let index = commitsArray.Item.Commits.L.length
             core.setOutput('index', index)
-      - run: echo "${{ steps.getindex.outputs.index }}"
       - name: create first-time entry for PR in DynamoDB
         if: ${{ !steps.previewappdata.outputs.stdout }}
         run: |
@@ -140,4 +134,3 @@ jobs:
           message: |
             Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}
           recreate: true
-          reactions: hooray
