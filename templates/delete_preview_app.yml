@@ -1,4 +1,4 @@
-name: Remove Peview App
+name: Remove Preview Apps
 
 on:
   pull_request:
@@ -7,21 +7,6 @@ on:
 env:
   REPO_NAME: ${{ github.event.repository.name }}
   PR_NUMBER: ${{ github.event.number }}
-  # workflow_dispatch:
-  #   inputs:
-  #     bucket-name:
-  #       required: true
-  #       type: string
-  #     aws-cf-dis-id:
-  #       required: true
-  #       type: string
-
-      # - name: Missing CloudFront Distribution ID
-      #   if: ${{ !inputs.aws-cf-dis-id }}
-      #   run: exit 1
-      # - name: Missing S3 Bucket name
-      #   if: ${{ !inputs.bucket-name }}
-      #   run: exit 1
 
 jobs:
   delete:
@@ -53,7 +38,7 @@ jobs:
             const core = require('@actions/core')
 
             const pullRequestObj = ${{ steps.previewappdata.outputs.stdout }}
-            const commitsArray = commitsArray.Item.Commits.L
+            const commitsArray = pullRequestObj.Item.Commits.L
 
             const [ buckets, distros, lambdas ] = [[], [], []]
 
@@ -65,20 +50,24 @@ jobs:
               lambdas.push(bucketId.split('-')[0])
             });
 
-            core.setOutput('buckets', buckets)
-            core.setOutput('distros', distros)
-            core.setOutput('lambdas', lambdas)
+            core.setOutput('buckets', buckets.join(' '))
+            core.setOutput('distros', distros.join(' '))
+            core.setOutput('lambdas', lambdas.join(' '))
       - name: Delete all s3 buckets
-        run: aws s3 rm s3://${{ inputs.bucket-name }} --recursive
-      - name: Delete Cloudfront
         run: |
+          for BUCKET in ${{ steps.getresourceids.outputs.buckets }}
+          do
+            aws s3 rb s3://$BUCKET --force
+          done
+      - name: Delete all Cloudfront distribution ids
+        run: |
+          sudo apt-get update
           sudo apt-get -y install jq
-          aws cloudfront get-distribution-config --id ${{ inputs.aws-cf-dis-id }} | jq .DistributionConfig.Enabled=false > tmp.json
-          jq -r .DistributionConfig tmp.json > tmp2.json
-          aws cloudfront update-distribution --id ${{ inputs.aws-cf-dis-id }} --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
-          echo q
-          aws cloudfront wait distribution-deployed --id ${{ inputs.aws-cf-dis-id }}
-          aws cloudfront delete-distribution --id ${{ inputs.aws-cf-dis-id }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.aws-cf-dis-id }} | jq .ETag -r)
-      - name: Delete Lambdas
-
-
+          for DISTRO in ${{ steps.getresourceids.outputs.distros }}
+          do
+            aws cloudfront get-distribution-config --id $DISTRO | jq .DistributionConfig.Enabled=false > tmp.json
+            jq -r .DistributionConfig tmp.json > tmp2.json
+            aws cloudfront update-distribution --id $DISTRO --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
+            aws cloudfront wait distribution-deployed --id $DISTRO
+            aws cloudfront delete-distribution --id $DISTRO --if-match $(aws cloudfront get-distribution-config --id $DISTRO | jq .ETag -r)
+          done
