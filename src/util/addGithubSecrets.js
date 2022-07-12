@@ -99,7 +99,7 @@ async function addGithubSecrets(secrets) {
 
 async function retrieveCurrentSecrets() {
   try {
-    var { owner, repo, response } = await getPublicKey();
+    const response = await getPublicKey();
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -139,7 +139,7 @@ async function validateGithubConnection() {
     bubbleErr(
       `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
     );
-    
+
     process.exit();
   }
 }
