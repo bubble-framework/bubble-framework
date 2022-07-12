@@ -1,5 +1,6 @@
 const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { wrapExecCmd } = require("../util/wrapExecCmd");
+const { getCloudfrontConfig } = require('../aws/getCloudfrontConfig');
 
 /*
 P
@@ -31,12 +32,41 @@ const parseCloudfrontAndS3Ids = (repoAppsInfo) => {
   });
 };
 
+const unique = (array) => array.filter((value, index, arr) => arr.indexOf(value) === index);
+
+const getLambdaARNs = (cloudfrontDetails) => {
+  const cacheItems = cloudfrontDetails.DistributionConfig.CacheBehaviors.Items;
+
+  const reduced = cacheItems.reduce((memo, item) => {
+    const lambdas = item.LambdaFunctionAssociations;
+
+    console.log(memo);
+
+    if (lambdas.Quantity > 0) {
+      memo.push(...lambdas.Items.map(item => {
+        return item.LambdaFunctionARN;
+      }));
+
+      return memo;
+    } else {
+      return memo;
+    }
+  }, []);
+
+  console.log('reduced unique:', unique(reduced));
+};
+
 const getAppsDetails = async (repoName) => {
-  const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
+  // const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
 
-  const appDetails = JSON.parse(rawAppsDetails).Items;
+  // const appDetails = JSON.parse(rawAppsDetails).Items;
 
-  const cloudfrontAndS3Info = parseCloudfrontAndS3Ids(appDetails);
+  // const cloudfrontAndS3Info = parseCloudfrontAndS3Ids(appDetails);
+
+  const cloudfrontConfig = JSON.parse(await wrapExecCmd(getCloudfrontConfig('E13I3Z6MZPC7XC')));
+
+  getLambdaARNs(cloudfrontConfig);
+
 };
 
 
