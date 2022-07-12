@@ -3,65 +3,66 @@ on: pull_request
 
 env:
   NODE_VERSION: 16.15.1
+  AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Notify about starting this deployment 
-      uses: hasura/comment-progress@v2.1.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        repository: ${{ github.repository }}
-        number: ${{ github.event.number }}
-        id: deploy-preview
-        message: 'Starting deployment of this pull request.'
-        reactions: rocket
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-    - name: export env variables
-      run: |
-        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    - name:
-      uses: oNaiPs/secrets-to-env-action@v1
-      with:
-        secrets: ${{ toJSON(secrets) }}
-    - name: create serverless yaml file
-      run: |
-        touch serverless.yml
-    - name: add config to serverless yaml file
-      id: config
-      uses: mikefarah/yq@master
-      with:
-        cmd: yq -i e '.myNextApplication.component = "@sls-next/serverless-component@latest"' serverless.yml 
-    - name: deploy with serverless framework
-      run: |
-        npm install
-        npm install @sls-next/serverless-component
-        npx serverless@2.72.2
-    - name: display the cloudfront link
-      id: url
-      uses: notiz-dev/github-action-json-property@release
-      with:
-        path: './.serverless/Template.myNextApplication.CloudFront.json'
-        prop_path: 'url'
-    - name: Notify about the result of this deployment 
-      uses: hasura/comment-progress@v2.1.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        repository: ${{ github.repository }}
-        number: ${{ github.event.number }}
-        id: deploy-preview
-        message: |
-          Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}
-        recreate: true
-        reactions: hooray
-    
+      - name: Notify about starting this deployment
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: "Starting deployment of this pull request."
+          reactions: rocket
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: export env variables
+        run: |
+          export AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
+      - name:
+        uses: oNaiPs/secrets-to-env-action@v1
+        with:
+          secrets: ${{ toJSON(secrets) }}
+      - name: create serverless yaml file
+        run: |
+          touch serverless.yml
+      - name: add config to serverless yaml file
+        id: config
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i e '.myNextApplication.component = "@sls-next/serverless-component@latest"' serverless.yml
+      - name: deploy with serverless framework
+        run: |
+          npm install
+          npm install @sls-next/serverless-component
+          npx serverless@2.72.2
+      - name: display the cloudfront link
+        id: url
+        uses: notiz-dev/github-action-json-property@release
+        with:
+          path: "./.serverless/Template.myNextApplication.CloudFront.json"
+          prop_path: "url"
+      - name: Notify about the result of this deployment
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: |
+            Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}
+          recreate: true
+          reactions: hooray

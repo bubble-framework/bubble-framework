@@ -1,5 +1,3 @@
-const prompts = require("prompts");
-const axios = require("axios");
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { createUser } = require("../aws/createUser");
@@ -10,7 +8,9 @@ const { getPublicKey } = require('../util/addGithubSecrets')
 const {
   addGithubSecrets,
   validateGithubConnection,
-  checkAwsSecretsCreated
+  retrieveCurrentSecrets,
+  checkBubbleAwsSecretsAdded,
+  checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
 
 const {
@@ -22,7 +22,10 @@ const {
 
 const {
   bubbleErr,
-  bubbleSuccess
+  bubbleSuccess,
+  bubbleWarn,
+  bubbleBold,
+  bubbleHelp
 } = require("../util/logger");
 
 const { userPolicyPath } = require("../util/paths");
@@ -33,13 +36,24 @@ const init = async (args) => {
       throw `Current directory is not a git repository or it is not tied to a GitHub Origin`;
     }
 
+    bubbleBold('Welcome to the Bubble CLI!\n');
+    bubbleHelp('Before we get started, please make sure you have your AWS credentials configured with AWS CLI.\n')
+
     await createConfigFile();
     await validateGithubConnection();
 
+    const currentSecrets = await retrieveCurrentSecrets();
+    const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
 
-    const awsSecretsCreated = await checkAwsSecretsCreated();
+    if (nonBubbleAwsSecretsAlreadyAdded) {
+      bubbleWarn("Looks like you already have AWS credentials saved in your Github repository! Not to worry, those can stay safe and sound where they are, but to provision your preview apps, we will create a new IAM user with the proper permissions. The credentials for this new user will be saved in your Github repository prepended with 'BUBBLE'.\n")
+    }
 
-    if (!awsSecretsCreated) {
+    const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
+
+    if (!bubbleAwsSecretsAdded) {
+      bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
+
       const { repo } = await getPublicKey();
 
       await wrapExecCmd(createUser(repo));
@@ -56,13 +70,13 @@ const init = async (args) => {
       bubbleSuccess("saved", "IAM User Restrictions: ");
 
       const secrets = {
-        "AWS_ACCESS_KEY_ID": accessKeyId,
-        "AWS_SECRET_ACCESS_KEY": secretKey
+        "BUBBLE_AWS_ACCESS_KEY_ID": accessKeyId,
+        "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey
       };
 
       addGithubSecrets(secrets);
     } else {
-      bubbleSuccess("already created", "AWS IAM User and Access Keys: ");
+      bubbleSuccess("already created and saved", "AWS IAM User and Access Keys: ");
     }
 
     createWorkflowDir();
@@ -71,7 +85,5 @@ const init = async (args) => {
     bubbleErr(`Could not initialize app:\n${err}`);
   }
 };
-
-// init();
 
 module.exports = { init };
