@@ -5,6 +5,12 @@ env:
   NODE_VERSION: 16.15.1
   AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+  PR_NAME: ${{ github.event.pull_request.title }}
+  PR_NUMBER: ${{ github.event.number }}
+  REPO_NAME: ${{ github.repository }}
+  COMMIT_ID: ${{ github.event.pull_request.head.sha }}
+  COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 jobs:
   deploy:
@@ -14,15 +20,15 @@ jobs:
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ github.event.number }}
+          repository: ${{ env.REPO_NAME }}
+          number: ${{ env.PR_NUMBER }}
           id: deploy-preview
           message: "Starting deployment of this pull request."
           reactions: rocket
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ env.COMMIT_ID }}
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -49,18 +55,33 @@ jobs:
           npm install
           npm install @sls-next/serverless-component
           npx serverless@2.72.2
+      - name: configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
       - name: display the cloudfront link
         id: url
         uses: notiz-dev/github-action-json-property@release
         with:
           path: "./.serverless/Template.myNextApplication.CloudFront.json"
           prop_path: "url"
+      - name: output subdomain
+        uses: satackey/action-js-inline@v0.0.2
+        id: getsubdomain
+        with:
+          script: |
+            const core = require('@actions/core')
+            const subdomain = ${{ steps.url.outputs.prop }}.split('.')[0].split('/')[2]
+            core.setOutput('subdomain', subdomain)
+      - run: echo "${{ steps.getsubdomain.outputs.subdomain }}"
       - name: Notify about the result of this deployment
         uses: hasura/comment-progress@v2.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          number: ${{ github.event.number }}
+          repository: ${{ env.REPO_NAME }}
+          number: ${{ env.PR_NUMBER }}
           id: deploy-preview
           message: |
             Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}

@@ -24,6 +24,7 @@
           "cloudfront:TagResource",
           "cloudfront:UntagResource",
           "cloudfront:ListTagsForResource",
+          "dynamodb:*",
           "iam:AttachRolePolicy",
           "iam:CreateRole",
           "iam:CreateServiceLinkedRole",
