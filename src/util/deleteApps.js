@@ -2,6 +2,8 @@ const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { wrapExecCmd } = require('../util/wrapExecCmd');
 const { getRepoInfo } = require('../util/addGithubSecrets');
 const { readConfigFile } = require('../util/fs');
+const { configPath } = require('../util/fs');
+
 const axios = require('axios');
 
 const DELETE_ALL_WORKFLOW_FILE = '';
@@ -25,7 +27,7 @@ const getActivePullRequestIdsString = (appsData) => {
 };
 
 const getGitHubToken = () => {
-  const configObj = readConfigFile();
+  const configObj = readConfigFile(configPath, "JSON");
 
   return configObj.github_access_token;
 };
