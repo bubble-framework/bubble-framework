@@ -2,14 +2,24 @@ const { readConfigFile, writeToConfigFile } = require('./fs');
 const { awsConfigPath, awsCredentialsPath } = require('./paths');
 const { getRepoInfo } = require('./addGithubSecrets');
 
-const modifyConfig = (id, key) => {
-  const { repo } = getRepoInfo();
-  let originalConfig = readConfigFile(awsConfigPath);
-  let newConfig = `
+const { repo } = getRepoInfo();
+
+const modifyConfig = () => {
+  const originalConfig = readConfigFile(awsConfigPath);
+  const newConfig = `
 [profile ${repo}-bubble-user]
-region=us-east-1
-output=json`
-  writeToConfigFile(originalConfig + newConfig, awsConfigPath)
+region = us-east-1
+output = json`;
+  writeToConfigFile(originalConfig + newConfig, awsConfigPath);
 }
 
-modifyConfig();
+const modifyCredentials = (id, key) => {
+  const originalConfig = readConfigFile(awsCredentialsPath);
+  const newConfig = `
+[${repo}-bubble-user]
+aws_access_key_id = ${id}
+aws_secret_access_key = ${key}`;
+  writeToConfigFile(originalConfig + newConfig, awsCredentialsPath);
+}
+
+module.exports = { modifyConfig, modifyCredentials };
