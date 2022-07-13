@@ -4,4 +4,4 @@ const getPreviewAppsDetails = (repoName) => {
   return `aws dynamodb scan --table-name ${tableName}`;
 };
 
-module.exports = { getPreviewAppsDetails }
+module.exports = { getPreviewAppsDetails };

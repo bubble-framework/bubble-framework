@@ -4,18 +4,18 @@ const {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn
-} = require("jjam-bubble/src/util/logger");
+} = require("./logger");
 
-const { wrapExecCmd } = require("jjam-bubble/src/util/wrapExecCmd");
+const { wrapExecCmd } = require("./wrapExecCmd");
 
-const { getRepoInfo } = require('jjam-bubble/src/util/addGithubSecrets');
-const { checkExistingUser } = require("jjam-bubble/src/aws/checkExistingUser");
-const { validateGithubConnection } = require("jjam-bubble/src/util/addGithubSecrets");
-const { deleteUser } = require("jjam-bubble/src/aws/deleteUser");
-const { deleteUserPolicy } = require("jjam-bubble/src/aws/deleteUserPolicy");
-const { getUserAccessKey } = require("jjam-bubble/src/aws/getUserAccessKey");
-const { deleteUserAccessKey } = require("jjam-bubble/src/aws/deleteUserAccessKey");
-const { deleteGithubSecrets } = require("jjam-bubble/src/util/deleteGithubSecrets");
+const { getRepoInfo } = require('./addGithubSecrets');
+const { checkExistingUser } = require("../aws/checkExistingUser");
+const { validateGithubConnection } = require("./addGithubSecrets");
+const { deleteUser } = require("../aws/deleteUser");
+const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
+const { getUserAccessKey } = require("../aws/getUserAccessKey");
+const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
+const { deleteGithubSecrets } = require("./deleteGithubSecrets");
 
 const existingAwsUser = async () => {
   try {
@@ -49,4 +49,4 @@ const deleteUserAll = async () => {
   }
 }
 
-module.exports = { deleteUserAll } 
+module.exports = { deleteUserAll }

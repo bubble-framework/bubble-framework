@@ -6,7 +6,7 @@
 // - delete all bubble-related local files
 
 const { deleteUserAll } = require('../util/deleteUser');
-const { deleteApps } = require('../')
+const { deleteApps } = require('../util/deleteApps');
 
 const destroy = async () => {
   // deleteUserAll();
