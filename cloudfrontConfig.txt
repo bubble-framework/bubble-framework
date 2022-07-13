@@ -1,0 +1,479 @@
+******************************************
+Multiple nested object properties
+RootObject.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations // Probably don't need this but am leaving in case(is an object which has Quantity and Items properties; Items is an array which can include LambdaFunctionARN )
+
+**RootObject.DistributionConfig.CacheBehaviors.Items
+(CacheBehaviors.Items is an array of objects, which have LambdaFunctionAssociations properties which are objects. The LambdaFunctionAssociations objects have a Quantity property: if that property's value is >0, there will be an Items property which is an array of objects which have a LambdaFunctionARN property, the value of which is the ARN string)**
+
+is where the data we need lives.
+
+LambdaFunctionAssociations will have a quantity,
+
+
+arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-mr7bx7:1
+arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-pf6uvdo:1
+arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-gtl1pc:1
+
+
+
+
+  Function input: [{CloudFrontDistroId, BucketId}. {cloudfrontId, BucketId}]
+  Function output: [{CloudFrontDistroId, BucketId, [lambda ARN, lambda ARN]}]
+
+  P
+    Need to access the DistributionConfig.CacheBehaviors.Items array inside the object which will be returned by the aws call
+
+    (JSON.parse first)
+
+    NOTES:
+      Handle network error and bad/empty responses
+      Is it possible there may be a deployment with no lambdas?
+
+  A
+    Return the result of mapping input array to its original element plus the following (for each element):
+        Call AWS get-distribution-config service using the value of the CloudFrontDistroId property and save the response after parsing its JSON
+
+        Initialize a variable cacheItems to point to the array contained inside RootObject.DistributionConfig.CacheBehaviors.Items
+
+        Return the result of reducing the array cacheItems points to to an array of LambdaFunction ARNs
+******************************************
+
+{
+    "ETag": "E346ILP39COL2B",
+    "DistributionConfig": {
+        "CallerReference": "1657151197066",
+        "Aliases": {
+            "Quantity": 0
+        },
+        "DefaultRootObject": "",
+        "Origins": {
+            "Quantity": 1,
+            "Items": [
+                {
+                    "Id": "jcvz0m-w5y5xx",
+                    "DomainName": "jcvz0m-w5y5xx.s3.us-east-1.amazonaws.com",
+                    "OriginPath": "",
+                    "CustomHeaders": {
+                        "Quantity": 0
+                    },
+                    "S3OriginConfig": {
+                        "OriginAccessIdentity": "origin-access-identity/cloudfront/E2AOMH66O2XSPV"
+                    },
+                    "ConnectionAttempts": 3,
+                    "ConnectionTimeout": 10,
+                    "OriginShield": {
+                        "Enabled": false
+                    }
+                }
+            ]
+        },
+        "OriginGroups": {
+            "Quantity": 0
+        },
+        "DefaultCacheBehavior": {
+            "TargetOriginId": "jcvz0m-w5y5xx",
+            "TrustedSigners": {
+                "Enabled": false,
+                "Quantity": 0
+            },
+            "TrustedKeyGroups": {
+                "Enabled": false,
+                "Quantity": 0
+            },
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": {
+                "Quantity": 7,
+                "Items": [
+                    "HEAD",
+                    "DELETE",
+                    "POST",
+                    "GET",
+                    "OPTIONS",
+                    "PUT",
+                    "PATCH"
+                ],
+                "CachedMethods": {
+                    "Quantity": 2,
+                    "Items": [
+                        "HEAD",
+                        "GET"
+                    ]
+                }
+            },
+            "SmoothStreaming": false,
+            "Compress": true,
+            "LambdaFunctionAssociations": {
+                "Quantity": 2,
+                "Items": [
+                    {
+                        "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-gtl1pc:1",
+                        "EventType": "origin-request",
+                        "IncludeBody": true
+                    },
+                    {
+                        "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-gtl1pc:1",
+                        "EventType": "origin-response",
+                        "IncludeBody": false
+                    }
+                ]
+            },
+            "FunctionAssociations": {
+                "Quantity": 0
+            },
+            "FieldLevelEncryptionId": "",
+            "ForwardedValues": {
+                "QueryString": true,
+                "Cookies": {
+                    "Forward": "all"
+                },
+                "Headers": {
+                    "Quantity": 2,
+                    "Items": [
+                        "Authorization",
+                        "Host"
+                    ]
+                },
+                "QueryStringCacheKeys": {
+                    "Quantity": 0
+                }
+            },
+            "MinTTL": 0,
+            "DefaultTTL": 0,
+            "MaxTTL": 31536000
+        },
+        "CacheBehaviors": {
+            "Quantity": 5,
+            "Items": [
+                {
+                    "PathPattern": "_next/static/*",
+                    "TargetOriginId": "jcvz0m-w5y5xx",
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "TrustedKeyGroups": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "ViewerProtocolPolicy": "https-only",
+                    "AllowedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "Compress": true,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FieldLevelEncryptionId": "",
+                    "ForwardedValues": {
+                        "QueryString": false,
+                        "Cookies": {
+                            "Forward": "none"
+                        },
+                        "Headers": {
+                            "Quantity": 0
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 0
+                        }
+                    },
+                    "MinTTL": 0,
+                    "DefaultTTL": 86400,
+                    "MaxTTL": 31536000
+                },
+                {
+                    "PathPattern": "static/*",
+                    "TargetOriginId": "jcvz0m-w5y5xx",
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "TrustedKeyGroups": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "ViewerProtocolPolicy": "https-only",
+                    "AllowedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "Compress": true,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FieldLevelEncryptionId": "",
+                    "ForwardedValues": {
+                        "QueryString": false,
+                        "Cookies": {
+                            "Forward": "none"
+                        },
+                        "Headers": {
+                            "Quantity": 0
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 0
+                        }
+                    },
+                    "MinTTL": 0,
+                    "DefaultTTL": 86400,
+                    "MaxTTL": 31536000
+                },
+                {
+                    "PathPattern": "api/*",
+                    "TargetOriginId": "jcvz0m-w5y5xx",
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "TrustedKeyGroups": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "ViewerProtocolPolicy": "https-only",
+                    "AllowedMethods": {
+                        "Quantity": 7,
+                        "Items": [
+                            "HEAD",
+                            "DELETE",
+                            "POST",
+                            "GET",
+                            "OPTIONS",
+                            "PUT",
+                            "PATCH"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "Compress": true,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 1,
+                        "Items": [
+                            {
+                                "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-mr7bx7:1",
+                                "EventType": "origin-request",
+                                "IncludeBody": true
+                            }
+                        ]
+                    },
+                    "FunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FieldLevelEncryptionId": "",
+                    "ForwardedValues": {
+                        "QueryString": true,
+                        "Cookies": {
+                            "Forward": "all"
+                        },
+                        "Headers": {
+                            "Quantity": 2,
+                            "Items": [
+                                "Authorization",
+                                "Host"
+                            ]
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 0
+                        }
+                    },
+                    "MinTTL": 0,
+                    "DefaultTTL": 0,
+                    "MaxTTL": 31536000
+                },
+                {
+                    "PathPattern": "_next/image*",
+                    "TargetOriginId": "jcvz0m-w5y5xx",
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "TrustedKeyGroups": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "ViewerProtocolPolicy": "https-only",
+                    "AllowedMethods": {
+                        "Quantity": 7,
+                        "Items": [
+                            "HEAD",
+                            "DELETE",
+                            "POST",
+                            "GET",
+                            "OPTIONS",
+                            "PUT",
+                            "PATCH"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "Compress": true,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 1,
+                        "Items": [
+                            {
+                                "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-pf6uvdo:1",
+                                "EventType": "origin-request",
+                                "IncludeBody": true
+                            }
+                        ]
+                    },
+                    "FunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FieldLevelEncryptionId": "",
+                    "ForwardedValues": {
+                        "QueryString": true,
+                        "Cookies": {
+                            "Forward": "all"
+                        },
+                        "Headers": {
+                            "Quantity": 1,
+                            "Items": [
+                                "Accept"
+                            ]
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 0
+                        }
+                    },
+                    "MinTTL": 0,
+                    "DefaultTTL": 60,
+                    "MaxTTL": 31536000
+                },
+                {
+                    "PathPattern": "_next/data/*",
+                    "TargetOriginId": "jcvz0m-w5y5xx",
+                    "TrustedSigners": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "TrustedKeyGroups": {
+                        "Enabled": false,
+                        "Quantity": 0
+                    },
+                    "ViewerProtocolPolicy": "https-only",
+                    "AllowedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ],
+                        "CachedMethods": {
+                            "Quantity": 2,
+                            "Items": [
+                                "HEAD",
+                                "GET"
+                            ]
+                        }
+                    },
+                    "SmoothStreaming": false,
+                    "Compress": true,
+                    "LambdaFunctionAssociations": {
+                        "Quantity": 2,
+                        "Items": [
+                            {
+                                "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-gtl1pc:1",
+                                "EventType": "origin-request",
+                                "IncludeBody": true
+                            },
+                            {
+                                "LambdaFunctionARN": "arn:aws:lambda:us-east-1:060644034369:function:jcvz0m-gtl1pc:1",
+                                "EventType": "origin-response",
+                                "IncludeBody": false
+                            }
+                        ]
+                    },
+                    "FunctionAssociations": {
+                        "Quantity": 0
+                    },
+                    "FieldLevelEncryptionId": "",
+                    "ForwardedValues": {
+                        "QueryString": true,
+                        "Cookies": {
+                            "Forward": "all"
+                        },
+                        "Headers": {
+                            "Quantity": 2,
+                            "Items": [
+                                "Authorization",
+                                "Host"
+                            ]
+                        },
+                        "QueryStringCacheKeys": {
+                            "Quantity": 0
+                        }
+                    },
+                    "MinTTL": 0,
+                    "DefaultTTL": 0,
+                    "MaxTTL": 31536000
+                }
+            ]
+        },
+        "CustomErrorResponses": {
+            "Quantity": 0
+        },
+        "Comment": "",
+        "Logging": {
+            "Enabled": false,
+            "IncludeCookies": false,
+            "Bucket": "",
+            "Prefix": ""
+        },
+        "PriceClass": "PriceClass_All",
+        "Enabled": true,
+        "ViewerCertificate": {
+            "CloudFrontDefaultCertificate": true,
+            "SSLSupportMethod": "vip",
+            "MinimumProtocolVersion": "TLSv1",
+            "CertificateSource": "cloudfront"
+        },
+        "Restrictions": {
+            "GeoRestriction": {
+                "RestrictionType": "none",
+                "Quantity": 0
+            }
+        },
+        "WebACLId": "",
+        "HttpVersion": "http2",
+        "IsIPV6Enabled": true
+    }
+}

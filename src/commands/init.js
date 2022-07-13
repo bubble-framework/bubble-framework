@@ -92,8 +92,10 @@ const init = async (args) => {
     createWorkflowDir();
     copyGithubActions();
 
-    await wrapExecCmd(createDynamoTable(repo));
-    bubbleSuccess("created", "Dynamo table created:");
+    setTimeout(async () => {
+      await wrapExecCmd(createDynamoTable(repo));
+      bubbleSuccess("created", "Dynamo table created:");
+    }, 10000);
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
   }
