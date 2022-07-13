@@ -3,10 +3,14 @@ name: Remove Preview Apps
 on:
   pull_request:
     types: [closed]
-
-env:
-  REPO_NAME: ${{ github.event.repository.name }}
-  PR_NUMBER: ${{ github.event.number }}
+  workflow_dispatch:
+    inputs:
+      repo-name:
+        required: true
+        type: string
+      pr-number:
+        required: true
+        type: number
 
 jobs:
   delete:
@@ -16,6 +20,17 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
     steps:
+      - name: Set env vars when workflow is initiated by PR closing
+        run: |
+          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+          echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
+        if: ${{ !inputs.repo-name && !inputs.pr-number }}
+      - name: Set env vars when workflow is initiated by bubble destroy
+        run: |
+          echo "REPO_NAME=${{ inputs.repo-name }}" >> $GITHUB_ENV
+          echo "PR_NUMBER=${{ inputs.pr-number }}" >> $GITHUB_ENV
+          echo "PR_NUMBER=${{ inputs.pr-number }}" >> $GITHUB_ENV
+        if: ${{ inputs.repo-name && inputs.pr-number }}
       - name: Missing AWS Credentials
         if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
         run: exit 1
@@ -30,6 +45,9 @@ jobs:
         with:
           run: |
             aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
+      - name: Soft delete pull request entry in DynamoDB
+        run: |
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET IsActive = :val" --expression-attribute-values '{":val":{"BOOL":false}}' --return-values ALL_NEW
       - name: Parse commits to get AWS Resource IDs
         uses: satackey/action-js-inline@v0.0.2
         id: getresourceids
@@ -70,4 +88,14 @@ jobs:
             aws cloudfront update-distribution --id $DISTRO --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
             aws cloudfront wait distribution-deployed --id $DISTRO
             aws cloudfront delete-distribution --id $DISTRO --if-match $(aws cloudfront get-distribution-config --id $DISTRO | jq .ETag -r)
+          done
+      - name: Delete all Lambdas
+        run: |
+          for LAMBDA in ${{ steps.getresourceids.outputs.lambdas }}
+          do
+            FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${LAMBDA}')].FunctionName" --output text)
+            for FUNCTION in $FUNCTIONS
+              do
+                aws lambda delete-function --function-name $FUNCTION
+              done
           done
