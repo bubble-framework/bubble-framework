@@ -1,74 +1,62 @@
 const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { wrapExecCmd } = require("../util/wrapExecCmd");
-const { getCloudfrontConfig } = require('../aws/getCloudfrontConfig');
+const { wrapExecCmd } = require('../util/wrapExecCmd');
+const { getRepoInfo } = require('../util/addGithubSecrets');
+const { readConfigFile } = require('../util/fs');
+const axios = require('axios');
 
-/*
-P
-  Need to access the DistributionConfig.CacheBehaviors.Items array inside the object which will be returned by the aws call
-
-  (JSON.parse first)
-
-  NOTES:
-    Handle network error and bad/empty responses
-    Is it possible there may be a deployment with no lambdas?
-
-A
-  Return the result of mapping input array to its original element plus the following (for each element):
-      Call AWS get-distribution-config service using the value of the CloudFrontDistroId property and save the response after parsing its JSON
-
-      Initialize a variable cacheItems to point to the array contained inside RootObject.DistributionConfig.CacheBehaviors.Items
-
-      Return the result of reducing the array cacheItems points to to an array of LambdaFunction ARNs
-
-*/
-const parseCloudfrontAndS3Ids = (repoAppsInfo) => {
-  return repoAppsInfo.flatMap(pullRequest => {
-    return pullRequest.Commits.L.map(previewApp => {
-      let parsed = {};
-      parsed.CloudFrontDistroId = previewApp.M.CloudFrontDistroId.S;
-      parsed.BucketId = previewApp.M.BucketId.S;
-      return parsed;
-    });
-  });
-};
-
-const unique = (array) => array.filter((value, index, arr) => arr.indexOf(value) === index);
-
-const getLambdaARNs = (cloudfrontDetails) => {
-  const cacheItems = cloudfrontDetails.DistributionConfig.CacheBehaviors.Items;
-
-  const reduced = cacheItems.reduce((memo, item) => {
-    const lambdas = item.LambdaFunctionAssociations;
-
-    console.log(memo);
-
-    if (lambdas.Quantity > 0) {
-      memo.push(...lambdas.Items.map(item => {
-        return item.LambdaFunctionARN;
-      }));
-
-      return memo;
-    } else {
-      return memo;
-    }
-  }, []);
-
-  console.log('reduced unique:', unique(reduced));
-};
+const DELETE_ALL_WORKFLOW_FILE = '';
 
 const getAppsDetails = async (repoName) => {
-  // const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
+  const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
 
-  // const appDetails = JSON.parse(rawAppsDetails).Items;
-
-  // const cloudfrontAndS3Info = parseCloudfrontAndS3Ids(appDetails);
-
-  const cloudfrontConfig = JSON.parse(await wrapExecCmd(getCloudfrontConfig('E13I3Z6MZPC7XC')));
-
-  getLambdaARNs(cloudfrontConfig);
-
+  return JSON.parse(rawAppsDetails).Items;
 };
 
+const getActivePullRequestIdsString = (appsData) => {
+  const activePullRequests = appsData.reduce((memo, pullRequest) => {
+    if (pullRequest.IsActive.BOOL === true) {
+      memo.push(pullRequest.PullRequestId.N);
+    }
 
-getAppsDetails();
-module.exports = { getAppsDetails };
+    return memo;
+  }, []);
+
+  return activePullRequests.join(' ');
+};
+
+const getGitHubToken = () => {
+  const configObj = readConfigFile();
+
+  return configObj.github_access_token;
+};
+
+const triggerRemoteRepoAppsTeardown = ({ owner, repo, pullRequestIds }) => {
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${DELETE_ALL_WORKFLOW_FILE}/dispatches`;
+  const token = getGitHubToken();
+
+  const headerData = {
+    headers: {
+      accept: 'application/vnd.github+json',
+      authorization: `token ${token}`,
+    },
+  };
+
+  const body = {
+    ref: 'main',
+    inputs: {
+      'pull-request-numbers': pullRequestIds,
+    },
+  };
+
+  axios.post(url, body, headerData);
+};
+
+const deleteApps = async () => {
+  const { owner, repo } = await getRepoInfo();
+  const appsDetails = await getAppsDetails();
+
+  const activePullRequestIds = getActivePullRequestIdsString(appsDetails);
+  triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
+};
+
+module.exports = { deleteApps };
