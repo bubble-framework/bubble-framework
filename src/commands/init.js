@@ -1,5 +1,4 @@
 const prompts = require("prompts");
-const axios = require("axios");
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { createUser } = require("../aws/createUser");
