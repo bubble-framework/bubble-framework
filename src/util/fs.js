@@ -86,7 +86,8 @@ const createConfigFile = async () => {
 };
 
 const readConfigFile = (path, output) => {
-  const rawUserAppsConfig = fs.readFileSync(path);
+  const rawUserAppsConfig = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
+
   switch (output) {
     case "JSON":
       return JSON.parse(rawUserAppsConfig);
