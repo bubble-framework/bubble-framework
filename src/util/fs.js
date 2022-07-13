@@ -18,7 +18,8 @@ const {
 } = require("./paths");
 
 const {
-  bubbleSuccess
+  bubbleSuccess,
+  bubbleErr,
 } = require("./logger");
 
 const createFolder = (path) => {
@@ -100,6 +101,16 @@ const isRepo = () => {
   });
 };
 
+const deleteWorkflowFolder = () => {
+  fs.rm("./.github", { recursive: true }, (err) => {
+    if (err) {
+      bubbleErr(err.message);
+      return;
+    }
+    bubbleSuccess("deleted", " Workflow folder:")
+  });
+};
+
 module.exports = {
   createWorkflowDir,
   copyGithubActions,
@@ -107,5 +118,6 @@ module.exports = {
   createConfigFile,
   readConfigFile,
   writeToConfigFile,
-  isRepo
+  isRepo,
+  deleteWorkflowFolder,
 };
