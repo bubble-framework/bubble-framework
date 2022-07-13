@@ -4,7 +4,7 @@ const { getRepoInfo } = require('./addGithubSecrets');
 
 const { repo } = getRepoInfo();
 
-const modifyConfig = () => {
+const modifyConfig = (repo) => {
   const originalConfig = readConfigFile(awsConfigPath);
   const newConfig = `
 [profile ${repo}-bubble-user]
@@ -13,7 +13,7 @@ output = json`;
   writeToConfigFile(originalConfig + newConfig, awsConfigPath);
 }
 
-const modifyCredentials = (id, key) => {
+const modifyCredentials = (id, key, repo) => {
   const originalConfig = readConfigFile(awsCredentialsPath);
   const newConfig = `
 [${repo}-bubble-user]

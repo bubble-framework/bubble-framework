@@ -5,7 +5,7 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-const { getRepoInfo } = require('../util/addGithubSecrets')
+const { getRepoInfo } = require('../util/addGithubSecrets');
 
 const {
   addGithubSecrets,
@@ -14,6 +14,11 @@ const {
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
+
+const {
+  modifyConfig,
+  modifyCredentials,
+} = require('../util/modifyAwsProfile');
 
 const {
   createWorkflowDir,
@@ -66,6 +71,10 @@ const init = async (args) => {
       const accessKeyInfoObj = JSON.parse(accessKeyInfo);
       const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
       const secretKey = accessKeyInfoObj["AccessKey"]["SecretAccessKey"];
+
+      modifyConfig(repo);
+      modifyCredentials(accessKeyId, secretKey, repo);
+      bubbleSuccess("created", "AWS Command Line Profile: ")
 
       await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
       bubbleSuccess("saved", "IAM User Restrictions: ");
