@@ -9,8 +9,13 @@ on:
         required: true
         type: string
       pr-number:
-        required: true
+        require: true
         type: number
+
+env:
+  REPO_NAME_WITH_OWNER: ${{ github.repository }}
+  REPO_NAME: ${{ github.event.repository.name }}
+  BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   delete:
@@ -22,15 +27,12 @@ jobs:
     steps:
       - name: Set env vars when workflow is initiated by PR closing
         run: |
-          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
           echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
-        if: ${{ !inputs.repo-name && !inputs.pr-number }}
+        if: ${{ !inputs.pr-number }}
       - name: Set env vars when workflow is initiated by bubble destroy
         run: |
-          echo "REPO_NAME=${{ inputs.repo-name }}" >> $GITHUB_ENV
           echo "PR_NUMBER=${{ inputs.pr-number }}" >> $GITHUB_ENV
-          echo "PR_NUMBER=${{ inputs.pr-number }}" >> $GITHUB_ENV
-        if: ${{ inputs.repo-name && inputs.pr-number }}
+        if: ${{ inputs.pr-number }}
       - name: Missing AWS Credentials
         if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
         run: exit 1
@@ -39,6 +41,9 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.4
       - name: Retrieve commits
         uses: mathiasvr/command-output@v1
         id: previewappdata
@@ -50,7 +55,7 @@ jobs:
           aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET IsActive = :val" --expression-attribute-values '{":val":{"BOOL":false}}' --return-values ALL_NEW
       - name: Parse commits to get AWS Resource IDs
         uses: satackey/action-js-inline@v0.0.2
-        id: getresourceids
+        id: getbundles
         with:
           script: |
             const core = require('@actions/core')
@@ -58,44 +63,25 @@ jobs:
             const pullRequestObj = ${{ steps.previewappdata.outputs.stdout }}
             const commitsArray = pullRequestObj.Item.Commits.L
 
-            const [ buckets, distros, lambdas ] = [[], [], []]
+            const bundles = []
 
             commitsArray.forEach(commit => {
               const bucketId = commit.M.BucketId.S
+              const distro = commit.M.CloudFrontDistroId.S
+              const lambdaPrefix = bucketId.split('-')[0]
+              const branchName = "${{ steps.branch-name.outputs.current_branch }}"
 
-              buckets.push(bucketId)
-              distros.push(commit.M.CloudFrontDistroId.S)
-              lambdas.push(bucketId.split('-')[0])
+              const command = `gh workflow run delete_bundle.yml -f bucket=${bucketId} distro=${distro} lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${branchName}`
+              bundles.push(command)
             });
 
-            core.setOutput('buckets', buckets.join(' '))
-            core.setOutput('distros', distros.join(' '))
-            core.setOutput('lambdas', lambdas.join(' '))
-      - name: Delete all s3 buckets
+            core.setOutput('bundles', bundles.join(' \ '))
+      - name: Delete all bundles
         run: |
-          for BUCKET in ${{ steps.getresourceids.outputs.buckets }}
-          do
-            aws s3 rb s3://$BUCKET --force
-          done
-      - name: Delete all Cloudfront distribution ids
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install jq
-          for DISTRO in ${{ steps.getresourceids.outputs.distros }}
-          do
-            aws cloudfront get-distribution-config --id $DISTRO | jq .DistributionConfig.Enabled=false > tmp.json
-            jq -r .DistributionConfig tmp.json > tmp2.json
-            aws cloudfront update-distribution --id $DISTRO --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
-            aws cloudfront wait distribution-deployed --id $DISTRO
-            aws cloudfront delete-distribution --id $DISTRO --if-match $(aws cloudfront get-distribution-config --id $DISTRO | jq .ETag -r)
-          done
-      - name: Delete all Lambdas
-        run: |
-          for LAMBDA in ${{ steps.getresourceids.outputs.lambdas }}
-          do
-            FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${LAMBDA}')].FunctionName" --output text)
-            for FUNCTION in $FUNCTIONS
-              do
-                aws lambda delete-function --function-name $FUNCTION
-              done
-          done
+          for BUNDLE in ${{ steps.getbundles.outputs.bundles }}
+            do
+              echo "$BUNDLE"
+              $BUNDLE
+            done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
