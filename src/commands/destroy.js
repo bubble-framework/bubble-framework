@@ -9,10 +9,10 @@ const { deleteDatabase } = require("../util/deleteDatabase")
 const { deleteLocalFiles } = require('../util/deleteLocalFiles')
 
 const destroy = async () => {
-  await deleteUserAll();
-  await deleteDatabase();
   await deleteApps();
+  await deleteDatabase();
   deleteLocalFiles();
+  await deleteUserAll();
 }
 
 module.exports = { destroy };
