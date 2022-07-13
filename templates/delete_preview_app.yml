@@ -71,17 +71,16 @@ jobs:
               const lambdaPrefix = bucketId.split('-')[0]
               const branchName = "${{ steps.branch-name.outputs.current_branch }}"
 
-              const command = `gh workflow run delete_bundle.yml -f bucket=${bucketId} distro=${distro} lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${branchName}`
+              const command = `"gh workflow run delete_bundle.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${branchName}"`
               bundles.push(command)
             });
 
-            core.setOutput('bundles', bundles.join(' \ '))
+            core.setOutput('bundles', bundles.join("\n"))
       - name: Delete all bundles
         run: |
-          for BUNDLE in ${{ steps.getbundles.outputs.bundles }}
-            do
-              echo "$BUNDLE"
-              $BUNDLE
-            done
+          myarray=(${{ steps.getbundles.outputs.bundles }})
+          for (( i=0; i<=${#myarray[@]}; i++ )); do
+            ${myarray[$i]}
+          done
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BUBBLE_GITHUB_TOKEN }}
