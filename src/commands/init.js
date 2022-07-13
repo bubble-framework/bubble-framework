@@ -1,5 +1,4 @@
 const prompts = require("prompts");
-const axios = require("axios");
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { createUser } = require("../aws/createUser");
@@ -53,10 +52,10 @@ const init = async (args) => {
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
+    const { repo } = await getRepoInfo();
 
     if (!bubbleAwsSecretsAdded) {
       bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
-      const { repo } = await getRepoInfo();
 
       await wrapExecCmd(createUser(repo));
 
@@ -84,12 +83,7 @@ const init = async (args) => {
     createWorkflowDir();
     copyGithubActions();
 
-    let remote = await wrapExecCmd("git config --get remote.origin.url");
-
-    const parts = remote.split("/");
-    const repo = parts[parts.length - 1].slice(0, -5);
-
-    await wrapExecCmd(createDynamoTable(`${repo}`));
+    await wrapExecCmd(createDynamoTable(repo));
     bubbleSuccess("created", "Dynamo table created:");
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
