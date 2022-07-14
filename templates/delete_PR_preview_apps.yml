@@ -1,0 +1,82 @@
+name: Remove Preview Apps For Pull Request
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        require: true
+        type: number
+
+env:
+  REPO_NAME_WITH_OWNER: ${{ github.repository }}
+  REPO_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+    steps:
+      - name: Set env vars when workflow is initiated by PR closing
+        run: |
+          echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
+        if: ${{ !inputs.pr-number }}
+      - name: Set env vars when workflow is initiated by bubble destroy
+        run: |
+          echo "PR_NUMBER=${{ inputs.pr-number }}" >> $GITHUB_ENV
+        if: ${{ inputs.pr-number }}
+      - name: Missing AWS Credentials
+        if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
+        run: exit 1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.4
+      - name: Retrieve commits
+        uses: mathiasvr/command-output@v1
+        id: previewappdata
+        with:
+          run: |
+            aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
+      - name: Parse commits to get AWS Resource IDs
+        uses: satackey/action-js-inline@v0.0.2
+        id: getbundles
+        with:
+          script: |
+            const core = require('@actions/core')
+
+            const pullRequestObj = ${{ steps.previewappdata.outputs.stdout }}
+            const commitsArray = pullRequestObj.Item.Commits.L
+
+            const bundles = []
+
+            commitsArray.forEach(commit => {
+              const bucketId = commit.M.BucketId.S
+              const distro = commit.M.CloudFrontDistroId.S
+              const lambdaPrefix = bucketId.split('-')[0]
+              const branchName = "${{ steps.branch-name.outputs.current_branch }}"
+
+              const command = `"gh workflow run delete_preview_app.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${branchName}"`
+              bundles.push(command)
+            });
+
+            core.setOutput('bundles', bundles.join("\n"))
+      - name: Delete AWS resources for each commit
+        run: |
+          myarray=(${{ steps.getbundles.outputs.bundles }})
+          for (( i=0; i<=${#myarray[@]}; i++ )); do
+            ${myarray[$i]}
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.BUBBLE_GITHUB_TOKEN }}
+      - name: Soft delete pull request entry in DynamoDB
+        run: |
+          aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET IsActive = :val" --expression-attribute-values '{":val":{"BOOL":false}}' --return-values ALL_NEW

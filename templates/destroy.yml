@@ -20,7 +20,7 @@ jobs:
         run: |
           for PR_NUMBER in ${{ inputs.pr-numbers }}
           do
-            gh workflow run remove_preview_app.yml -f pr-number=$PR_NUMBER --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${{ steps.branch-name.outputs.current_branch }}
+            gh workflow run delete_PR_preview_apps.yml -f pr-number=$PR_NUMBER --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${{ steps.branch-name.outputs.current_branch }}
           done
         env:
           GITHUB_TOKEN: ${{ secrets.BUBBLE_GITHUB_TOKEN }}
