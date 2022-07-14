@@ -13,6 +13,10 @@ jobs:
     env:
       REPO_NAME_WITH_OWNER: ${{ github.repository }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Get branch name
         id: branch-name
         uses: tj-actions/branch-names@v5.4

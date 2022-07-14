@@ -21,6 +21,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Set env vars when workflow is initiated by PR closing
         run: |
           echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
