@@ -14,14 +14,14 @@ const userHandleFailedAppPath = path.join(
   "/.github/workflows/handle_failed_deploy.yml"
 );
 
-const userRemoveAppPath = path.join(
+const userRemovePRAppsPath = path.join(
   process.cwd(),
-  "/.github/workflows/remove_preview_app.yml"
+  "/.github/workflows/delete_PR_preview_apps.yml"
 );
 
-const frameworkRemoveAppPath = path.join(
+const frameworkRemovePRAppsPath = path.join(
   rootFrameworkPath,
-  `/templates/delete_preview_app.yml`
+  `/templates/delete_PR_preview_apps.yml`
 );
 
 const frameworkDeployReviewAppPath = path.join(
@@ -39,6 +39,26 @@ const userPolicyPath = path.join(
   `/src/aws/userPolicy.json`
 );
 
+const userRemoveAppPath = path.join(
+  process.cwd(),
+  "/.github/workflows/delete_preview_app.yml"
+);
+
+const frameworkRemoveAppPath = path.join(
+  rootFrameworkPath,
+  `/templates/delete_preview_app.yml`
+);
+
+const userDestroy = path.join(
+  process.cwd(),
+  "/.github/workflows/destroy.yml"
+);
+
+const frameworkDestroy = path.join(
+  rootFrameworkPath,
+  `/templates/destroy.yml`
+);
+
 const dataFolderPath = path.join(process.env.HOME, "/.bubble");
 const configPath = path.join(process.env.HOME, "/.bubble/config.json");
 const gitPath = path.join(process.cwd(), "/.git");
@@ -51,10 +71,14 @@ module.exports = {
   workflowFolderPath,
   userDeployReviewAppPath,
   userHandleFailedAppPath,
-  userRemoveAppPath,
+  userRemovePRAppsPath,
+  frameworkRemovePRAppsPath,
   frameworkDeployReviewAppPath,
   frameworkHandleFailedAppPath,
+  userRemoveAppPath,
   frameworkRemoveAppPath,
+  userDestroy,
+  frameworkDestroy,
   userPolicyPath,
   dataFolderPath,
   configPath,

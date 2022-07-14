@@ -6,7 +6,7 @@ const { configPath } = require('../util/fs');
 
 const axios = require('axios');
 
-const DELETE_ALL_WORKFLOW_FILE = '';
+const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));

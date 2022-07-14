@@ -9,9 +9,13 @@ const {
   userDeployReviewAppPath,
   userHandleFailedAppPath,
   userRemoveAppPath,
+  frameworkRemoveAppPath,
+  userRemovePRAppsPath,
+  frameworkRemovePRAppsPath,
   frameworkDeployReviewAppPath,
   frameworkHandleFailedAppPath,
-  frameworkRemoveAppPath,
+  userDestroy,
+  frameworkDestroy,
   dataFolderPath,
   configPath,
   gitPath
@@ -45,7 +49,15 @@ const copyGithubActions = () => {
 
   fs.copyFileSync(frameworkRemoveAppPath, userRemoveAppPath);
 
-  bubbleSuccess("created", "Remove preview app Github action: ");
+  bubbleSuccess("created", "Remove single preview app Github action: ");
+  
+  fs.copyFileSync(frameworkRemovePRAppsPath, userRemovePRAppsPath);
+
+  bubbleSuccess("created", "Remove all preview apps for pull request Github action: ");
+
+  fs.copyFileSync(frameworkDestroy, userDestroy);
+
+  bubbleSuccess("created", "Remove all preview apps for all pull requests Github action: ");
 };
 
 const addToken = async () => {
