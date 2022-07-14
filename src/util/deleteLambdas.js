@@ -6,7 +6,7 @@ const { getRepoInfo } = require("../util/addGithubSecrets");
 const { bubbleErr, bubbleSuccess } = require('./logger');
 
 const deleteLambdas = async () => {
-  const { repo } = getRepoInfo();
+  const { repo } = await getRepoInfo();
   let prefixes = JSON.parse(await wrapExecCmd(getLambdaPrefixFromDb(repo)));
   prefixes = prefixes.Items.flatMap(lambda => lambda.LambdaId.S);
 

@@ -20,6 +20,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+      REPO_NAME: ${{ github.event.repository.name }}
     steps:
       - name: Missing AWS Credentials
         if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
