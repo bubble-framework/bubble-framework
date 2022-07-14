@@ -37,7 +37,6 @@ const deleteAwsUser = async (repo) => {
 
 const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
-  repo = 'color-app'
   if (existingAwsUser()) {
     try {
       await deleteGithubSecrets();
