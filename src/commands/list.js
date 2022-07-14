@@ -3,9 +3,26 @@ const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { outputTableFromArray } = require('../util/consoleMessage');
 const { getRepoInfo } = require('../util/addGithubSecrets');
 
+const { bubbleErr } = require('../util/logger');
+
+const TABLE_DELETED_ERROR_CODE = 255;
+
 const list = async () => {
   const { repo } = await getRepoInfo();
-  const details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
+  let details;
+
+  try {
+    details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
+  } catch (e) {
+    if (e.code === TABLE_DELETED_ERROR_CODE) {
+      bubbleErr("Looks like bubble isn't set up yet, or has been destroyed. Try running bubble init.");
+    } else {
+      bubbleErr("We couldn't get the details for your preview apps.");
+    }
+
+    return;
+  }
+  
   const parsed = [];
   details.forEach(pullRequest => {
     if (pullRequest.IsActive.BOOL) {
@@ -29,4 +46,3 @@ const list = async () => {
 }
 
 module.exports = { list }
-
