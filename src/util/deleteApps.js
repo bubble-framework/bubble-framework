@@ -66,4 +66,4 @@ const deleteApps = async () => {
   await triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
 };
 
-module.exports = { deleteApps };
+module.exports = { deleteApps, getGitHubToken };

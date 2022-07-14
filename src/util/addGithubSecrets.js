@@ -126,7 +126,7 @@ async function retrieveCurrentSecrets() {
 
 function checkBubbleAwsSecretsAdded(currentSecrets) {
   return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_ACCESS_KEY_ID') &&
-    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_SECRET_ACCESS_KEY');
+    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_SECRET_ACCESS_KEY')
 }
 
 function checkNonBubbleAwsSecretsAdded(currentSecrets) {

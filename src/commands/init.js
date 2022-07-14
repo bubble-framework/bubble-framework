@@ -15,6 +15,8 @@ const {
   checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
 
+const { getGitHubToken } = require('../util/deleteApps');
+
 const {
   modifyConfig,
   modifyCredentials,
@@ -79,14 +81,17 @@ const init = async (args) => {
       await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
       bubbleSuccess("saved", "IAM User Restrictions: ");
 
+      const token = getGitHubToken();
+
       const secrets = {
         "BUBBLE_AWS_ACCESS_KEY_ID": accessKeyId,
         "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey,
+        "BUBBLE_GITHUB_TOKEN": token,
       };
 
       await addGithubSecrets(secrets);
     } else {
-      bubbleSuccess("already created and saved", "AWS IAM User and Access Keys: ");
+      bubbleSuccess("already created and saved", "AWS IAM User, Access Keys and Github Token: ");
     }
 
     createWorkflowDir();
