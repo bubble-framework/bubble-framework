@@ -1,5 +1,7 @@
 const axios = require("axios");
 const { readConfigFile } = require("./fs");
+const { configPath } = require('./paths')
+
 const {
   bubbleErr,
   bubbleSuccess,
@@ -23,7 +25,7 @@ const encrypt = async (publicKey, secretVal) => {
 };
 
 const headerObj = () => {
-  const configObj = readConfigFile();
+  const configObj = readConfigFile(configPath, "JSON");
   const githubAccessToken = configObj.github_access_token;
 
   return (obj = {
@@ -60,7 +62,7 @@ async function addGithubSecrets(secrets) {
 
   try {
     const repoInfo = await getRepoInfo();
-    [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
+    [owner, repo] = [repoInfo.owner, repoInfo.repo];
 
     response = await getPublicKey();
 
@@ -102,7 +104,7 @@ async function retrieveCurrentSecrets() {
 
   try {
     const repoInfo = await getRepoInfo();
-    [ owner, repo ] = [repoInfo.owner, repoInfo.repo];
+    [owner, repo] = [repoInfo.owner, repoInfo.repo];
 
     const response = await getPublicKey();
     if (response.status !== 200) {

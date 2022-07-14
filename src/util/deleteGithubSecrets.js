@@ -1,5 +1,7 @@
 const axios = require("axios");
-const { readConfigFile, readDataFile } = require("./fs");
+const { readConfigFile } = require("./fs");
+const { configPath } = require('./paths')
+
 const {
   bubbleErr,
   bubbleSuccess,
@@ -18,7 +20,7 @@ async function deleteGithubSecrets() {
       const parts = remote.split("/");
       const owner = parts[parts.length - 2];
       const repo = parts[parts.length - 1].slice(0, -5);
-      const config_obj = readConfigFile();
+      const config_obj = readConfigFile(configPath, "JSON");
       const github_access_token = config_obj.github_access_token;
 
       let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;

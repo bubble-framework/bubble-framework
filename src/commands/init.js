@@ -5,7 +5,7 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-const { getRepoInfo } = require('../util/addGithubSecrets')
+const { getRepoInfo } = require('../util/addGithubSecrets');
 
 const {
   addGithubSecrets,
@@ -14,6 +14,11 @@ const {
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
+
+const {
+  modifyConfig,
+  modifyCredentials,
+} = require('../util/modifyAwsProfile');
 
 const {
   createWorkflowDir,
@@ -67,6 +72,10 @@ const init = async (args) => {
       const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
       const secretKey = accessKeyInfoObj["AccessKey"]["SecretAccessKey"];
 
+      modifyConfig(repo);
+      modifyCredentials(accessKeyId, secretKey, repo);
+      bubbleSuccess("created", "AWS Command Line Profile: ")
+
       await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
       bubbleSuccess("saved", "IAM User Restrictions: ");
 
@@ -75,7 +84,7 @@ const init = async (args) => {
         "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey,
       };
 
-      addGithubSecrets(secrets);
+      await addGithubSecrets(secrets);
     } else {
       bubbleSuccess("already created and saved", "AWS IAM User and Access Keys: ");
     }
@@ -83,8 +92,10 @@ const init = async (args) => {
     createWorkflowDir();
     copyGithubActions();
 
-    await wrapExecCmd(createDynamoTable(repo));
-    bubbleSuccess("created", "Dynamo table created:");
+    setTimeout(async () => {
+      await wrapExecCmd(createDynamoTable(repo));
+      bubbleSuccess("created", "Dynamo table created:");
+    }, 13000);
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
   }
