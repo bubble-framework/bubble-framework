@@ -84,7 +84,7 @@ const init = async (args) => {
         "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey,
       };
 
-      addGithubSecrets(secrets);
+      await addGithubSecrets(secrets);
     } else {
       bubbleSuccess("already created and saved", "AWS IAM User and Access Keys: ");
     }
@@ -95,7 +95,7 @@ const init = async (args) => {
     setTimeout(async () => {
       await wrapExecCmd(createDynamoTable(repo));
       bubbleSuccess("created", "Dynamo table created:");
-    }, 10000);
+    }, 13000);
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
   }
