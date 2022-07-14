@@ -5,7 +5,6 @@ const { deleteLocalFiles } = require('../util/deleteLocalFiles')
 
 const destroy = async () => {
   await deleteApps();
-  await deleteDatabase('PreviewApps');
   deleteLocalFiles();
 }
 
