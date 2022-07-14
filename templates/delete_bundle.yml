@@ -1,4 +1,4 @@
-name: Remove Preview App Bundle
+name: Remove Preview App AWS Resource Set
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
         type: string
 
 jobs:
-  delete:
+  delete-resource-set:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
@@ -30,7 +30,7 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Delete s3 bucket
-        run: aws s3 rb s3://${{ inputs.bucket }} --force
+        run: aws s3 rb s3://${{ inputs.bucket }} --force || echo "Bucket ${{ inputs.bucket }} could not be deleted" && continue
       - name: Delete Cloudfront distribution id
         run: |
           sudo apt-get update
@@ -45,5 +45,5 @@ jobs:
           FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${{ inputs.lambda }}')].FunctionName" --output text)
           for FUNCTION in $FUNCTIONS
             do
-              aws lambda delete-function --function-name $FUNCTION
+              aws lambda delete-function --function-name $FUNCTION || echo "Lambda function $FUNCTION could not be deleted" && continue
             done
