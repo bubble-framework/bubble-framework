@@ -21,10 +21,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: Set env vars when workflow is initiated by PR closing
         run: |
           echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
@@ -41,9 +37,6 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v5.4
       - name: Retrieve commits
         uses: mathiasvr/command-output@v1
         id: previewappdata
@@ -66,9 +59,8 @@ jobs:
               const bucketId = commit.M.BucketId.S
               const distro = commit.M.CloudFrontDistroId.S
               const lambdaPrefix = bucketId.split('-')[0]
-              const branchName = "${{ steps.branch-name.outputs.current_branch }}"
 
-              const command = `"gh workflow run delete_preview_app.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r ${branchName}"`
+              const command = `"gh workflow run delete_preview_app.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r main"`
               bundles.push(command)
             });
 

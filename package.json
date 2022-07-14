@@ -1,6 +1,6 @@
 {
   "name": "jjam-bubble",
-  "version": "1.0.17--beta",
+  "version": "1.0.18--beta",
   "description": "Review Apps for Dynamic Frontend Applications",
   "main": "index.js",
   "scripts": {
