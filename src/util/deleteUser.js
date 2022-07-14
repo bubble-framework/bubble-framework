@@ -16,6 +16,7 @@ const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
 const { getUserAccessKey } = require("../aws/getUserAccessKey");
 const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
 const { deleteGithubSecrets } = require("./deleteGithubSecrets");
+const { deleteConfig, deleteCredentials } = require('./deleteAwsProfile');
 
 const existingAwsUser = async () => {
   try {
@@ -27,8 +28,7 @@ const existingAwsUser = async () => {
   }
 }
 
-const deleteAwsUser = async () => {
-  const { repo } = await getRepoInfo();
+const deleteAwsUser = async (repo) => {
   await wrapExecCmd(deleteUserPolicy(repo));
   const { AccessKeyMetadata } = JSON.parse(await wrapExecCmd(getUserAccessKey(repo)));
   await wrapExecCmd(deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo));
@@ -36,10 +36,13 @@ const deleteAwsUser = async () => {
 }
 
 const deleteUserAll = async () => {
+  let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
       await deleteGithubSecrets();
-      await deleteAwsUser();
+      await deleteAwsUser(repo);
+      deleteConfig(repo);
+      deleteCredentials(repo);
       bubbleSuccess("deleted", "The user and its Github secrets have been deleted");
     } catch (err) {
       bubbleErr(`user deletion failed, ${err}`);

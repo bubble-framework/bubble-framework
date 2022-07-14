@@ -1,10 +1,11 @@
 const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { wrapExecCmd } = require('../util/wrapExecCmd');
-const { getRepoInfo } = require('../util/addGithubSecrets');
-const { readConfigFile } = require('../util/fs');
-const { configPath } = require('../util/fs');
+const { wrapExecCmd } = require('./wrapExecCmd');
+const { getRepoInfo } = require('./addGithubSecrets');
+const { readConfigFile } = require('./fs');
+const { configPath } = require('./paths');
 
 const axios = require('axios');
+const { bubbleErr } = require('./logger');
 
 const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
 
@@ -32,7 +33,7 @@ const getGitHubToken = () => {
   return configObj.github_access_token;
 };
 
-const triggerRemoteRepoAppsTeardown = ({ owner, repo, pullRequestIds }) => {
+const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) => {
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${DELETE_ALL_WORKFLOW_FILE}/dispatches`;
   const token = getGitHubToken();
 
@@ -46,19 +47,23 @@ const triggerRemoteRepoAppsTeardown = ({ owner, repo, pullRequestIds }) => {
   const body = {
     ref: 'main',
     inputs: {
-      'pull-request-numbers': pullRequestIds,
+      'pr-numbers': pullRequestIds,
     },
   };
 
-  axios.post(url, body, headerData);
+  try {
+    await axios.post(url, body, headerData);
+  } catch (err) {
+    bubbleErr(`Remote Preview Apps Teardown Failed ${err}`)
+  }
 };
 
 const deleteApps = async () => {
   const { owner, repo } = await getRepoInfo();
-  const appsDetails = await getAppsDetails();
+  const appsDetails = await getAppsDetails(repo);
 
   const activePullRequestIds = getActivePullRequestIdsString(appsDetails);
-  triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
+  await triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
 };
 
-module.exports = { deleteApps };
+module.exports = { deleteApps, getGitHubToken };

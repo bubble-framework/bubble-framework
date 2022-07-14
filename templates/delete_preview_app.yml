@@ -20,11 +20,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+      REPO_NAME: ${{ github.event.repository.name }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: Missing AWS Credentials
         if: ${{ !env.AWS_SECRET_ACCESS_KEY && !env.AWS_ACCESS_KEY_ID }}
         run: exit 1
@@ -44,10 +41,11 @@ jobs:
           aws cloudfront update-distribution --id ${{ inputs.distro }} --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
           aws cloudfront wait distribution-deployed --id ${{ inputs.distro }}
           aws cloudfront delete-distribution --id ${{ inputs.distro }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.distro }} | jq .ETag -r)
-      - name: Delete all Lambdas
+      - name: Delete all Lambdas and save all lambdas to database for future batch delete
         run: |
           FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${{ inputs.lambda }}')].FunctionName" --output text)
           for FUNCTION in $FUNCTIONS
             do
+              aws dynamodb put-item --table-name ${{ env.REPO_NAME }}-Lambdas --item '{ "LambdaPrefix": {"S": "${{ inputs.lambda }}" }}'
               aws lambda delete-function --function-name $FUNCTION || echo "Lambda function $FUNCTION could not be deleted" && continue
             done
