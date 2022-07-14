@@ -8,7 +8,7 @@ const { bubbleErr, bubbleSuccess } = require('./logger');
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();
   let prefixes = JSON.parse(await wrapExecCmd(getLambdaPrefixFromDb(repo)));
-  prefixes = prefixes.Items.flatMap(lambda => lambda.LambdaId.S);
+  prefixes = prefixes.Items.flatMap(lambda => lambda.LambdaPrefix.S);
 
   const functions = [];
   for (let i = 0; i < prefixes.length; i++) {
