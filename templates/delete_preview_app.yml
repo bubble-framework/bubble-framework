@@ -12,7 +12,6 @@ on:
 env:
   REPO_NAME_WITH_OWNER: ${{ github.repository }}
   REPO_NAME: ${{ github.event.repository.name }}
-  BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
   delete:
