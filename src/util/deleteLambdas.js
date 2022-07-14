@@ -22,7 +22,7 @@ const deleteLambdas = async () => {
     }
     bubbleSuccess('deleted', "Lambdas: ")
   } catch (err) {
-    bubbleErr(`Lambdas are not ready to be deleted yet: ${err}`)
+    throw new Error(`Lambdas are not ready to be deleted yet! Please try again`);
   }
 }
 
