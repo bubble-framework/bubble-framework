@@ -4,7 +4,7 @@ const { outputTableFromArray } = require('../util/consoleMessage');
 const { getRepoInfo } = require('../util/addGithubSecrets');
 
 const list = async () => {
-  const { repo } = getRepoInfo();
+  const { repo } = await getRepoInfo();
   const details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
   const parsed = [];
   details.forEach(pullRequest => {
@@ -20,6 +20,11 @@ const list = async () => {
       })
     }
   })
+
+  if (parsed.length === 0) {
+    parsed.push("There are no preview apps at the moment")
+  }
+
   outputTableFromArray(parsed);
 }
 
