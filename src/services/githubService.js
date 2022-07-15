@@ -50,7 +50,7 @@ async function getPublicKey() {
 async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   const { owner, repo } = await getRepoInfo();
 
-  const { publicKey, keyId } = publicKeyObj;
+  const { key: publicKey, key_id: keyId } = publicKeyObj;
   const encryptedSecretVal = await encrypt(publicKey, secretVal);
   bubbleWarn(`${secretName} has been encrypted.`);
 
