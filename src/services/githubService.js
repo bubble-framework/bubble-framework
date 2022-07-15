@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 const { readConfigFile } = require("../util/fs");
 const { encrypt } = require('../util/encrypt');
 
