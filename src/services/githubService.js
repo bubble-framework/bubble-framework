@@ -42,32 +42,27 @@ async function addSecret(secretName, secretVal, publicKeyObj) {
   bubbleSuccess("created", `${secretName} secret has been:`);
 }
 
-/*
-await Object.keys(secrets).map(async (key) => {
-    const secretName = key;
-    const secretVal = secrets[key];
-    const encryptedSecretVal = await encrypt(publicKey, secretVal);
-    bubbleWarn(`${secretName} has been encrypted.`);
+async function getGithubSecrets() {
+  try {
+    const response = await getPublicKey();
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  } catch (e) {
+    bubbleErr(
+      `Couldn't pull public key due to: ${e}. Secrets will not be populated. Please rerun bubble init.`
+    );
+    process.exit();
+  }
 
-    url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
-    const data = {
-      encrypted_value: encryptedSecretVal,
-      key_id: keyId,
-    };
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
+  const currentSecrets = await axios.get(url, HEADER_OBJ);
 
-    await axios.put(url, data, HEADER_OBJ);
-    bubbleSuccess("created", `${secretName} secret has been:`);
-  });
-*/
-
-/*
-secrets = {
-  BUBBLE_SECRET_NAME: "gnwligh23850",
+  return currentSecrets;
 }
-
-*/
 
 module.exports = {
   getPublicKey,
   addSecret,
+  getGithubSecrets,
 }
