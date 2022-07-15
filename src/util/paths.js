@@ -21,18 +21,18 @@ const userRemovePRAppsPath = path.join(
 );
 
 const frameworkRemovePRAppsPath = path.join(
-  rootFrameworkPath,
-  `/templates/bubble_remove_PR_preview_apps.yml`
+  templateFolderPath,
+  "/bubble_remove_PR_preview_apps.yml"
 );
 
 const frameworkDeployReviewAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/bubble_deploy_preview_app.yml`
+  templateFolderPath,
+  "/bubble_deploy_preview_app.yml"
 );
 
 const frameworkHandleFailedAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/bubble_log_deploy_error.yml`
+  templateFolderPath,
+  "/bubble_log_deploy_error.yml"
 );
 
 const userPolicyPath = path.join(
@@ -46,8 +46,8 @@ const userRemoveAppPath = path.join(
 );
 
 const frameworkRemoveAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/bubble_remove_single_preview_app.yml`
+  templateFolderPath,
+  "/bubble_remove_single_preview_app.yml"
 );
 
 const userDestroy = path.join(
@@ -56,8 +56,8 @@ const userDestroy = path.join(
 );
 
 const frameworkDestroy = path.join(
-  rootFrameworkPath,
-  `/templates/bubble_remove_all_preview_apps.yml`
+  templateFolderPath,
+  "/bubble_remove_all_preview_apps.yml"
 );
 
 const dataFolderPath = path.join(process.env.HOME, "/.bubble");
