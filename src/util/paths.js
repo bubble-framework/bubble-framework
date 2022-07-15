@@ -1,7 +1,7 @@
 const path = require("path");
 
 const rootFrameworkPath = path.join(__dirname, "/../..");
-const templateFolderPath = path.join(process.cwd(), "/templates");
+const templateFolderPath = path.join(rootFrameworkPath, "/templates");
 const githubFolderPath = path.join(process.cwd(), "/.github");
 const workflowFolderPath = path.join(process.cwd(), "/.github/workflows");
 
