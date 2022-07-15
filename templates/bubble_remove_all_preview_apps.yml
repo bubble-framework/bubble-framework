@@ -1,4 +1,4 @@
-name: Remove All Preview Apps for all Pull Requests in Repo
+name: Bubble--Remove All Preview Apps
 
 on:
   workflow_dispatch:

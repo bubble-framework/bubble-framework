@@ -1,7 +1,9 @@
+name: Bubble--Log Error
+
 on:
   workflow_run:
     workflows:
-      - deploy on pull
+      - Bubble--Make Preview App
     types: [ completed ]
 
 jobs:
