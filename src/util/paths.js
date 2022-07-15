@@ -17,12 +17,12 @@ const userHandleFailedAppPath = path.join(
 
 const userRemovePRAppsPath = path.join(
   workflowFolderPath,
-  "/bubble_remove_PR_preview_apps.yml"
+  "/bubble_remove_branch_preview_apps.yml"
 );
 
 const frameworkRemovePRAppsPath = path.join(
   templateFolderPath,
-  "/bubble_remove_PR_preview_apps.yml"
+  "/bubble_remove_branch_preview_apps.yml"
 );
 
 const frameworkDeployReviewAppPath = path.join(
