@@ -5,7 +5,10 @@ async function getRepoInfo() {
     "gh repo view --json nameWithOwner -q '.nameWithOwner'"
   );
 
-  const [ owner, repo ] = nameWithOwner.split('/');
+  const [ owner, repo ] = nameWithOwner
+    .trim()
+    .split('/');
+  
   return { owner, repo };
 };
 
