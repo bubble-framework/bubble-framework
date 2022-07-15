@@ -22,7 +22,7 @@ const list = async () => {
 
     return;
   }
-  
+
   const parsed = [];
   details.forEach(pullRequest => {
     if (pullRequest.IsActive.BOOL) {
@@ -33,6 +33,7 @@ const list = async () => {
         detail.commit_id = commit.M.CommitId.S.slice(0, 7);
         detail.commit_message = commit.M.CommitMessageHeader.S;
         detail.created_at = commit.M.CreatedAt.S;
+        detail.url = 'https://' + commit.M.CloudfrontSubdomain.S + '.cloudfront.net';
         parsed.push(detail);
       })
     }
