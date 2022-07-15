@@ -1,7 +1,7 @@
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { outputTableFromArray } = require('../util/consoleMessage');
-const { getRepoInfo } = require('../util/addGithubSecrets');
+const { getRepoInfo } = require('../constants');
 
 const { bubbleErr } = require('../util/logger');
 

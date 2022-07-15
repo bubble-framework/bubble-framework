@@ -1,12 +1,12 @@
-const { wrapExecCmd } = require("./util/wrapExecCmd");
+const { wrapExecCmd } = require("jjam-bubble/src/util/wrapExecCmd");
 
-const repoInfo = (async function getRepoInfo() {
+async function getRepoInfo() {
   let nameWithOwner = await wrapExecCmd(
     "gh repo view --json nameWithOwner -q '.nameWithOwner'"
   );
 
   const [ owner, repo ] = nameWithOwner.split('/');
   return { owner, repo };
-})();
+};
 
-module.exports = { repoInfo };
+module.exports = { getRepoInfo };

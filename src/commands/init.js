@@ -36,7 +36,7 @@ const {
   bubbleHelp
 } = require("../util/logger");
 
-const { repoInfo } = require('../constants');
+const { getRepoInfo } = require('../constants');
 const { userPolicyPath } = require("../util/paths");
 
 const init = async (args) => {
@@ -58,7 +58,7 @@ const init = async (args) => {
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
-    const { repo } = repoInfo();
+    const { repo } = await getRepoInfo();
 
     if (!bubbleAwsSecretsAdded) {
       bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');

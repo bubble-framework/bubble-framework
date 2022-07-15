@@ -8,7 +8,7 @@ const {
 
 const { wrapExecCmd } = require("./wrapExecCmd");
 
-const { getRepoInfo } = require('./addGithubSecrets');
+const { getRepoInfo } = require('../constants');
 const { checkExistingUser } = require("../aws/checkExistingUser");
 const { deleteUser } = require("../aws/deleteUser");
 const { deleteUserPolicy } = require("../aws/deleteUserPolicy");

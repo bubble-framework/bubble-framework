@@ -10,8 +10,8 @@ const {
 } = require("../util/logger");
 
 const { configPath } = require('../util/paths');
-const { repoInfo } = require('../constants');
-const { owner, repo } = repoInfo;
+const { getRepoInfo } = require('../constants');
+const { owner, repo } = await getRepoInfo;
 
 const HEADER_OBJ = (() => {
   const configObj = readConfigFile(configPath, "JSON");
