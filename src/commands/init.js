@@ -5,12 +5,13 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-const { getRepoInfo } = require('../util/addGithubSecrets');
+
+const { repoInfo } = require('../constants');
+const { getGithubSecrets } = require('../services/githubService');
 
 const {
   addGithubSecrets,
   validateGithubConnection,
-  retrieveCurrentSecrets,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
@@ -51,7 +52,7 @@ const init = async (args) => {
     await createConfigFile();
     await validateGithubConnection();
 
-    const currentSecrets = await retrieveCurrentSecrets();
+    const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
 
     if (nonBubbleAwsSecretsAlreadyAdded) {
@@ -59,7 +60,7 @@ const init = async (args) => {
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
-    const { repo } = await getRepoInfo();
+    const { repo } = repoInfo();
 
     if (!bubbleAwsSecretsAdded) {
       bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
