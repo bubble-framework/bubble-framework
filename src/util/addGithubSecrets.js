@@ -2,51 +2,15 @@ const axios = require("axios");
 const process = require("process");
 
 const { repoInfo } = require('../constants');
+const { owner, repo } = repoInfo;
 
-const { readConfigFile } = require("./fs");
-const { configPath } = require('./paths')
+const { getPublicKey, addSecret } = require('../services/githubService');
 
 const {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn
 } = require("./logger");
-
-const HEADER_OBJ = (() => {
-  const configObj = readConfigFile(configPath, "JSON");
-  const githubAccessToken = configObj.github_access_token;
-
-  return (obj = {
-    headers: {
-      Authorization: `token ${githubAccessToken}`,
-      "Content-Type": "application/json",
-      Accept: "application/vnd.github.v3+json",
-    },
-  });
-})();
-
-const { owner, repo } = repoInfo;
-
-const encrypt = async (publicKey, secretVal) => {
-  const sodium = require("libsodium-wrappers");
-  await sodium.ready;
-  const key = publicKey;
-
-  const messageBytes = Buffer.from(secretVal);
-  const keyBytes = Buffer.from(key, "base64");
-
-  const encryptedBytes = sodium.crypto_box_seal(messageBytes, keyBytes);
-
-  const encrypted = Buffer.from(encryptedBytes).toString("base64");
-  return encrypted;
-};
-
-async function getPublicKey() {
-  let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
-
-  let response = await axios.get(url, HEADER_OBJ);
-  return response;
-}
 
 async function addGithubSecrets(secrets) {
   let response;
@@ -61,27 +25,16 @@ async function addGithubSecrets(secrets) {
     bubbleErr(
       `Couldn't pull public key due to: ${e}. Secrets will not be populated. Please rerun bubble init.`
     );
+
     process.exit();
   }
 
   bubbleSuccess("retrieved", "Public key:");
-  const publicKey = response.data.key;
-  const keyId = response.data.key_id;
+  const publicKeyObj = response.data;
 
-  await Object.keys(secrets).map(async (key) => {
-    const secretName = key;
-    const secretVal = secrets[key];
-    const encryptedSecretVal = await encrypt(publicKey, secretVal);
-    bubbleWarn(`${secretName} has been encrypted.`);
-
-    url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
-    const data = {
-      encrypted_value: encryptedSecretVal,
-      key_id: keyId,
-    };
-
-    await axios.put(url, data, HEADER_OBJ);
-    bubbleSuccess("created", `${secretName} secret has been:`);
+  Object.keys(secrets).forEach(async secretName => {
+    const secretVal = secrets[secretName];
+    await addSecret(secretName, secretVal, publicKeyObj);
   });
 }
 
