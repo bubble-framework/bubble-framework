@@ -1,4 +1,4 @@
-name: Remove Preview App AWS Resource Set
+name: Bubble--Remove Single Preview App
 
 on:
   workflow_dispatch:

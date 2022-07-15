@@ -1,4 +1,4 @@
-name: Remove Preview Apps For Pull Request
+name: Bubble--Remove Preview Apps on PR Close
 
 on:
   pull_request:
