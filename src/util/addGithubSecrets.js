@@ -1,6 +1,8 @@
 const axios = require("axios");
 const process = require("process");
 
+const { repoInfo } = require('../constants');
+
 const { readConfigFile } = require("./fs");
 const { configPath } = require('./paths')
 
@@ -9,8 +11,6 @@ const {
   bubbleSuccess,
   bubbleWarn
 } = require("./logger");
-
-const { wrapExecCmd } = require("./wrapExecCmd");
 
 const HEADER_OBJ = (() => {
   const configObj = readConfigFile(configPath, "JSON");
@@ -24,6 +24,8 @@ const HEADER_OBJ = (() => {
     },
   });
 })();
+
+const { owner, repo } = repoInfo;
 
 const encrypt = async (publicKey, secretVal) => {
   const sodium = require("libsodium-wrappers");
@@ -39,18 +41,7 @@ const encrypt = async (publicKey, secretVal) => {
   return encrypted;
 };
 
-async function getRepoInfo() {
-  let remote = await wrapExecCmd("git config --get remote.origin.url");
-
-  const parts = remote.split("/");
-  const owner = parts[parts.length - 2];
-  const repo = parts[parts.length - 1].slice(0, -5);
-
-  return { owner, repo };
-}
-
 async function getPublicKey() {
-  const { owner, repo } = await getRepoInfo();
   let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
 
   let response = await axios.get(url, HEADER_OBJ);
@@ -58,12 +49,9 @@ async function getPublicKey() {
 }
 
 async function addGithubSecrets(secrets) {
-  let owner, repo, response;
+  let response;
 
   try {
-    const repoInfo = await getRepoInfo();
-    [owner, repo] = [repoInfo.owner, repoInfo.repo];
-
     response = await getPublicKey();
 
     if (response.status !== 200) {
@@ -98,12 +86,7 @@ async function addGithubSecrets(secrets) {
 }
 
 async function retrieveCurrentSecrets() {
-  let owner, repo;
-
   try {
-    const repoInfo = await getRepoInfo();
-    [owner, repo] = [repoInfo.owner, repoInfo.repo];
-
     const response = await getPublicKey();
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -162,7 +145,6 @@ async function validateGithubConnection() {
 }
 
 module.exports = {
-  getRepoInfo,
   getPublicKey,
   addGithubSecrets,
   validateGithubConnection,
