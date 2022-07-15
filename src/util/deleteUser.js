@@ -10,7 +10,6 @@ const { wrapExecCmd } = require("./wrapExecCmd");
 
 const { getRepoInfo } = require('./addGithubSecrets');
 const { checkExistingUser } = require("../aws/checkExistingUser");
-const { validateGithubConnection } = require("./addGithubSecrets");
 const { deleteUser } = require("../aws/deleteUser");
 const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
 const { getUserAccessKey } = require("../aws/getUserAccessKey");

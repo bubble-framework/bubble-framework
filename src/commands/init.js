@@ -6,12 +6,10 @@ const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
 
-const { repoInfo } = require('../constants');
 const { getGithubSecrets } = require('../services/githubService');
 
 const {
   addGithubSecrets,
-  validateGithubConnection,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
 } = require("../util/addGithubSecrets");
@@ -38,6 +36,7 @@ const {
   bubbleHelp
 } = require("../util/logger");
 
+const { repoInfo } = require('../constants');
 const { userPolicyPath } = require("../util/paths");
 
 const init = async (args) => {
@@ -50,7 +49,6 @@ const init = async (args) => {
     bubbleHelp('Before we get started, please make sure you have your AWS credentials configured with AWS CLI.\n');
 
     await createConfigFile();
-    await validateGithubConnection();
 
     const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);

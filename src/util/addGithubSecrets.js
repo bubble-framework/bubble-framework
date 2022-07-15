@@ -1,31 +1,10 @@
-const process = require("process");
-
 const { getPublicKey, addGithubSecret } = require('../services/githubService');
 
-const {
-  bubbleErr,
-  bubbleSuccess,
-} = require("./logger");
+const { bubbleSuccess } = require("./logger");
 
 async function addGithubSecrets(secrets) {
-  let response;
-
-  try {
-    response = await getPublicKey();
-
-    if (response.status !== 200) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-  } catch (e) {
-    bubbleErr(
-      `Couldn't pull public key due to: ${e}. Secrets will not be populated. Please rerun bubble init.`
-    );
-
-    process.exit();
-  }
-
+  const { data: publicKeyObj } = await getPublicKey();
   bubbleSuccess("retrieved", "Public key:");
-  const publicKeyObj = response.data;
 
   Object.keys(secrets).forEach(async secretName => {
     const secretVal = secrets[secretName];
@@ -57,25 +36,8 @@ function checkNonBubbleAwsSecretsAdded(currentSecrets) {
   )) && !checkBubbleAwsSecretsAdded(currentSecrets);
 }
 
-async function validateGithubConnection() {
-  try {
-    const response = await getPublicKey();
-
-    if (response.status !== 200) {
-      throw `HTTP error! status: ${response.status}`;
-    }
-  } catch (e) {
-    bubbleErr(
-      `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
-    );
-
-    process.exit();
-  }
-}
-
 module.exports = {
   addGithubSecrets,
-  validateGithubConnection,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
 };
