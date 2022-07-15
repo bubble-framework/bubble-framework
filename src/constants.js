@@ -1,4 +1,4 @@
-const { wrapExecCmd } = require("./wrapExecCmd");
+const { wrapExecCmd } = require("./util/wrapExecCmd");
 
 const repoInfo = await (async function getRepoInfo() {
   let nameWithOwner = await wrapExecCmd(
