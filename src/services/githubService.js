@@ -1,10 +1,9 @@
-const { readConfigFile } = require("./fs");
-const { configPath } = require('./paths');
+const { readConfigFile } = require("../util/fs");
+const { encrypt } = require('../util/encrypt');
 
+const { configPath } = require('../util/paths');
 const { repoInfo } = require('../constants');
 const { owner, repo } = repoInfo;
-
-const { encrypt } = require('../util/encrypt');
 
 const HEADER_OBJ = (() => {
   const configObj = readConfigFile(configPath, "JSON");
