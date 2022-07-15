@@ -11,7 +11,6 @@ const {
 
 const { configPath } = require('../util/paths');
 const { getRepoInfo } = require('../constants');
-const { owner, repo } = await getRepoInfo;
 
 const HEADER_OBJ = (() => {
   const configObj = readConfigFile(configPath, "JSON");
@@ -27,6 +26,8 @@ const HEADER_OBJ = (() => {
 })();
 
 async function getPublicKey() {
+  const { owner, repo } = await getRepoInfo();
+
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
 
   try {
@@ -47,6 +48,8 @@ async function getPublicKey() {
 }
 
 async function addGithubSecret(secretName, secretVal, publicKeyObj) {
+  const { owner, repo } = await getRepoInfo();
+
   const { publicKey, keyId } = publicKeyObj;
   const encryptedSecretVal = await encrypt(publicKey, secretVal);
   bubbleWarn(`${secretName} has been encrypted.`);
@@ -63,6 +66,8 @@ async function addGithubSecret(secretName, secretVal, publicKeyObj) {
 }
 
 async function getGithubSecrets() {
+  const { owner, repo } = await getRepoInfo();
+
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
   const secrets = await axios.get(url, HEADER_OBJ);
 
