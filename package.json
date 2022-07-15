@@ -1,6 +1,6 @@
 {
   "name": "jjam-bubble",
-  "version": "1.0.18--beta",
+  "version": "1.0.20--beta",
   "description": "Review Apps for Dynamic Frontend Applications",
   "main": "index.js",
   "scripts": {
@@ -35,6 +35,7 @@
     "axios": "^0.27.2",
     "commander": "^6.2.0",
     "libsodium-wrappers": "^0.7.10",
+    "open": "^8.4.0",
     "prompts": "^2.4.0"
   }
 }
