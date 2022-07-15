@@ -12,6 +12,19 @@ const {
 
 const { wrapExecCmd } = require("./wrapExecCmd");
 
+const HEADER_OBJ = (() => {
+  const configObj = readConfigFile(configPath, "JSON");
+  const githubAccessToken = configObj.github_access_token;
+
+  return (obj = {
+    headers: {
+      Authorization: `token ${githubAccessToken}`,
+      "Content-Type": "application/json",
+      Accept: "application/vnd.github.v3+json",
+    },
+  });
+})();
+
 const encrypt = async (publicKey, secretVal) => {
   const sodium = require("libsodium-wrappers");
   await sodium.ready;
@@ -24,19 +37,6 @@ const encrypt = async (publicKey, secretVal) => {
 
   const encrypted = Buffer.from(encryptedBytes).toString("base64");
   return encrypted;
-};
-
-const headerObj = () => {
-  const configObj = readConfigFile(configPath, "JSON");
-  const githubAccessToken = configObj.github_access_token;
-
-  return (obj = {
-    headers: {
-      Authorization: `token ${githubAccessToken}`,
-      "Content-Type": "application/json",
-      Accept: "application/vnd.github.v3+json",
-    },
-  });
 };
 
 async function getRepoInfo() {
@@ -53,9 +53,7 @@ async function getPublicKey() {
   const { owner, repo } = await getRepoInfo();
   let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
 
-  const obj = headerObj();
-
-  let response = await axios.get(url, obj);
+  let response = await axios.get(url, HEADER_OBJ);
   return response;
 }
 
@@ -94,9 +92,7 @@ async function addGithubSecrets(secrets) {
       key_id: keyId,
     };
 
-    const obj = headerObj();
-
-    await axios.put(url, data, obj);
+    await axios.put(url, data, HEADER_OBJ);
     bubbleSuccess("created", `${secretName} secret has been:`);
   });
 }
@@ -120,8 +116,7 @@ async function retrieveCurrentSecrets() {
   }
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
-  const obj = headerObj();
-  const currentSecrets = await axios.get(url, obj);
+  const currentSecrets = await axios.get(url, HEADER_OBJ);
 
   return currentSecrets;
 }
