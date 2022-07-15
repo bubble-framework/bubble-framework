@@ -1,4 +1,6 @@
 const axios = require("axios");
+const process = require("process");
+
 const { readConfigFile } = require("./fs");
 const { configPath } = require('./paths')
 
@@ -7,8 +9,8 @@ const {
   bubbleSuccess,
   bubbleWarn
 } = require("./logger");
+
 const { wrapExecCmd } = require("./wrapExecCmd");
-const process = require("process");
 
 const encrypt = async (publicKey, secretVal) => {
   const sodium = require("libsodium-wrappers");
@@ -125,14 +127,18 @@ async function retrieveCurrentSecrets() {
 }
 
 function checkBubbleAwsSecretsAdded(currentSecrets) {
-  return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_ACCESS_KEY_ID') &&
-    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'BUBBLE_AWS_SECRET_ACCESS_KEY')
+  const secretNames = currentSecrets.data.secrets.map(secretObj => secretObj.name);
+
+  return secretNames.includes('BUBBLE_AWS_ACCESS_KEY_ID')
+    && secretNames.includes('BUBBLE_AWS_SECRET_ACCESS_KEY');
 }
 
 function checkNonBubbleAwsSecretsAdded(currentSecrets) {
-  return currentSecrets.data.secrets.some(secretObj => secretObj.name === 'AWS_ACCESS_KEY_ID') &&
-    currentSecrets.data.secrets.some(secretObj => secretObj.name === 'AWS_SECRET_ACCESS_KEY') &&
-    !checkBubbleAwsSecretsAdded(currentSecrets);
+  const secretNames = currentSecrets.data.secrets.map(secretObj => secretObj.name);
+
+  return secretNames.includes('AWS_ACCESS_KEY_ID')
+    && secretNames.includes('AWS_SECRET_ACCESS_KEY')
+    && !checkBubbleAwsSecretsAdded(currentSecrets);
 }
 
 async function validateGithubConnection() {
