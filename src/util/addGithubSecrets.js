@@ -128,17 +128,26 @@ async function retrieveCurrentSecrets() {
 
 function checkBubbleAwsSecretsAdded(currentSecrets) {
   const secretNames = currentSecrets.data.secrets.map(secretObj => secretObj.name);
+  const bubbleSecretNames = [
+    'BUBBLE_AWS_ACCESS_KEY_ID',
+    'BUBBLE_AWS_SECRET_ACCESS_KEY',
+  ];
 
-  return secretNames.includes('BUBBLE_AWS_ACCESS_KEY_ID')
-    && secretNames.includes('BUBBLE_AWS_SECRET_ACCESS_KEY');
+  return bubbleSecretNames.every(bubbleSecretName => (
+    secretNames.includes(bubbleSecretName)
+  ));
 }
 
 function checkNonBubbleAwsSecretsAdded(currentSecrets) {
   const secretNames = currentSecrets.data.secrets.map(secretObj => secretObj.name);
+  const awsSecretNames = [
+    'AWS_ACCESS_KEY_ID',
+    'AWS_SECRET_ACCESS_KEY',
+  ]
 
-  return secretNames.includes('AWS_ACCESS_KEY_ID')
-    && secretNames.includes('AWS_SECRET_ACCESS_KEY')
-    && !checkBubbleAwsSecretsAdded(currentSecrets);
+  return awsSecretNames.every(awsSecretNames => (
+    secretNames.includes(awsSecretNames)
+  )) && !checkBubbleAwsSecretsAdded(currentSecrets);
 }
 
 async function validateGithubConnection() {
