@@ -1,49 +1,21 @@
-const { wrapExecCmd } = require("../util/wrapExecCmd");
-const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { outputTableFromArray } = require('../util/consoleMessage');
-const { getRepoInfo } = require('../util/addGithubSecrets');
-
-const { bubbleErr } = require('../util/logger');
-
-const TABLE_DELETED_ERROR_CODE = 255;
+const open = require("open");
+const { getExistingApps } = require('../util/getExistingApps');
+const prompts = require("prompts");
 
 const list = async () => {
-  const { repo } = await getRepoInfo();
-  let details;
+  const apps = await getExistingApps()
+  commitMessages = apps.map(app => app.commit_message);
+  const selectList = {
+    type: "select",
+    name: "commitMessage",
+    message: "Select a preview app to go to its url",
+    choices: commitMessages,
+  };
 
-  try {
-    details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
-  } catch (e) {
-    if (e.code === TABLE_DELETED_ERROR_CODE) {
-      bubbleErr("Looks like bubble isn't set up yet, or has been destroyed. Try running bubble init.");
-    } else {
-      bubbleErr("We couldn't get the details for your preview apps.");
-    }
-
-    return;
-  }
-
-  const parsed = [];
-  details.forEach(pullRequest => {
-    if (pullRequest.IsActive.BOOL) {
-      pullRequest.Commits.L.forEach(commit => {
-        const detail = {};
-        detail.pull_request_id = pullRequest.PullRequestId.N;
-        detail.pull_request_name = pullRequest.PRName.S;
-        detail.commit_id = commit.M.CommitId.S.slice(0, 7);
-        detail.commit_message = commit.M.CommitMessageHeader.S;
-        detail.created_at = commit.M.CreatedAt.S;
-        detail.url = 'https://' + commit.M.CloudfrontSubdomain.S + '.cloudfront.net';
-        parsed.push(detail);
-      })
-    }
-  })
-
-  if (parsed.length === 0) {
-    parsed.push("There are no preview apps at the moment")
-  }
-
-  outputTableFromArray(parsed);
+  const result = await prompts(selectList);
+  const choice = commitMessages[result["commitMessage"]];
+  const domain = apps.find(app => app.commit_message === choice).url
+  return open(domain);
 }
 
 module.exports = { list }
