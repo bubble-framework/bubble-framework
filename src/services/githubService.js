@@ -3,6 +3,12 @@ const axios = require('axios');
 const { readConfigFile } = require("../util/fs");
 const { encrypt } = require('../util/encrypt');
 
+const {
+  bubbleErr,
+  bubbleSuccess,
+  bubbleWarn,
+} = require("../util/logger");
+
 const { configPath } = require('../util/paths');
 const { repoInfo } = require('../constants');
 const { owner, repo } = repoInfo;
