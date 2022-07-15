@@ -26,7 +26,7 @@ async function getPublicKey() {
   return response;
 }
 
-async function addSecret(secretName, secretVal, publicKeyObj) {
+async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   const { publicKey, keyId } = publicKeyObj;
   const encryptedSecretVal = await encrypt(publicKey, secretVal);
   bubbleWarn(`${secretName} has been encrypted.`);
@@ -63,6 +63,6 @@ async function getGithubSecrets() {
 
 module.exports = {
   getPublicKey,
-  addSecret,
+  addGithubSecret,
   getGithubSecrets,
 }
