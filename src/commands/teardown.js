@@ -9,30 +9,41 @@ const {
   WAIT_TO_TEARDOWN_MSG,
   TEARDOWN_DONE_MSG,
   LAMBDA_TEARDOWN_ERROR_MSG,
+  commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline
 } = require("../util/messages");
 
+const { existingAwsUser } = require("../util/deleteUser");
+
 const teardown = async () => {
-  bubbleBold(WAIT_TO_TEARDOWN_MSG);
-  const randomJoke = randomJokeSetup('TEARDOWN');
-  bubbleBold(waitForJokeSetup(randomJoke));
-
   try {
-    await deleteLambdas();
-  } catch (err) {
-    bubbleErr(err);
-    bubbleBold(LAMBDA_TEARDOWN_ERROR_MSG);
-    return;
+    if (!existingAwsUser()) {
+      throw new Error();
+    }
+
+    bubbleBold(WAIT_TO_TEARDOWN_MSG);
+    const randomJoke = randomJokeSetup('TEARDOWN');
+    bubbleBold(waitForJokeSetup(randomJoke));
+
+    try {
+      await deleteLambdas();
+    } catch (err) {
+      bubbleErr(err);
+      bubbleBold(LAMBDA_TEARDOWN_ERROR_MSG);
+      return;
+    }
+
+    bubbleBold(waitForJokePunchline(randomJoke, 'TEARDOWN'));
+
+    await deleteDatabase('Lambdas')
+    await deleteUserAll();
+
+    bubbleBold(TEARDOWN_DONE_MSG);
+  } catch {
+    bubbleBold(commandsOutOfOrder('teardown'));
   }
-
-  bubbleBold(waitForJokePunchline(randomJoke, 'TEARDOWN'));
-
-  await deleteDatabase('Lambdas')
-  await deleteUserAll();
-
-  bubbleBold(TEARDOWN_DONE_MSG);
 }
 
 module.exports = { teardown };

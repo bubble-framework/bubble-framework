@@ -1,4 +1,3 @@
-const prompts = require("prompts");
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { createUser } = require("../aws/createUser");
@@ -43,11 +42,12 @@ const {
   WAIT_FOR_DB_JOKE_DRUM,
   DB_CREATED_MSG,
   DB_NOT_CREATED_MSG,
+  commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
   waitForDBJokeCrickets,
-  duplicate_bubble_init
+  duplicateBubbleInit
 } = require("../util/messages");
 
 const { existingAwsUser } = require("../util/deleteUser");
@@ -63,7 +63,8 @@ const init = async (args) => {
     const { repo } = await getRepoInfo();
 
     if (existingAwsUser()) {
-      throw `${duplicate_bubble_init(repo)}`;
+      bubbleBold(`${duplicateBubbleInit(repo)}`);
+      return;
     }
 
     bubbleBold('Welcome to the Bubble CLI!\n');
@@ -144,6 +145,7 @@ const init = async (args) => {
     }, 13000);
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);
+    bubbleBold(commandsOutOfOrder('init'));
   }
 };
 

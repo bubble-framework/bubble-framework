@@ -7,26 +7,37 @@ const {
 const {
   WAIT_TO_DESTROY_MSG,
   DESTROY_DONE_MSG,
+  commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
   instructTeardown
 } = require("../util/messages");
 
+const { existingAwsUser } = require("../util/deleteUser");
+
 const destroy = async () => {
-  bubbleBold(WAIT_TO_DESTROY_MSG);
-  const { repo } = await getRepoInfo();
-  const randomJoke = randomJokeSetup('DESTROY');
-  bubbleBold(waitForJokeSetup(randomJoke));
+  try {
+    if (!existingAwsUser()) {
+      throw new Error();
+    }
 
-  await deleteApps();
+    bubbleBold(WAIT_TO_DESTROY_MSG);
+    const { repo } = await getRepoInfo();
+    const randomJoke = randomJokeSetup('DESTROY');
+    bubbleBold(waitForJokeSetup(randomJoke));
 
-  bubbleBold(waitForJokePunchline(randomJoke, 'DESTROY'));
+    await deleteApps();
 
-  deleteLocalFiles();
+    bubbleBold(waitForJokePunchline(randomJoke, 'DESTROY'));
 
-  bubbleBold(DESTROY_DONE_MSG);
-  bubbleBold(instructTeardown(repo));
+    deleteLocalFiles();
+
+    bubbleBold(DESTROY_DONE_MSG);
+    bubbleBold(instructTeardown(repo));
+  } catch {
+    bubbleBold(commandsOutOfOrder('destroy'));
+  }
 }
 
 module.exports = { destroy };
