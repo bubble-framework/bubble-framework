@@ -5,7 +5,7 @@ const {
 const { deleteWorkflowFolder } = require("./fs")
 
 const deleteLocalFiles = () => {
-  bubbleWarn("Deleting workflow files");
+  bubbleWarn("Now deleting workflow files...");
   deleteWorkflowFolder();
 }
 

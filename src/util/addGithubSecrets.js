@@ -5,8 +5,12 @@ const { configPath } = require('./paths')
 const {
   bubbleErr,
   bubbleSuccess,
-  bubbleWarn
+  bubbleWarn,
+  bubbleBold
 } = require("./logger");
+const {
+  GITHUB_CONNECTION_FAILURE_MSG
+} = require("./messages");
 const { wrapExecCmd } = require("./wrapExecCmd");
 const process = require("process");
 
@@ -143,9 +147,8 @@ async function validateGithubConnection() {
       throw `HTTP error! status: ${response.status}`;
     }
   } catch (e) {
-    bubbleErr(
-      `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
-    );
+    bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
+    bubbleBold(GITHUB_CONNECTION_FAILURE_MSG);
 
     process.exit();
   }

@@ -37,12 +37,33 @@ const {
   bubbleHelp
 } = require("../util/logger");
 
+const {
+  INIT_FINISHED_MSG,
+  WAIT_FOR_DB_MSG,
+  WAIT_FOR_DB_JOKE_DRUM,
+  DB_CREATED_MSG,
+  DB_NOT_CREATED_MSG,
+  randomJokeSetup,
+  waitForJokeSetup,
+  waitForJokePunchline,
+  waitForDBJokeCrickets,
+  duplicate_bubble_init
+} = require("../util/messages");
+
+const { existingAwsUser } = require("../util/deleteUser");
+
 const { userPolicyPath } = require("../util/paths");
 
 const init = async (args) => {
   try {
     if (!isRepo()) {
       throw `Current directory is not a git repository or it is not tied to a GitHub Origin`;
+    }
+
+    const { repo } = await getRepoInfo();
+
+    if (existingAwsUser()) {
+      throw `${duplicate_bubble_init(repo)}`;
     }
 
     bubbleBold('Welcome to the Bubble CLI!\n');
@@ -59,7 +80,6 @@ const init = async (args) => {
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
-    const { repo } = await getRepoInfo();
 
     if (!bubbleAwsSecretsAdded) {
       bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
@@ -97,9 +117,30 @@ const init = async (args) => {
     createWorkflowDir();
     copyGithubActions();
 
+    bubbleBold(WAIT_FOR_DB_MSG);
+    const randomDBJoke = randomJokeSetup('DB');
     setTimeout(async () => {
-      await wrapExecCmd(createDynamoTable(repo));
-      bubbleSuccess("created", "Dynamo table created:");
+      bubbleBold(waitForJokeSetup(randomDBJoke));
+    }, 2000);
+    setTimeout(async () => {
+      bubbleBold(waitForJokePunchline(randomDBJoke, 'DB'));
+    }, 7000);
+    setTimeout(async () => {
+      bubbleBold(WAIT_FOR_DB_JOKE_DRUM);
+    }, 8000);
+    setTimeout(async () => {
+      bubbleBold(waitForDBJokeCrickets());
+    }, 10000);
+
+
+    setTimeout(async () => {
+      try {
+        await wrapExecCmd(createDynamoTable(repo));
+        bubbleBold(DB_CREATED_MSG);
+        bubbleBold(INIT_FINISHED_MSG);
+      } catch {
+        bubbleBold(DB_NOT_CREATED_MSG);
+      }
     }, 13000);
   } catch (err) {
     bubbleErr(`Could not initialize app:\n${err}`);

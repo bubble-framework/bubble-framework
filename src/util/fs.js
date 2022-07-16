@@ -26,6 +26,10 @@ const {
   bubbleErr,
 } = require("./logger");
 
+const {
+  FOLDER_ALREADY_DELETED
+} = require("./messages");
+
 const createFolder = (path) => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
@@ -50,7 +54,7 @@ const copyGithubActions = () => {
   fs.copyFileSync(frameworkRemoveAppPath, userRemoveAppPath);
 
   bubbleSuccess("created", "Remove single preview app Github action: ");
-  
+
   fs.copyFileSync(frameworkRemovePRAppsPath, userRemovePRAppsPath);
 
   bubbleSuccess("created", "Remove all preview apps for pull request Github action: ");
@@ -129,7 +133,7 @@ const isRepo = () => {
 const deleteWorkflowFolder = () => {
   fs.rm("./.github", { recursive: true }, (err) => {
     if (err) {
-      bubbleErr(err.message);
+      bubbleErr(FOLDER_ALREADY_DELETED);
       return;
     }
     bubbleSuccess("deleted", " Workflow folder:")

@@ -3,7 +3,7 @@ const prompts = require("prompts");
 const {
   bubbleErr,
   bubbleSuccess,
-  bubbleWarn
+  bubbleBold
 } = require("./logger");
 
 const { wrapExecCmd } = require("./wrapExecCmd");
@@ -39,6 +39,7 @@ const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
+      bubbleBold(`Now deleting the Bubble-created IAM user and its Gihub secrets...`)
       await deleteGithubSecrets();
       await deleteAwsUser(repo);
       deleteConfig(repo);
