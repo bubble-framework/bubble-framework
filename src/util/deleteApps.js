@@ -39,9 +39,6 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
 
   const headerData = {
     headers: { 
-      owner,
-      repo,
-      workflow_id: DELETE_ALL_WORKFLOW_FILE,
       accept: 'application/vnd.github+json',
       authorization: `token ${token}`,
     },
@@ -56,8 +53,12 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
 
   try {
     await axios.post(url, body, headerData);
-  } catch (err) {
-    bubbleErr(`Remote Preview Apps Teardown Failed ${err}`)
+  } catch (e) {
+    if (e.response.status === 422 && e.response.data.message.includes("'pr-numbers'")) {
+      bubbleWarn("Looks like there are no preview apps to be deleted for this repository!");
+    } else {
+      bubbleErr(`Remote Preview Apps Teardown Failed ${err}`);
+    }
   }
 };
 
