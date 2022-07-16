@@ -5,7 +5,7 @@ const { readConfigFile } = require('./fs');
 const { configPath } = require('./paths');
 
 const axios = require('axios');
-const { bubbleErr } = require('./logger');
+const { bubbleErr, bubbleWarn } = require('./logger');
 
 const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
 
