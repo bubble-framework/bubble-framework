@@ -38,7 +38,10 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   const token = getGitHubToken();
 
   const headerData = {
-    headers: {
+    headers: { 
+      owner,
+      repo,
+      workflow_id: DELETE_ALL_WORKFLOW_FILE,
       accept: 'application/vnd.github+json',
       authorization: `token ${token}`,
     },
