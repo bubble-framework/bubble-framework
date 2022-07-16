@@ -12,7 +12,7 @@ const {
   addGithubSecrets,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
-} = require("../util/addGithubSecrets");
+} = require("../util/manageGithubSecrets");
 
 const { getGitHubToken } = require('../util/deleteApps');
 
