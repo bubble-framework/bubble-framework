@@ -12,7 +12,7 @@ const {
 
 const deleteDatabase = async (name) => {
   const { repo } = await getRepoInfo();
-  bubbleBold(`Now deleting the ${repo}-${name} database...`);
+  bubbleBold(`Deleting the ${repo}-${name} database...`);
 
   try {
     await wrapExecCmd(deleteTable(repo, name));

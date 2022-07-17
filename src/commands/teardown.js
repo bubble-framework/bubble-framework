@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { deleteLambdas } = require('../util/deleteLambdas');
 const { deleteDatabase } = require('../util/deleteDatabase');
 const { deleteUserAll } = require('../util/deleteUser');
@@ -19,7 +20,7 @@ const { existingAwsUser } = require("../util/deleteUser");
 
 const teardown = async () => {
   try {
-    if (!existingAwsUser()) {
+    if (!existingAwsUser() || fs.existsSync("./.github")) {
       throw new Error();
     }
 
@@ -35,7 +36,7 @@ const teardown = async () => {
       return;
     }
 
-    bubbleBold(waitForJokePunchline(randomJoke, 'TEARDOWN'));
+    bubbleBold(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`);
 
     await deleteDatabase('Lambdas')
     await deleteUserAll();

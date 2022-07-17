@@ -42,7 +42,6 @@ const {
   WAIT_FOR_DB_JOKE_DRUM,
   DB_CREATED_MSG,
   DB_NOT_CREATED_MSG,
-  commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
@@ -57,12 +56,12 @@ const { userPolicyPath } = require("../util/paths");
 const init = async (args) => {
   try {
     if (!isRepo()) {
-      throw `Current directory is not a git repository or it is not tied to a GitHub Origin`;
+      throw `Please make sure the current directory is a git repository or is tied to a GitHub Origin, then re-run \`bubble init\`!`;
     }
 
     const { repo } = await getRepoInfo();
 
-    if (existingAwsUser()) {
+    if (await existingAwsUser()) {
       bubbleBold(`${duplicateBubbleInit(repo)}`);
       return;
     }
@@ -83,7 +82,7 @@ const init = async (args) => {
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
 
     if (!bubbleAwsSecretsAdded) {
-      bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
+      bubbleBold('\nCreating AWS IAM User credentials and saving in your Github repository...\n');
 
       await wrapExecCmd(createUser(repo));
 
@@ -112,7 +111,7 @@ const init = async (args) => {
 
       await addGithubSecrets(secrets);
     } else {
-      bubbleSuccess("already created and saved", "AWS IAM User, Access Keys and Github Token: ");
+      bubbleBold("Your Bubble-created AWS IAM user has already previously been created and saved in your Github repository!");
     }
 
     createWorkflowDir();
@@ -144,8 +143,7 @@ const init = async (args) => {
       }
     }, 13000);
   } catch (err) {
-    bubbleErr(`Could not initialize app:\n${err}`);
-    bubbleBold(commandsOutOfOrder('init'));
+    bubbleErr(`Couldn't finish initializing Bubble:\n${err}`);
   }
 };
 

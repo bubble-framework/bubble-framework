@@ -13,9 +13,9 @@ const getExistingApps = async () => {
     details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
   } catch (e) {
     if (e.code === TABLE_DELETED_ERROR_CODE) {
-      bubbleErr("Looks like bubble isn't set up yet, or has been destroyed. Try running bubble init.");
+      bubbleErr("Looks like your bubble-tracking DynamoDB table hasn't been set up yet, or has already been destroyed. Try running \`bubble init\`.");
     } else {
-      bubbleErr("We couldn't get the details for your preview apps.");
+      bubbleErr("Sorry, we couldn't get the details for your bubbles!");
     }
 
     return;

@@ -6,14 +6,10 @@ const { configPath } = require('./paths');
 
 const axios = require('axios');
 const {
-  bubbleErr,
-  bubbleBold
+  bubbleErr
 } = require('./logger');
-const {
-  GITHUB_CONNECTION_FAILURE_MSG
-} = require("./messages");
 
-const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
+const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
@@ -61,7 +57,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
     await axios.post(url, body, headerData);
   } catch (err) {
     bubbleErr(`Remote Preview Apps Teardown Failed due to: ${err}\n`);
-    bubbleBold(GITHUB_CONNECTION_FAILURE_MSG);  }
+  }
 };
 
 const deleteApps = async () => {

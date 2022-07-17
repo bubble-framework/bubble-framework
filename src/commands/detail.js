@@ -4,6 +4,7 @@ const {
   bubbleBold
 } = require("../util/logger");
 const {
+  SHORT_NO_BUBBLES_MSG,
   DETAIL_INTRO_MSG,
   commandsOutOfOrder
 } = require("../util/messages");
@@ -20,7 +21,7 @@ const detail = async () => {
 
     const apps = await getExistingApps();
     if (apps.length === 0) {
-      apps.push("There are no preview apps at the moment");
+      apps.push(SHORT_NO_BUBBLES_MSG);
     }
     outputTableFromArray(apps);
   } catch {

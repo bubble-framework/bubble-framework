@@ -30,10 +30,6 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Notify about starting removal of single preview app
-        uses: hasura/comment-progress@v2.1.0
-        with:
-          message: "Starting removal of all AWS resources for this bubble."
       - name: Delete s3 bucket
         run: aws s3 rb s3://${{ inputs.bucket }} --force || echo "Bucket ${{ inputs.bucket }} could not be deleted" && continue
       - name: Delete Cloudfront distribution id
@@ -53,7 +49,3 @@ jobs:
               aws dynamodb put-item --table-name ${{ env.REPO_NAME }}-Lambdas --item '{ "LambdaPrefix": {"S": "${{ inputs.lambda }}" }}'
               aws lambda delete-function --function-name $FUNCTION || echo "Lambda function $FUNCTION could not be deleted" && continue
             done
-      - name: Notify about completion of removal of single preview app
-        uses: hasura/comment-progress@v2.1.0
-        with:
-          message: "Finished removal of AWS resources for this bubble! \U0001F642"

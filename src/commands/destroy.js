@@ -6,13 +6,16 @@ const {
 } = require("../util/logger");
 const {
   WAIT_TO_DESTROY_MSG,
-  DESTROY_DONE_MSG,
+  DESTROY_WORKFLOWS_COMPLETING_MSG,
   commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
   instructTeardown
 } = require("../util/messages");
+const {
+  validateGithubConnection
+} = require("../util/addGithubSecrets");
 
 const { existingAwsUser } = require("../util/deleteUser");
 
@@ -21,6 +24,8 @@ const destroy = async () => {
     if (!existingAwsUser()) {
       throw new Error();
     }
+
+    await validateGithubConnection();
 
     bubbleBold(WAIT_TO_DESTROY_MSG);
     const { repo } = await getRepoInfo();
@@ -31,9 +36,9 @@ const destroy = async () => {
 
     bubbleBold(waitForJokePunchline(randomJoke, 'DESTROY'));
 
-    deleteLocalFiles();
+    await deleteLocalFiles();
 
-    bubbleBold(DESTROY_DONE_MSG);
+    bubbleBold(DESTROY_WORKFLOWS_COMPLETING_MSG);
     bubbleBold(instructTeardown(repo));
   } catch {
     bubbleBold(commandsOutOfOrder('destroy'));

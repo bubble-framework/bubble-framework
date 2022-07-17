@@ -84,7 +84,7 @@ async function addGithubSecrets(secrets) {
   const publicKey = response.data.key;
   const keyId = response.data.key_id;
 
-  await Object.keys(secrets).map(async (key) => {
+  await Promise.all(Object.keys(secrets).map(async (key) => {
     const secretName = key;
     const secretVal = secrets[key];
     const encryptedSecretVal = await encrypt(publicKey, secretVal);
@@ -99,8 +99,8 @@ async function addGithubSecrets(secrets) {
     const obj = headerObj();
 
     await axios.put(url, data, obj);
-    bubbleSuccess("created", `${secretName} secret has been:`);
-  });
+    bubbleSuccess("created", `${secretName} Github secret has been:`);
+  }));
 }
 
 async function retrieveCurrentSecrets() {

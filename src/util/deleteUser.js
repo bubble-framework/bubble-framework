@@ -39,18 +39,18 @@ const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
-      bubbleBold(`Now deleting the Bubble-created IAM user and its Gihub secrets...`)
+      bubbleBold(`Deleting the Bubble-created IAM user and its Gihub secrets...`)
       await deleteGithubSecrets();
       await deleteAwsUser(repo);
       deleteConfig(repo);
       deleteCredentials(repo);
-      bubbleSuccess("deleted", "The user and its Github secrets have been deleted");
+      bubbleSuccess("deleted", "User and its Github secrets: ");
     } catch (err) {
-      bubbleErr(`user deletion failed, ${err}`);
+      bubbleErr(`User deletion failed due to: ${err}.`);
     }
   } else {
-    bubbleErr("There is no user created for this repo yet.");
+    bubbleErr("Looks like no Bubble-created IAM user exists for this repo!");
   }
 }
 
-module.exports = { deleteUserAll }
+module.exports = { deleteUserAll, existingAwsUser }

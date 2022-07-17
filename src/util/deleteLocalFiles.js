@@ -4,9 +4,9 @@ const {
 
 const { deleteWorkflowFolder } = require("./fs")
 
-const deleteLocalFiles = () => {
-  bubbleWarn("Now deleting workflow files...");
-  deleteWorkflowFolder();
+const deleteLocalFiles = async () => {
+  bubbleWarn("Deleting workflow files...");
+  await deleteWorkflowFolder();
 }
 
 module.exports = { deleteLocalFiles }
