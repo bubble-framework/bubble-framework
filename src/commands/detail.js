@@ -4,6 +4,7 @@ const {
   bubbleBold
 } = require("../util/logger");
 const {
+  DETAIL_INTRO_MSG,
   commandsOutOfOrder
 } = require("../util/messages");
 
@@ -14,6 +15,8 @@ const detail = async () => {
     if (!existingAwsUser()) {
       throw new Error();
     }
+
+    bubbleBold(DETAIL_INTRO_MSG);
 
     const apps = await getExistingApps();
     if (apps.length === 0) {

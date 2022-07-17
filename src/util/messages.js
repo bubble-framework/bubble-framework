@@ -8,6 +8,8 @@ const WAIT_FOR_DB_JOKE_DRUM = `${emoji.get('drum_with_drumsticks')}...\n`;
 const DB_CREATED_MSG = "Whew! Good thing your DynamoDB table's created. We were about to tell another joke...\n";
 const DB_NOT_CREATED_MSG = `Oh no, looks like there was an issue creating your DynamoDB table! ${emoji.get('face_with_hand_over_mouth')} Thank goodness for bubble wrap though, we've got you covered! Just re-run \`bubble init\` and we'll get that sorted out for you!`;
 
+const DETAIL_INTRO_MSG = "Here's a quick view of all your bubbles:"
+
 const WAIT_TO_DESTROY_MSG = `We'll get started popping all your bubbles! Grab a hot tea ${emoji.get('tea')} and chew on this bubble-related pun while you wait...\n"`;
 const DESTROY_DONE_MSG = "All set! All Bubble-related files in your local project folder should now be deleted, and most AWS resources provisioned for your bubbles have been removed.\n";
 const FOLDER_ALREADY_DELETED = `Looks like your local Bubble-related workflow files have already been deleted! We love an easy cleanup... ${emoji.get('broom')}`;
@@ -106,6 +108,7 @@ module.exports = {
   WAIT_FOR_DB_JOKE_DRUM,
   DB_CREATED_MSG,
   DB_NOT_CREATED_MSG,
+  DETAIL_INTRO_MSG,
   WAIT_TO_DESTROY_MSG,
   DESTROY_DONE_MSG,
   WAIT_TO_TEARDOWN_MSG,

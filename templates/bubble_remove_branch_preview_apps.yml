@@ -37,6 +37,10 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Notify about starting removal of preview apps in branch
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          message: "We'll work on going through all the bubbles in this branch and start popping 'em all!"
       - name: Retrieve commits
         uses: mathiasvr/command-output@v1
         id: previewappdata

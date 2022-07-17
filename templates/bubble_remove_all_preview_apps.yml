@@ -13,6 +13,10 @@ jobs:
     env:
       REPO_NAME_WITH_OWNER: ${{ github.repository }}
     steps:
+      - name: Notify about starting removal of all preview apps in repo
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          message: "Hang tight! We'll get started popping all active bubbles in this repo. Once we're done, most of the AWS resources provisioned for all your preview apps will be removed \U0001F9FC"
       - name: Execute preview app deletion workflow for each PR number
         run: |
           for PR_NUMBER in ${{ inputs.pr-numbers }}

@@ -16,7 +16,7 @@ const list = async () => {
       throw new Error();
     }
 
-    const apps = await getExistingApps()
+    const apps = await getExistingApps();
     commitMessages = apps.map(app => app.commit_message);
     const selectList = {
       type: "select",
