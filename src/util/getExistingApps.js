@@ -3,6 +3,11 @@ const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { getRepoInfo } = require('./addGithubSecrets');
 const { bubbleErr } = require('./logger');
 
+const {
+  PREVIEWS_TABLE_DELETED_MSG,
+  NO_PREVIEW_DETAILS_RETRIEVED_MSG
+} = require("./messages");
+
 const TABLE_DELETED_ERROR_CODE = 255;
 
 const getExistingApps = async () => {
@@ -13,9 +18,9 @@ const getExistingApps = async () => {
     details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
   } catch (e) {
     if (e.code === TABLE_DELETED_ERROR_CODE) {
-      bubbleErr("Looks like your bubble-tracking DynamoDB table hasn't been set up yet, or has already been destroyed. Try running \`bubble init\`.");
+      bubbleErr(PREVIEWS_TABLE_DELETED_MSG);
     } else {
-      bubbleErr("Sorry, we couldn't get the details for your bubbles!");
+      bubbleErr(NO_PREVIEW_DETAILS_RETRIEVED_MSG);
     }
 
     return;

@@ -1,16 +1,18 @@
-const prompts = require("prompts");
-
 const {
   bubbleErr,
   bubbleSuccess,
   bubbleBold
 } = require("./logger");
 
+const {
+  DELETING_BUBBLE_USER_MSG,
+  NONEXISTENT_BUBBLE_AWS_USER_MSG
+} = require("./messages");
+
 const { wrapExecCmd } = require("./wrapExecCmd");
 
 const { getRepoInfo } = require('./addGithubSecrets');
 const { checkExistingUser } = require("../aws/checkExistingUser");
-const { validateGithubConnection } = require("./addGithubSecrets");
 const { deleteUser } = require("../aws/deleteUser");
 const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
 const { getUserAccessKey } = require("../aws/getUserAccessKey");
@@ -39,7 +41,7 @@ const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
-      bubbleBold(`Deleting the Bubble-created IAM user and its Gihub secrets...`)
+      bubbleBold(DELETING_BUBBLE_USER_MSG);
       await deleteGithubSecrets();
       await deleteAwsUser(repo);
       deleteConfig(repo);
@@ -49,7 +51,7 @@ const deleteUserAll = async () => {
       bubbleErr(`User deletion failed due to: ${err}.`);
     }
   } else {
-    bubbleErr("Looks like no Bubble-created IAM user exists for this repo!");
+    bubbleErr(NONEXISTENT_BUBBLE_AWS_USER_MSG);
   }
 }
 

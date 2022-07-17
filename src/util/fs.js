@@ -23,12 +23,12 @@ const {
 
 const {
   bubbleSuccess,
-  bubbleErr,
   bubbleBold
 } = require("./logger");
 
 const {
   GITHUB_PAT_MSG,
+  REUSE_GH_PAT_MSG,
   FOLDER_ALREADY_DELETED
 } = require("./messages");
 
@@ -88,7 +88,7 @@ const createConfigFile = async () => {
     const question = {
       type: "confirm",
       name: "useToken",
-      message: `Would you like to use the same Github access token as the last time you ran \`bubble init\`?`,
+      message: REUSE_GH_PAT_MSG,
       initial: true,
     };
 

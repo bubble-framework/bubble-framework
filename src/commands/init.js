@@ -37,6 +37,12 @@ const {
 } = require("../util/logger");
 
 const {
+  NOT_A_REPO_MSG,
+  WELCOME_MSG,
+  PREREQ_MSG,
+  NONBUBBLE_AWS_KEYS_IN_REPO_MSG,
+  CREATING_IAM_USER_MSG,
+  BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG,
   INIT_FINISHED_MSG,
   WAIT_FOR_DB_MSG,
   WAIT_FOR_DB_JOKE_DRUM,
@@ -56,7 +62,7 @@ const { userPolicyPath } = require("../util/paths");
 const init = async (args) => {
   try {
     if (!isRepo()) {
-      throw `Please make sure the current directory is a git repository or is tied to a GitHub Origin, then re-run \`bubble init\`!`;
+      throw `${NOT_A_REPO_MSG}`;
     }
 
     const { repo } = await getRepoInfo();
@@ -66,8 +72,8 @@ const init = async (args) => {
       return;
     }
 
-    bubbleBold('Welcome to the Bubble CLI!\n');
-    bubbleHelp('Before we get started, please make sure you have your AWS credentials configured with AWS CLI.\n');
+    bubbleBold(WELCOME_MSG);
+    bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
     await validateGithubConnection();
@@ -76,13 +82,13 @@ const init = async (args) => {
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
 
     if (nonBubbleAwsSecretsAlreadyAdded) {
-      bubbleWarn("Looks like you already have AWS credentials saved in your Github repository! Not to worry, those can stay safe and sound where they are, but to provision your preview apps, we will create a new IAM user with the proper permissions. The credentials for this new user will be saved in your Github repository prepended with 'BUBBLE'.\n");
+      bubbleWarn(NONBUBBLE_AWS_KEYS_IN_REPO_MSG);
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
 
     if (!bubbleAwsSecretsAdded) {
-      bubbleBold('\nCreating AWS IAM User credentials and saving in your Github repository...\n');
+      bubbleBold(CREATING_IAM_USER_MSG);
 
       await wrapExecCmd(createUser(repo));
 
@@ -111,7 +117,7 @@ const init = async (args) => {
 
       await addGithubSecrets(secrets);
     } else {
-      bubbleBold("Your Bubble-created AWS IAM user has already previously been created and saved in your Github repository!");
+      bubbleBold(BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG);
     }
 
     createWorkflowDir();
