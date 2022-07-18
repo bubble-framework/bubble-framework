@@ -157,25 +157,25 @@ const activeReposWithoutCurrent = (activeRepos, currentRepoName) => {
 const addToActiveReposFile = (repoName) => {
   let activeRepos = [];
   if (fs.existsSync(activeReposPath)) {
-    activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+    activeRepos = readConfigFile(activeReposPath, "JSON");
   }
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
   activeRepos.push({ repoName, status: 'active' });
-  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
 const updateStatusInActiveReposFile = (currentRepoName) => {
-  let activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+  let activeRepos = readConfigFile(activeReposPath, "JSON");
   activeRepos = activeRepos.map(repo => repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo);
-  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
   bubbleSuccess(`updated in ${activeReposPath}`, `Repo ${currentRepoName} status: `);
 };
 
 const removeFromActiveReposFile = (repoName) => {
-  let activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+  let activeRepos = readConfigFile(activeReposPath, "JSON");
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
-  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
   bubbleSuccess(`removed from ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
