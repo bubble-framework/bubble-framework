@@ -31,9 +31,15 @@ const {
 const {
   bubbleErr,
   bubbleSuccess,
+  bubbleHelp,
+  bubbleGeneral,
+  bubbleLoading,
+  bubbleWelcome,
+  bubbleIntro,
   bubbleWarn,
-  bubbleBold,
-  bubbleHelp
+  bubblePunchline,
+  bubbleConclusionPrimary,
+  bubbleConclusionSecondary
 } = require("../util/logger");
 
 const {
@@ -68,11 +74,11 @@ const init = async (args) => {
     const { repo } = await getRepoInfo();
 
     if (await existingAwsUser()) {
-      bubbleBold(`${duplicateBubbleInit(repo)}`);
+      bubbleWarn(`${duplicateBubbleInit(repo)}`);
       return;
     }
 
-    bubbleBold(WELCOME_MSG);
+    bubbleWelcome(WELCOME_MSG);
     bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
@@ -88,7 +94,7 @@ const init = async (args) => {
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
 
     if (!bubbleAwsSecretsAdded) {
-      bubbleBold(CREATING_IAM_USER_MSG);
+      bubbleGeneral(CREATING_IAM_USER_MSG);
 
       await wrapExecCmd(createUser(repo));
 
@@ -117,35 +123,38 @@ const init = async (args) => {
 
       await addGithubSecrets(secrets);
     } else {
-      bubbleBold(BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG);
+      bubbleWarn(BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG);
     }
 
     createWorkflowDir();
     copyGithubActions();
 
-    bubbleBold(WAIT_FOR_DB_MSG);
+    bubbleIntro(WAIT_FOR_DB_MSG, 1);
     const randomDBJoke = randomJokeSetup('DB');
+    let spinner;
     setTimeout(async () => {
-      bubbleBold(waitForJokeSetup(randomDBJoke));
+      spinner = bubbleLoading(waitForJokeSetup(randomDBJoke), 1);
+      spinner.start();
     }, 2000);
     setTimeout(async () => {
-      bubbleBold(waitForJokePunchline(randomDBJoke, 'DB'));
+      spinner.succeed();
+      bubblePunchline(waitForJokePunchline(randomDBJoke, 'DB'), 1);
     }, 7000);
     setTimeout(async () => {
-      bubbleBold(WAIT_FOR_DB_JOKE_DRUM);
+      bubblePunchline(WAIT_FOR_DB_JOKE_DRUM, 1);
     }, 8000);
     setTimeout(async () => {
-      bubbleBold(waitForDBJokeCrickets());
+      bubblePunchline(waitForDBJokeCrickets(), 1);
     }, 10000);
 
 
     setTimeout(async () => {
       try {
         await wrapExecCmd(createDynamoTable(repo));
-        bubbleBold(DB_CREATED_MSG);
-        bubbleBold(INIT_FINISHED_MSG);
+        bubbleConclusionPrimary(DB_CREATED_MSG, 1);
+        bubbleConclusionSecondary(INIT_FINISHED_MSG, 1);
       } catch {
-        bubbleBold(DB_NOT_CREATED_MSG);
+        bubbleConclusionPrimary(DB_NOT_CREATED_MSG, 1);
       }
     }, 13000);
   } catch (err) {

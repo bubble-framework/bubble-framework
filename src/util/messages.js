@@ -1,7 +1,7 @@
 const emoji = require('node-emoji');
 
 const NOT_A_REPO_MSG = `Please make sure the current directory is a git repository or is tied to a GitHub Origin, then re-run \`bubble init\`!`;
-const WELCOME_MSG = 'WELCOME TO THE BUBBLE CLI!\n';
+const WELCOME_MSG = `${emoji.get('large_blue_circle')} WELCOME TO THE BUBBLE CLI! ${emoji.get('large_blue_circle')}\n`;
 const PREREQ_MSG = 'Before we get started, please make sure you have your AWS credentials configured with AWS CLI.\n';
 const GITHUB_CONNECTION_FAILURE_MSG = `Please validate your Github token, git remote value, remote repo permissions, and make sure you set your remote repo URL to HTTPS (https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#switching-remote-urls-from-ssh-to-https)\n`;
 const GITHUB_PAT_MSG = `Please provide a valid github access token with 'repo' permission (https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) ${emoji.get('coin')}\nEnter token: `;

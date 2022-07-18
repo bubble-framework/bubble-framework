@@ -2,7 +2,7 @@ const open = require("open");
 const { getExistingApps } = require('../util/getExistingApps');
 const prompts = require("prompts");
 const {
-  bubbleBold
+  bubbleWarn
 } = require("../util/logger");
 const {
   NO_BUBBLES_MSG,
@@ -32,10 +32,10 @@ const list = async () => {
       const domain = apps.find(app => app.commit_message === choice).url
       return open(domain);
     } else {
-      bubbleBold(NO_BUBBLES_MSG);
+      bubbleWarn(NO_BUBBLES_MSG);
     }
   } catch {
-    bubbleBold(commandsOutOfOrder('list'));
+    bubbleWarn(commandsOutOfOrder('list'));
   }
 }
 

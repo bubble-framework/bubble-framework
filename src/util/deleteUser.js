@@ -1,7 +1,7 @@
 const {
+  bubbleGeneral,
   bubbleErr,
-  bubbleSuccess,
-  bubbleBold
+  bubbleSuccess
 } = require("./logger");
 
 const {
@@ -41,7 +41,7 @@ const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
-      bubbleBold(DELETING_BUBBLE_USER_MSG);
+      bubbleGeneral(DELETING_BUBBLE_USER_MSG);
       await deleteGithubSecrets();
       await deleteAwsUser(repo);
       deleteConfig(repo);

@@ -3,9 +3,9 @@ const { readConfigFile } = require("./fs");
 const { configPath } = require('./paths')
 
 const {
+  bubbleGeneral,
   bubbleErr,
-  bubbleSuccess,
-  bubbleWarn
+  bubbleSuccess
 } = require("./logger");
 const { wrapExecCmd } = require("./wrapExecCmd");
 
@@ -48,7 +48,7 @@ async function deleteGithubSecrets() {
       secrets.forEach((secret_name) => {
         url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secret_name}`;
 
-        bubbleWarn(`Removing ${secret_name} secret from your Github repository...`);
+        bubbleGeneral(`Removing ${secret_name} secret from your Github repository...`);
         axios.delete(url, obj).then(_ => {
           bubbleSuccess("removed", `${secret_name} secret has been:`);
         }).catch(err => bubbleErr(`Oops! Could not remove ${secret_name}. Try re-running \`bubble teardown\` and double check your Github repository if you'd like to ensure all secrets prepended with \`BUBBLE\` have been removed.`));

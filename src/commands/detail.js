@@ -1,7 +1,8 @@
 const { getExistingApps } = require('../util/getExistingApps');
 const { outputTableFromArray } = require('../util/consoleMessage');
 const {
-  bubbleBold
+  bubbleGeneral,
+  bubbleWarn
 } = require("../util/logger");
 const {
   SHORT_NO_BUBBLES_MSG,
@@ -17,7 +18,7 @@ const detail = async () => {
       throw new Error();
     }
 
-    bubbleBold(DETAIL_INTRO_MSG);
+    bubbleGeneral(DETAIL_INTRO_MSG);
 
     const apps = await getExistingApps();
     if (apps.length === 0) {
@@ -25,7 +26,7 @@ const detail = async () => {
     }
     outputTableFromArray(apps);
   } catch {
-    bubbleBold(commandsOutOfOrder('detail'));
+    bubbleWarn(commandsOutOfOrder('detail'));
   }
 }
 

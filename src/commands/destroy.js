@@ -2,7 +2,12 @@ const { deleteApps } = require('../util/deleteApps');
 const { deleteLocalFiles } = require('../util/deleteLocalFiles');
 const { getRepoInfo } = require('../util/addGithubSecrets');
 const {
-  bubbleBold
+  bubbleIntro,
+  bubbleLoading,
+  bubblePunchline,
+  bubbleConclusionPrimary,
+  bubbleConclusionSecondary,
+  bubbleWarn
 } = require("../util/logger");
 const {
   WAIT_TO_DESTROY_MSG,
@@ -27,21 +32,24 @@ const destroy = async () => {
 
     await validateGithubConnection();
 
-    bubbleBold(WAIT_TO_DESTROY_MSG);
+    bubbleIntro(WAIT_TO_DESTROY_MSG, 2);
     const { repo } = await getRepoInfo();
     const randomJoke = randomJokeSetup('DESTROY');
-    bubbleBold(waitForJokeSetup(randomJoke));
+    let spinner;
+    spinner = bubbleLoading(waitForJokeSetup(randomJoke), 2);
+    spinner.start();
 
     await deleteApps();
 
-    bubbleBold(waitForJokePunchline(randomJoke, 'DESTROY'));
+    spinner.succeed();
+    bubblePunchline(waitForJokePunchline(randomJoke, 'DESTROY'), 2);
 
     await deleteLocalFiles();
 
-    bubbleBold(DESTROY_WORKFLOWS_COMPLETING_MSG);
-    bubbleBold(instructTeardown(repo));
+    bubbleConclusionPrimary(DESTROY_WORKFLOWS_COMPLETING_MSG, 2);
+    bubbleConclusionSecondary(instructTeardown(repo), 2);
   } catch {
-    bubbleBold(commandsOutOfOrder('destroy'));
+    bubbleWarn(commandsOutOfOrder('destroy'));
   }
 }
 

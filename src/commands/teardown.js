@@ -4,7 +4,11 @@ const { deleteDatabase } = require('../util/deleteDatabase');
 const { deleteUserAll } = require('../util/deleteUser');
 const {
   bubbleErr,
-  bubbleBold
+  bubbleWarn,
+  bubbleIntro,
+  bubbleSetup,
+  bubblePunchline,
+  bubbleConclusionPrimary
 } = require('../util/logger');
 const {
   WAIT_TO_TEARDOWN_MSG,
@@ -24,26 +28,26 @@ const teardown = async () => {
       throw new Error();
     }
 
-    bubbleBold(WAIT_TO_TEARDOWN_MSG);
+    bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
     const randomJoke = randomJokeSetup('TEARDOWN');
-    bubbleBold(waitForJokeSetup(randomJoke));
+    bubbleSetup(waitForJokeSetup(randomJoke), 2);
 
     try {
       await deleteLambdas();
     } catch (err) {
       bubbleErr(err);
-      bubbleBold(LAMBDA_TEARDOWN_ERROR_MSG);
+      bubbleWarn(LAMBDA_TEARDOWN_ERROR_MSG);
       return;
     }
 
-    bubbleBold(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`);
+    bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
 
     await deleteDatabase('Lambdas')
     await deleteUserAll();
 
-    bubbleBold(TEARDOWN_DONE_MSG);
+    bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
   } catch {
-    bubbleBold(commandsOutOfOrder('teardown'));
+    bubbleWarn(commandsOutOfOrder('teardown'));
   }
 }
 

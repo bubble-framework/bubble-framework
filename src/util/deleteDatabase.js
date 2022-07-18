@@ -2,9 +2,10 @@ const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { deleteTable } = require('../aws/deleteTable');
 const { getRepoInfo } = require('./addGithubSecrets');
 const {
+  bubbleGeneral,
   bubbleSuccess,
   bubbleErr,
-  bubbleBold
+  bubbleWarn
 } = require("./logger");
 const {
   dbDeletionError
@@ -12,14 +13,14 @@ const {
 
 const deleteDatabase = async (name) => {
   const { repo } = await getRepoInfo();
-  bubbleBold(`Deleting the ${repo}-${name} database...`);
+  bubbleGeneral(`Deleting the ${repo}-${name} database...`);
 
   try {
     await wrapExecCmd(deleteTable(repo, name));
     bubbleSuccess("deleted", `${name} database: `);
   } catch (err) {
     bubbleErr(err);
-    bubbleBold(dbDeletionError(repo, name));
+    bubbleWarn(dbDeletionError(repo, name));
   }
 };
 

@@ -23,7 +23,7 @@ const {
 
 const {
   bubbleSuccess,
-  bubbleBold
+  bubbleWarn
 } = require("./logger");
 
 const {
@@ -133,7 +133,7 @@ const deleteWorkflowFolder = () => {
   return new Promise(res => {
     fs.rm("./.github", { recursive: true }, (err) => {
       if (err) {
-        bubbleBold(FOLDER_ALREADY_DELETED);
+        bubbleWarn(FOLDER_ALREADY_DELETED);
         res();
       } else {
         bubbleSuccess("deleted", " Workflow folder:")

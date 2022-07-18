@@ -6,7 +6,7 @@ const {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn,
-  bubbleBold
+  bubbleSecrets
 } = require("./logger");
 const {
   GITHUB_CONNECTION_FAILURE_MSG
@@ -88,7 +88,7 @@ async function addGithubSecrets(secrets) {
     const secretName = key;
     const secretVal = secrets[key];
     const encryptedSecretVal = await encrypt(publicKey, secretVal);
-    bubbleWarn(`${secretName} has been encrypted.`);
+    bubbleSecrets(`${secretName} has been encrypted.`);
 
     url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
     const data = {
@@ -148,7 +148,7 @@ async function validateGithubConnection() {
     }
   } catch (e) {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
-    bubbleBold(GITHUB_CONNECTION_FAILURE_MSG);
+    bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
 
     process.exit();
   }

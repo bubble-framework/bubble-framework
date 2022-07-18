@@ -3,7 +3,7 @@ const { getLambdaPrefixFromDb } = require('../aws/getLambdaPrefixFromDb');
 const { deleteLambda } = require('../aws/deleteLambda');
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { getRepoInfo } = require("../util/addGithubSecrets");
-const { bubbleErr, bubbleSuccess } = require('./logger');
+const { bubbleSuccess } = require('./logger');
 
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();
