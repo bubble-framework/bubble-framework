@@ -1,37 +1,86 @@
-const fs = require("fs");
-const path = require("path");
-const escape = "\x1b";
+const ora = require('ora');
+const chalk = require('chalk');
 const reset = "\x1b[0m";
-const red = "[31m";
-const yellow = "[33m";
-const green = "[32m";
-const help = "[1;36m";
-const bold = "[1;30m";
 
-const bubbleBold = (text) => {
-  console.log(`${escape}${bold}`, text, reset);
+const bubbleWelcome = (text) => {
+  console.log(chalk.bold.hex("#023a8c")(text));
+}
+
+const bubbleGeneral = (text) => {
+  console.log(chalk.bold.hex("#003d47")(text));
+};
+
+const bubbleLoading = (text, opt) => {
+  const hexCode = opt === 1 ? '#005b6b' : '#0357d2';
+
+  const spinner = ora(chalk.bold.hex(hexCode)(text));
+  spinner.color = 'cyan';
+  return spinner;
+};
+
+const bubbleIntro = (text, opt) => {
+  const hexCode = opt === 1 ? '#003d47' : '#023a8c';
+
+  console.log(chalk.bold.hex(hexCode)(text));
+};
+
+const bubbleSetup = (text, opt) => {
+  const hexCode = opt === 1 ? '#005b6b' : '#0357d2';
+
+  console.log(chalk.bold.hex(hexCode)(text));
+};
+
+const bubblePunchline = (text, opt) => {
+  const hexCode = opt === 1 ? '#007a8e' : '#2279fb';
+
+  console.log(chalk.bold.hex(hexCode)(text));
+};
+
+const bubbleConclusionPrimary = (text, opt) => {
+  const hexCode = opt === 1 ? '#0093b5' : '#458ffb';
+
+  console.log(chalk.bold.hex(hexCode)(text));
+};
+
+const bubbleConclusionSecondary = (text, opt) => {
+  const hexCode = opt === 1 ? '#0098b2' : '#68a4fc';
+
+  console.log(chalk.bold.hex(hexCode)(text));
 };
 
 const bubbleHelp = (text) => {
-  console.log(`${escape}${help}`, text, reset);
+  console.log(chalk.bold.hex("#0357d2")(text));
 };
 
 const bubbleSuccess = (successText, text) => {
-  console.log(`${text}${escape}${green}`, successText, reset);
+  console.log(chalk.hex("#003d47")(text), chalk.hex("#0098b2")(successText), reset);
 };
 
 const bubbleErr = (text) => {
-  console.log(`Error ${escape}${red}`, text, reset);
+  console.log(chalk.bold.hex("#eb0000")('Error: '), chalk.hex("#ff7676")(text), reset);
 };
 
 const bubbleWarn = (text) => {
-  console.log(`${escape}${yellow}`, text, reset);
+  console.log(chalk.bold.hex("#ffa500")(text));
 };
+
+const bubbleSecrets = (text) => {
+  console.log(chalk.hex("#00d6f9")(text));
+}
 
 module.exports = {
   bubbleSuccess,
   bubbleErr,
-  bubbleWarn,
-  bubbleBold,
-  bubbleHelp
+  bubbleHelp,
+  bubbleGeneral,
+  bubbleLoading,
+  bubbleSecrets,
+  bubbleWelcome,
+  bubbleLoading,
+  bubbleIntro,
+  bubbleSetup,
+  bubblePunchline,
+  bubbleConclusionPrimary,
+  bubbleConclusionSecondary,
+  bubbleWarn
 };

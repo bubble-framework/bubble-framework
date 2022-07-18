@@ -1,6 +1,5 @@
 const { readConfigFile, writeToConfigFile } = require('./fs');
 const { awsConfigPath, awsCredentialsPath } = require('./paths');
-const { getRepoInfo } = require('./addGithubSecrets');
 
 const modifyConfig = (repo) => {
   const originalConfig = readConfigFile(awsConfigPath);

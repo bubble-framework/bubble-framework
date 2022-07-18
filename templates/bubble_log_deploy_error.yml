@@ -1,0 +1,16 @@
+name: Bubble--Log Error
+
+on:
+  workflow_run:
+    workflows:
+      - Bubble--Make Preview App
+    types: [ completed ]
+
+jobs:
+  comment-failure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quipper/comment-failure-action@v0.1.1
+      with:
+        message: "Oops! Looks like an error occurred while your bubble was being deployed. Take a look at the logs in the link below, and try again!"
+

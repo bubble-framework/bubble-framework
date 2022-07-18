@@ -23,8 +23,14 @@ const {
 
 const {
   bubbleSuccess,
-  bubbleErr,
+  bubbleWarn
 } = require("./logger");
+
+const {
+  GITHUB_PAT_MSG,
+  REUSE_GH_PAT_MSG,
+  FOLDER_ALREADY_DELETED
+} = require("./messages");
 
 const createFolder = (path) => {
   if (!fs.existsSync(path)) {
@@ -41,11 +47,11 @@ const createWorkflowDir = () => {
 const copyGithubActions = () => {
   fs.copyFileSync(frameworkDeployReviewAppPath, userDeployReviewAppPath);
 
-  bubbleSuccess("created", "Create review app Github action: ");
+  bubbleSuccess("created", "Create preview app Github action: ");
 
   fs.copyFileSync(frameworkHandleFailedAppPath, userHandleFailedAppPath);
 
-  bubbleSuccess("created", "Handle failed review app Github action: ");
+  bubbleSuccess("created", "Handle failed preview app deployment Github action: ");
 
   fs.copyFileSync(frameworkRemoveAppPath, userRemoveAppPath);
 
@@ -57,17 +63,14 @@ const copyGithubActions = () => {
 
   fs.copyFileSync(frameworkDestroy, userDestroy);
 
-  bubbleSuccess("created", "Remove all preview apps for all pull requests Github action: ");
+  bubbleSuccess("created", "Remove all preview apps for all pull requests in repo Github action: ");
 };
 
 const addToken = async () => {
   const question = {
     type: "text",
     name: "githubToken",
-    message: `Please provide a valid github access token
- (https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token)
- Only 'repo' permission is needed for access token.
- Enter token: `,
+    message: GITHUB_PAT_MSG,
   };
 
   const result = await prompts(question);
@@ -85,7 +88,7 @@ const createConfigFile = async () => {
     const question = {
       type: "confirm",
       name: "useToken",
-      message: `Would you like to use existing Github config token?`,
+      message: REUSE_GH_PAT_MSG,
       initial: true,
     };
 
@@ -127,12 +130,16 @@ const isRepo = () => {
 };
 
 const deleteWorkflowFolder = () => {
-  fs.rm("./.github", { recursive: true }, (err) => {
-    if (err) {
-      bubbleErr(err.message);
-      return;
-    }
-    bubbleSuccess("deleted", " Workflow folder:")
+  return new Promise(res => {
+    fs.rm("./.github", { recursive: true }, (err) => {
+      if (err) {
+        bubbleWarn(FOLDER_ALREADY_DELETED);
+        res();
+      } else {
+        bubbleSuccess("deleted", " Workflow folder:")
+        res();
+      }
+    });
   });
 };
 

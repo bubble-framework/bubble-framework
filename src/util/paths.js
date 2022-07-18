@@ -1,37 +1,38 @@
 const path = require("path");
 
 const rootFrameworkPath = path.join(__dirname, "/../..");
+const templateFolderPath = path.join(rootFrameworkPath, "/templates");
 const githubFolderPath = path.join(process.cwd(), "/.github");
 const workflowFolderPath = path.join(process.cwd(), "/.github/workflows");
 
 const userDeployReviewAppPath = path.join(
-  process.cwd(),
-  "/.github/workflows/deploy.yml"
+  workflowFolderPath,
+  "/bubble_deploy_preview_app.yml"
 );
 
 const userHandleFailedAppPath = path.join(
-  process.cwd(),
-  "/.github/workflows/handle_failed_deploy.yml"
+  workflowFolderPath,
+  "/bubble_log_deploy_error.yml"
 );
 
 const userRemovePRAppsPath = path.join(
-  process.cwd(),
-  "/.github/workflows/delete_PR_preview_apps.yml"
+  workflowFolderPath,
+  "/bubble_remove_branch_preview_apps.yml"
 );
 
 const frameworkRemovePRAppsPath = path.join(
-  rootFrameworkPath,
-  `/templates/delete_PR_preview_apps.yml`
+  templateFolderPath,
+  "/bubble_remove_branch_preview_apps.yml"
 );
 
 const frameworkDeployReviewAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/deploy.yml`
+  templateFolderPath,
+  "/bubble_deploy_preview_app.yml"
 );
 
 const frameworkHandleFailedAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/handle_failed_deploy.yml`
+  templateFolderPath,
+  "/bubble_log_deploy_error.yml"
 );
 
 const userPolicyPath = path.join(
@@ -40,30 +41,30 @@ const userPolicyPath = path.join(
 );
 
 const userRemoveAppPath = path.join(
-  process.cwd(),
-  "/.github/workflows/delete_preview_app.yml"
+  workflowFolderPath,
+  "/bubble_remove_single_preview_app.yml"
 );
 
 const frameworkRemoveAppPath = path.join(
-  rootFrameworkPath,
-  `/templates/delete_preview_app.yml`
+  templateFolderPath,
+  "/bubble_remove_single_preview_app.yml"
 );
 
 const userDestroy = path.join(
-  process.cwd(),
-  "/.github/workflows/destroy.yml"
+  workflowFolderPath,
+  "/bubble_remove_all_preview_apps.yml"
 );
 
 const frameworkDestroy = path.join(
-  rootFrameworkPath,
-  `/templates/destroy.yml`
+  templateFolderPath,
+  "/bubble_remove_all_preview_apps.yml"
 );
 
 const dataFolderPath = path.join(process.env.HOME, "/.bubble");
 const configPath = path.join(process.env.HOME, "/.bubble/config.json");
 const gitPath = path.join(process.cwd(), "/.git");
-const awsConfigPath = path.join(process.env.HOME, "/.aws/config")
-const awsCredentialsPath = path.join(process.env.HOME, "/.aws/credentials")
+const awsConfigPath = path.join(process.env.HOME, "/.aws/config");
+const awsCredentialsPath = path.join(process.env.HOME, "/.aws/credentials");
 
 module.exports = {
   githubFolderPath,

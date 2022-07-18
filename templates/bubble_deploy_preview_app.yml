@@ -1,4 +1,4 @@
-name: deploy on pull
+name: Bubble--Make Preview App
 on: pull_request
 
 env:
@@ -20,9 +20,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ env.PR_NUMBER }}
+          commit-sha: ${{ env.COMMIT_ID }}
           id: deploy-preview
-          message: "Starting deployment of this pull request."
+          message: "Hang tight! We'll get started provisioning AWS resources for your brand new bubble. Grab a coffee while you wait \U00002615"
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -129,8 +129,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ env.PR_NUMBER }}
+          commit-sha: ${{ env.COMMIT_ID }}
           id: deploy-preview
-          message: |
-            Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}
+          message: "Yay! \U0001F389 Your bubble was successfully deployed and is ready to be viewed in all its glory. Check out the link at ${{ steps.url.outputs.prop }}."
           recreate: true
