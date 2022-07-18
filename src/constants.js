@@ -2,13 +2,13 @@ const { wrapExecCmd } = require("./util/wrapExecCmd");
 
 async function getRepoInfo() {
   let nameWithOwner = await wrapExecCmd(
-    "gh repo view --json nameWithOwner -q '.nameWithOwner'"
+    "git config --get remote.origin.url"
   );
 
-  const [ owner, repo ] = nameWithOwner
-    .trim()
-    .split('/');
-  
+  const parts = nameWithOwner.split("/");
+  const owner = parts[parts.length - 2];
+  const repo = parts[parts.length - 1].split(".")[0];
+
   return { owner, repo };
 };
 

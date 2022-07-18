@@ -25,7 +25,8 @@ const {
   createWorkflowDir,
   copyGithubActions,
   createConfigFile,
-  isRepo
+  isRepo,
+  addToActiveReposFile
 } = require("../util/fs");
 
 const {
@@ -70,7 +71,7 @@ const init = async () => {
     if (!isRepo()) {
       throw `${NOT_A_REPO_MSG}`;
     }
-    
+
     const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
     const inRoot = await inRootDirectory();
     if (!inRoot) {
@@ -89,6 +90,7 @@ const init = async () => {
     bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
+    addToActiveReposFile(repo);
 
     const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
@@ -152,7 +154,6 @@ const init = async () => {
     setTimeout(async () => {
       bubblePunchline(waitForDBJokeCrickets(), 1);
     }, 10000);
-
 
     setTimeout(async () => {
       try {

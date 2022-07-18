@@ -25,6 +25,6 @@ const deleteLambdas = async () => {
   } catch (err) {
     throw new Error(err);
   }
-}
+};
 
 module.exports = { deleteLambdas };

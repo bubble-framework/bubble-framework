@@ -18,6 +18,7 @@ const {
   frameworkDestroy,
   dataFolderPath,
   configPath,
+  activeReposPath,
   gitPath
 } = require("./paths");
 
@@ -146,8 +147,37 @@ const deleteWorkflowFolder = () => {
 const inRootDirectory = async () => {
   const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
   const currentDirectory = process.cwd();
-  return repoDirectory === currentDirectory
-}
+  return repoDirectory.trim() === currentDirectory.trim();
+};
+
+const activeReposWithoutCurrent = (activeRepos, currentRepoName) => {
+  return activeRepos.filter(({ repoName }) => repoName !== currentRepoName);
+};
+
+const addToActiveReposFile = (repoName) => {
+  let activeRepos = [];
+  if (fs.existsSync(activeReposPath)) {
+    activeRepos = readConfigFile(activeReposPath, "JSON");
+  }
+  activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
+  activeRepos.push({ repoName, status: 'active' });
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
+};
+
+const updateStatusToDestroyedInActiveReposFile = (currentRepoName) => {
+  let activeRepos = readConfigFile(activeReposPath, "JSON");
+  activeRepos = activeRepos.map(repo => repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo);
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  bubbleSuccess(`updated in ${activeReposPath}`, `Repo ${currentRepoName} status: `);
+};
+
+const removeFromActiveReposFile = (repoName) => {
+  let activeRepos = readConfigFile(activeReposPath, "JSON");
+  activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
+  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  bubbleSuccess(`removed from ${activeReposPath}`, `Repo name ${repoName}: `);
+};
 
 module.exports = {
   createWorkflowDir,
@@ -159,4 +189,7 @@ module.exports = {
   isRepo,
   deleteWorkflowFolder,
   inRootDirectory,
+  addToActiveReposFile,
+  updateStatusToDestroyedInActiveReposFile,
+  removeFromActiveReposFile,
 };

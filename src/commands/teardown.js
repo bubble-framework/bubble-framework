@@ -19,7 +19,8 @@ const {
   waitForJokeSetup,
   waitForJokePunchline
 } = require("../util/messages");
-
+const { removeFromActiveReposFile } = require("../util/fs");
+const { getRepoInfo } = require('../constants');
 const { existingAwsUser } = require("../util/deleteUser");
 
 const teardown = async () => {
@@ -27,6 +28,8 @@ const teardown = async () => {
     if (!existingAwsUser() || fs.existsSync("./.github")) {
       throw new Error();
     }
+
+    const { repo } = await getRepoInfo();
 
     bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
     const randomJoke = randomJokeSetup('TEARDOWN');
@@ -42,9 +45,10 @@ const teardown = async () => {
 
     bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
 
-    await deleteDatabase('Lambdas')
+    await deleteDatabase('Lambdas');
     await deleteUserAll();
 
+    removeFromActiveReposFile(repo);
     bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
   } catch {
     bubbleWarn(commandsOutOfOrder('teardown'));
