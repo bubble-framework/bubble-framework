@@ -80,7 +80,6 @@ const init = async () => {
     }
 
     // const { repo } = await getRepoInfo();
-    const repo = 'bubble-test-next-search-app'
 
     // if (await existingAwsUser()) {
     //   bubbleWarn(`${duplicateBubbleInit(repo)}`);

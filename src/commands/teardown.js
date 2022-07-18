@@ -19,32 +19,37 @@ const {
   waitForJokeSetup,
   waitForJokePunchline
 } = require("../util/messages");
+const { removeFromActiveReposFile } = require("../util/fs");
 
 const { existingAwsUser } = require("../util/deleteUser");
 
 const teardown = async () => {
   try {
-    if (!existingAwsUser() || fs.existsSync("./.github")) {
-      throw new Error();
-    }
+    // if (!existingAwsUser() || fs.existsSync("./.github")) {
+    //   throw new Error();
+    // }
+
+    // const { repo } = await getRepoInfo();
 
     bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
-    const randomJoke = randomJokeSetup('TEARDOWN');
-    bubbleSetup(waitForJokeSetup(randomJoke), 2);
+    // const randomJoke = randomJokeSetup('TEARDOWN');
+    // bubbleSetup(waitForJokeSetup(randomJoke), 2);
 
-    try {
-      await deleteLambdas();
-    } catch (err) {
-      bubbleErr(err);
-      bubbleWarn(LAMBDA_TEARDOWN_ERROR_MSG);
-      return;
-    }
+    // try {
+    //   await deleteLambdas();
+    // } catch (err) {
+    //   bubbleErr(err);
+    //   bubbleWarn(LAMBDA_TEARDOWN_ERROR_MSG);
+    //   return;
+    // }
 
-    bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
+    // bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
 
-    await deleteDatabase('Lambdas')
-    await deleteUserAll();
+    // await deleteDatabase('Lambdas')
+    // await deleteUserAll();
 
+    const repo = 'bubble-test-next-search-app'
+    removeFromActiveReposFile(repo);
     bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
   } catch {
     bubbleWarn(commandsOutOfOrder('teardown'));

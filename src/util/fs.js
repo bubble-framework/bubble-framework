@@ -165,6 +165,13 @@ const addToActiveReposFile = (repoName) => {
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
+const removeFromActiveReposFile = (repoName) => {
+  let activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+  activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
+  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  bubbleSuccess(`removed from ${activeReposPath}`, `Repo name ${repoName}: `);
+};
+
 module.exports = {
   createWorkflowDir,
   copyGithubActions,
@@ -175,5 +182,6 @@ module.exports = {
   isRepo,
   deleteWorkflowFolder,
   inRootDirectory,
-  addToActiveReposFile
+  addToActiveReposFile,
+  removeFromActiveReposFile
 };
