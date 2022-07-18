@@ -1,4 +1,4 @@
-import { post } from 'axios';
+import axios from 'axios';
 
 import awsService from '../services/awsService';
 import { wrapExecCmd } from './wrapExecCmd';
@@ -29,7 +29,7 @@ const getActivePullRequestIdsString = (appsData) => {
 };
 
 const getGitHubToken = () => {
-  const configObj = readConfigFile(configPath, "JSON");
+  const configObj = readConfigFile(configPath, 'JSON');
 
   return configObj.github_access_token;
 };
@@ -39,7 +39,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   const token = getGitHubToken();
 
   const headerData = {
-    headers: { 
+    headers: {
       accept: 'application/vnd.github+json',
       authorization: `token ${token}`,
     },
@@ -53,12 +53,12 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   };
 
   try {
-    await post(url, body, headerData);
+    await axios.post(url, body, headerData);
   } catch (e) {
-    if (e.response.status === 422 && e.response.data.message.includes("'pr-numbers'")) {
-      bubbleWarn("Looks like there are no preview apps to be deleted for this repository!");
+    if (e.response.status === 422 && e.response.data.message.includes('pr-numbers')) {
+      bubbleWarn('Looks like there are no preview apps to be deleted for this repository!');
     } else {
-      bubbleErr(`Remote Preview Apps Teardown Failed ${err}`);
+      bubbleErr(`Remote Preview Apps Teardown Failed ${e}`);
     }
   }
 };
