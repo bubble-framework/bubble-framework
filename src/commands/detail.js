@@ -1,4 +1,4 @@
-const { getExistingApps } = require('../util/getExistingApps');
+const { getExistingApps } = require('../util/getExistingApps').default;
 const { outputTableFromArray } = require('../util/consoleMessage');
 const {
   bubbleGeneral,

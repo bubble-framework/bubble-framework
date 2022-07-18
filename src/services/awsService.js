@@ -38,7 +38,25 @@ const awsService = {
     `aws iam delete-access-key --user-name ${repo}-bubble-user --access-key-id ${keyId}`
   ),
 
-  
+  deleteUserPolicy: (repo) => (
+    `aws iam delete-user-policy --user-name ${repo}-bubble-user --policy-name BubblePolicy`
+  ),
+
+  getLambdaFunctions: (prefix, repo) => (
+    `aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${prefix}')].FunctionName" --output text --profile ${repo}-bubble-user`
+  ),
+
+  getLambdaPrefixFromDb: (repo) => (
+    `aws dynamodb scan --table-name ${repo}-Lambdas --profile ${repo}-bubble-user`
+  ),
+
+  getPreviewAppsDetails: (repo) => (
+    `aws dynamodb scan --table-name ${repo}-PreviewApps --profile ${repo}-bubble-user`
+  ),
+
+  getUserAccessKey: (repo) => (
+    `aws iam list-access-keys --user-name ${repo}-bubble-user`
+  ),
 };
 
 export default awsService;

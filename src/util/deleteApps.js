@@ -1,16 +1,17 @@
-const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { wrapExecCmd } = require('./wrapExecCmd');
-const { getRepoInfo } = require('../constants');
-const { readConfigFile } = require('./fs');
-const { configPath } = require('./paths');
+import { post } from 'axios';
 
-const axios = require('axios');
-const { bubbleErr, bubbleWarn } = require('./logger');
+import awsService from '../services/awsService';
+import { wrapExecCmd } from './wrapExecCmd';
+import { getRepoInfo } from '../constants';
+import { readConfigFile } from './fs';
+import { configPath } from './paths';
+
+import { bubbleErr, bubbleWarn } from './logger';
 
 const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
-  const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
+  const rawAppsDetails = await wrapExecCmd(awsService.getPreviewAppsDetails(repoName));
 
   return JSON.parse(rawAppsDetails).Items;
 };
@@ -52,7 +53,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   };
 
   try {
-    await axios.post(url, body, headerData);
+    await post(url, body, headerData);
   } catch (e) {
     if (e.response.status === 422 && e.response.data.message.includes("'pr-numbers'")) {
       bubbleWarn("Looks like there are no preview apps to be deleted for this repository!");
@@ -70,4 +71,4 @@ const deleteApps = async () => {
   await triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
 };
 
-module.exports = { deleteApps, getGitHubToken };
+export default { deleteApps, getGitHubToken };

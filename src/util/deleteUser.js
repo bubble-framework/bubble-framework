@@ -4,9 +4,6 @@ import { wrapExecCmd } from "./wrapExecCmd";
 import { getRepoInfo } from '../constants';
 
 import awsService from "../services/awsService";
-// const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
-// const { getUserAccessKey } = require("../aws/getUserAccessKey");
-// const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
 
 import { deleteGithubSecrets } from "./deleteGithubSecrets";
 import { deleteConfig, deleteCredentials } from './deleteAwsProfile';
@@ -22,9 +19,16 @@ const existingAwsUser = async () => {
 }
 
 const deleteAwsUser = async (repo) => {
-  await wrapExecCmd(deleteUserPolicy(repo));
-  const { AccessKeyMetadata } = JSON.parse(await wrapExecCmd(getUserAccessKey(repo)));
-  await wrapExecCmd(deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo));
+  await wrapExecCmd(awsService.deleteUserPolicy(repo));
+
+  const { AccessKeyMetadata } = JSON.parse(
+    await wrapExecCmd(awsService.getUserAccessKey(repo));
+  );
+
+  await wrapExecCmd(
+    awsService.deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo)
+  );
+
   await wrapExecCmd(awsService.deleteUser(repo));
 }
 

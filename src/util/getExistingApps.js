@@ -1,12 +1,9 @@
-const { wrapExecCmd } = require("./wrapExecCmd");
-const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { getRepoInfo } = require('./addGithubSecrets');
-const { bubbleErr } = require('./logger');
+import { wrapExecCmd } from "./wrapExecCmd";
+import awsService from '../services/awsService';
+import { getRepoInfo } from './addGithubSecrets';
+import { bubbleErr } from './logger';
 
-const {
-  PREVIEWS_TABLE_DELETED_MSG,
-  NO_PREVIEW_DETAILS_RETRIEVED_MSG
-} = require("./messages");
+import { PREVIEWS_TABLE_DELETED_MSG, NO_PREVIEW_DETAILS_RETRIEVED_MSG } from "./messages";
 
 const TABLE_DELETED_ERROR_CODE = 255;
 
@@ -15,7 +12,7 @@ const getExistingApps = async () => {
   let details;
 
   try {
-    details = JSON.parse(await wrapExecCmd(getPreviewAppsDetails(repo))).Items;
+    details = JSON.parse(await wrapExecCmd(awsService.getPreviewAppsDetails(repo))).Items;
   } catch (e) {
     if (e.code === TABLE_DELETED_ERROR_CODE) {
       bubbleErr(PREVIEWS_TABLE_DELETED_MSG);
@@ -44,4 +41,4 @@ const getExistingApps = async () => {
   return parsed;
 }
 
-module.exports = { getExistingApps };
+export default { getExistingApps };
