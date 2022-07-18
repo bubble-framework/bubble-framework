@@ -151,7 +151,7 @@ const inRootDirectory = async () => {
 };
 
 const activeReposWithoutCurrent = (activeRepos, currentRepoName) => {
-  return activeRepos.filter(repo => repo !== currentRepoName);
+  return activeRepos.filter(({ repoName }) => repoName !== currentRepoName);
 };
 
 const addToActiveReposFile = (repoName) => {
@@ -160,7 +160,7 @@ const addToActiveReposFile = (repoName) => {
     activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
   }
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
-  activeRepos.push(repoName);
+  activeRepos.push({ repoName, status: 'active' });
   fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
