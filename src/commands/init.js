@@ -6,6 +6,7 @@ const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
 const { getRepoInfo } = require('../util/addGithubSecrets');
+const { inRootDirectory } = require('../util/fs');
 
 const {
   addGithubSecrets,
@@ -40,6 +41,13 @@ const {
 const { userPolicyPath } = require("../util/paths");
 
 const init = async (args) => {
+  const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
+  const inRoot = await inRootDirectory();
+  if (!inRoot) {
+    bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
+    return;
+  }
+
   try {
     if (!isRepo()) {
       throw `Current directory is not a git repository or it is not tied to a GitHub Origin`;
