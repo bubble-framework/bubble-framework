@@ -155,7 +155,6 @@ const init = async () => {
       bubblePunchline(waitForDBJokeCrickets(), 1);
     }, 10000);
 
-
     setTimeout(async () => {
       try {
         await wrapExecCmd(createDynamoTable(repo));
