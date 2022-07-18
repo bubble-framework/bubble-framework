@@ -3,7 +3,7 @@ const { getLambdaPrefixFromDb } = require('../aws/getLambdaPrefixFromDb');
 const { deleteLambda } = require('../aws/deleteLambda');
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { getRepoInfo } = require("../util/addGithubSecrets");
-const { bubbleErr, bubbleSuccess } = require('./logger');
+const { bubbleSuccess } = require('./logger');
 
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();
@@ -22,7 +22,7 @@ const deleteLambdas = async () => {
     }
     bubbleSuccess('deleted', "Lambdas: ")
   } catch (err) {
-    throw new Error(`Lambdas are not ready to be deleted yet! Please try again`);
+    throw new Error(err);
   }
 }
 

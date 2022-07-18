@@ -37,6 +37,14 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
+      - name: Notify about starting removal of preview apps in branch
+        uses: hasura/comment-progress@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          number: ${{ env.PR_NUMBER }}
+          id: destroy-preview
+          message: "We'll work on going through all the bubbles in this branch and start popping 'em all! Once we're finished, most of the AWS resources provisioned for your preview apps on this pull request will be removed."
       - name: Retrieve commits
         uses: mathiasvr/command-output@v1
         id: previewappdata
@@ -60,7 +68,7 @@ jobs:
               const distro = commit.M.CloudFrontDistroId.S
               const lambdaPrefix = bucketId.split('-')[0]
 
-              const command = `"gh workflow run delete_preview_app.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r main"`
+              const command = `"gh workflow run bubble_remove_single_preview_app.yml -f bucket=${bucketId} -f distro=${distro} -f lambda=${lambdaPrefix} --repo ${{ env.REPO_NAME_WITH_OWNER }} -r main"`
               bundles.push(command)
             });
 

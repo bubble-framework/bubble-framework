@@ -5,9 +5,11 @@ const { readConfigFile } = require('./fs');
 const { configPath } = require('./paths');
 
 const axios = require('axios');
-const { bubbleErr } = require('./logger');
+const {
+  bubbleErr
+} = require('./logger');
 
-const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
+const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
@@ -54,7 +56,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   try {
     await axios.post(url, body, headerData);
   } catch (err) {
-    bubbleErr(`Remote Preview Apps Teardown Failed ${err}`)
+    bubbleErr(`Remote Preview Apps Teardown Failed due to: ${err}\n`);
   }
 };
 

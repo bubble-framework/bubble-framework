@@ -5,8 +5,12 @@ const { configPath } = require('./paths')
 const {
   bubbleErr,
   bubbleSuccess,
-  bubbleWarn
+  bubbleWarn,
+  bubbleSecrets
 } = require("./logger");
+const {
+  GITHUB_CONNECTION_FAILURE_MSG
+} = require("./messages");
 const { wrapExecCmd } = require("./wrapExecCmd");
 const process = require("process");
 
@@ -80,11 +84,11 @@ async function addGithubSecrets(secrets) {
   const publicKey = response.data.key;
   const keyId = response.data.key_id;
 
-  await Object.keys(secrets).map(async (key) => {
+  await Promise.all(Object.keys(secrets).map(async (key) => {
     const secretName = key;
     const secretVal = secrets[key];
     const encryptedSecretVal = await encrypt(publicKey, secretVal);
-    bubbleWarn(`${secretName} has been encrypted.`);
+    bubbleSecrets(`${secretName} has been encrypted.`);
 
     url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
     const data = {
@@ -95,8 +99,8 @@ async function addGithubSecrets(secrets) {
     const obj = headerObj();
 
     await axios.put(url, data, obj);
-    bubbleSuccess("created", `${secretName} secret has been:`);
-  });
+    bubbleSuccess("created", `${secretName} Github secret has been:`);
+  }));
 }
 
 async function retrieveCurrentSecrets() {
@@ -143,9 +147,8 @@ async function validateGithubConnection() {
       throw `HTTP error! status: ${response.status}`;
     }
   } catch (e) {
-    bubbleErr(
-      `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
-    );
+    bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
+    bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
 
     process.exit();
   }
