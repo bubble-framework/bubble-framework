@@ -1,34 +1,68 @@
-import { wrapExecCmd } from "../util/wrapExecCmd";
+import { wrapExecCmd } from '../util/wrapExecCmd';
+import { getGitHubToken } from '../util/deleteApps';
+import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile';
+import { existingAwsUser } from '../util/deleteUser';
+import { userPolicyPath } from '../util/paths';
 
-import awsService from "../services/awsService";
+import {
+  addGithubSecrets,
+  checkBubbleAwsSecretsAdded,
+  checkNonBubbleAwsSecretsAdded,
+} from '../util/manageGithubSecrets';
 
-import { inRootDirectory } from '../util/fs';
+import awsService from '../services/awsService';
+
+import {
+  inRootDirectory,
+  createWorkflowDir,
+  copyGithubActions,
+  createConfigFile,
+  isRepo,
+} from '../util/fs';
+
 import { getRepoInfo } from '../constants';
 import { getGithubSecrets } from '../services/githubService';
 
-import { addGithubSecrets, checkBubbleAwsSecretsAdded, checkNonBubbleAwsSecretsAdded } from "../util/manageGithubSecrets";
+import {
+  bubbleErr,
+  bubbleSuccess,
+  bubbleHelp,
+  bubbleGeneral,
+  bubbleLoading,
+  bubbleWelcome,
+  bubbleIntro,
+  bubbleWarn,
+  bubblePunchline,
+  bubbleConclusionPrimary,
+  bubbleConclusionSecondary,
+} from '../util/logger';
 
-import { getGitHubToken } from '../util/deleteApps';
-
-import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile';
-
-import { createWorkflowDir, copyGithubActions, createConfigFile, isRepo } from "../util/fs";
-
-import { bubbleErr, bubbleSuccess, bubbleHelp, bubbleGeneral, bubbleLoading, bubbleWelcome, bubbleIntro, bubbleWarn, bubblePunchline, bubbleConclusionPrimary, bubbleConclusionSecondary } from "../util/logger";
-
-import { NOT_A_REPO_MSG, WELCOME_MSG, PREREQ_MSG, NONBUBBLE_AWS_KEYS_IN_REPO_MSG, CREATING_IAM_USER_MSG, BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG, INIT_FINISHED_MSG, WAIT_FOR_DB_MSG, WAIT_FOR_DB_JOKE_DRUM, DB_CREATED_MSG, DB_NOT_CREATED_MSG, randomJokeSetup, waitForJokeSetup, waitForJokePunchline, waitForDBJokeCrickets, duplicateBubbleInit } from "../util/messages";
-
-import { existingAwsUser } from "../util/deleteUser";
-
-import { userPolicyPath } from "../util/paths";
+import {
+  NOT_A_REPO_MSG,
+  WELCOME_MSG,
+  PREREQ_MSG,
+  NONBUBBLE_AWS_KEYS_IN_REPO_MSG,
+  CREATING_IAM_USER_MSG,
+  BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG,
+  INIT_FINISHED_MSG,
+  WAIT_FOR_DB_MSG,
+  WAIT_FOR_DB_JOKE_DRUM,
+  DB_CREATED_MSG,
+  DB_NOT_CREATED_MSG,
+  randomJokeSetup,
+  waitForJokeSetup,
+  waitForJokePunchline,
+  waitForDBJokeCrickets,
+  duplicateBubbleInit,
+} from '../util/messages';
 
 const init = async () => {
   try {
     if (!isRepo()) {
-      throw `${NOT_A_REPO_MSG}`;
+      throw new Error(`${NOT_A_REPO_MSG}`);
     }
-    
-    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
+
+    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel');
     const inRoot = await inRootDirectory();
     if (!inRoot) {
       bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
@@ -61,27 +95,27 @@ const init = async () => {
 
       await wrapExecCmd(awsService.createUser(repo));
 
-      bubbleSuccess("created", "IAM User: ");
+      bubbleSuccess('created', 'IAM User: ');
 
       const accessKeyInfo = await wrapExecCmd(awsService.createAccessKey(repo));
-      bubbleSuccess("created", "IAM User Access Key: ");
+      bubbleSuccess('created', 'IAM User Access Key: ');
       const accessKeyInfoObj = JSON.parse(accessKeyInfo);
-      const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
-      const secretKey = accessKeyInfoObj["AccessKey"]["SecretAccessKey"];
+      const accessKeyId = accessKeyInfoObj.AccessKey.AccessKeyId;
+      const secretKey = accessKeyInfoObj.AccessKey.SecretAccessKey;
 
       modifyConfig(repo);
       modifyCredentials(accessKeyId, secretKey, repo);
-      bubbleSuccess("created", "AWS Command Line Profile: ")
+      bubbleSuccess('created', 'AWS Command Line Profile: ');
 
       await wrapExecCmd(awsService.attachUserPolicy(userPolicyPath, repo));
-      bubbleSuccess("saved", "IAM User Restrictions: ");
+      bubbleSuccess('saved', 'IAM User Restrictions: ');
 
       const token = getGitHubToken();
 
       const secrets = {
-        "BUBBLE_AWS_ACCESS_KEY_ID": accessKeyId,
-        "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey,
-        "BUBBLE_GITHUB_TOKEN": token,
+        BUBBLE_AWS_ACCESS_KEY_ID: accessKeyId,
+        BUBBLE_AWS_SECRET_ACCESS_KEY: secretKey,
+        BUBBLE_GITHUB_TOKEN: token,
       };
 
       await addGithubSecrets(secrets);
@@ -110,7 +144,6 @@ const init = async () => {
       bubblePunchline(waitForDBJokeCrickets(), 1);
     }, 10000);
 
-
     setTimeout(async () => {
       try {
         await wrapExecCmd(awsService.createDynamoTable(repo));
@@ -125,4 +158,4 @@ const init = async () => {
   }
 };
 
-export default { init };
+export default init;
