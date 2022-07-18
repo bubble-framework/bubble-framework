@@ -1,9 +1,11 @@
 const open = require("open");
 const { getExistingApps } = require('../util/getExistingApps');
 const prompts = require("prompts");
+
 const {
   bubbleWarn
 } = require("../util/logger");
+
 const {
   NO_BUBBLES_MSG,
   commandsOutOfOrder

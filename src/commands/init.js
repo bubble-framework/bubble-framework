@@ -4,15 +4,14 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-const { getRepoInfo } = require('../util/addGithubSecrets');
+
+const { getGithubSecrets } = require('../services/githubService');
 
 const {
   addGithubSecrets,
-  validateGithubConnection,
-  retrieveCurrentSecrets,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded
-} = require("../util/addGithubSecrets");
+} = require("../util/manageGithubSecrets");
 
 const { getGitHubToken } = require('../util/deleteApps');
 
@@ -42,6 +41,8 @@ const {
   bubbleConclusionSecondary
 } = require("../util/logger");
 
+const { getRepoInfo } = require('../constants');
+
 const {
   NOT_A_REPO_MSG,
   WELCOME_MSG,
@@ -65,7 +66,7 @@ const { existingAwsUser } = require("../util/deleteUser");
 
 const { userPolicyPath } = require("../util/paths");
 
-const init = async (args) => {
+const init = async () => {
   try {
     if (!isRepo()) {
       throw `${NOT_A_REPO_MSG}`;
@@ -82,9 +83,8 @@ const init = async (args) => {
     bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
-    await validateGithubConnection();
 
-    const currentSecrets = await retrieveCurrentSecrets();
+    const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
 
     if (nonBubbleAwsSecretsAlreadyAdded) {

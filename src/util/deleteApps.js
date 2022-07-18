@@ -1,6 +1,6 @@
 const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
 const { wrapExecCmd } = require('./wrapExecCmd');
-const { getRepoInfo } = require('./addGithubSecrets');
+const { getRepoInfo } = require('../constants');
 const { readConfigFile } = require('./fs');
 const { configPath } = require('./paths');
 

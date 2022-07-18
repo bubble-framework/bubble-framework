@@ -1,12 +1,15 @@
 const { wrapExecCmd } = require("../util/wrapExecCmd");
+
 const { deleteTable } = require('../aws/deleteTable');
-const { getRepoInfo } = require('./addGithubSecrets');
+const { getRepoInfo } = require('../constants');
+
 const {
   bubbleGeneral,
   bubbleSuccess,
   bubbleErr,
   bubbleWarn
 } = require("./logger");
+
 const {
   dbDeletionError
 } = require("./messages");
