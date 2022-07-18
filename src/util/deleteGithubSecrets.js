@@ -30,4 +30,4 @@ async function deleteGithubSecrets() {
   });
 }
 
-export default { deleteGithubSecrets };
+export default deleteGithubSecrets;

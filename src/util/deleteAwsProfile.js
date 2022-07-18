@@ -1,7 +1,7 @@
 import { readConfigFile, writeToConfigFile } from './fs';
 import { awsConfigPath, awsCredentialsPath } from './paths';
 
-const deleteConfig = (repo) => {
+export const deleteConfig = (repo) => {
   const originalConfig = readConfigFile(awsConfigPath);
 
   const configLines = originalConfig.split('\n');
@@ -11,7 +11,7 @@ const deleteConfig = (repo) => {
   writeToConfigFile(configLines.join('\n'), awsConfigPath);
 };
 
-const deleteCredentials = (repo) => {
+export const deleteCredentials = (repo) => {
   const originalConfig = readConfigFile(awsCredentialsPath);
 
   const configLines = originalConfig.split('\n');
@@ -20,5 +20,3 @@ const deleteCredentials = (repo) => {
 
   writeToConfigFile(configLines.join('\n'), awsCredentialsPath);
 };
-
-export default { deleteConfig, deleteCredentials };
