@@ -165,6 +165,13 @@ const addToActiveReposFile = (repoName) => {
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
+const updateStatusInActiveReposFile = (currentRepoName) => {
+  let activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+  activeRepos = activeRepos.map(repo => repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo);
+  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  bubbleSuccess(`updated in ${activeReposPath}`, `Repo ${currentRepoName} status: `);
+};
+
 const removeFromActiveReposFile = (repoName) => {
   let activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
@@ -183,5 +190,6 @@ module.exports = {
   deleteWorkflowFolder,
   inRootDirectory,
   addToActiveReposFile,
-  removeFromActiveReposFile
+  updateStatusInActiveReposFile,
+  removeFromActiveReposFile,
 };

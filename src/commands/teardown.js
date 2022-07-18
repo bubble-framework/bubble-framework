@@ -20,7 +20,7 @@ const {
   waitForJokePunchline
 } = require("../util/messages");
 const { removeFromActiveReposFile } = require("../util/fs");
-
+const { getRepoInfo } = require('../constants');
 const { existingAwsUser } = require("../util/deleteUser");
 
 const teardown = async () => {
@@ -45,10 +45,10 @@ const teardown = async () => {
 
     // bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
 
-    // await deleteDatabase('Lambdas')
+    // await deleteDatabase('Lambdas');
     // await deleteUserAll();
 
-    const repo = 'bubble-test-next-search-app'
+    const repo = 'bubble-test-next-search-app-2'
     removeFromActiveReposFile(repo);
     bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
   } catch {
