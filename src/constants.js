@@ -1,4 +1,4 @@
-const { wrapExecCmd } = require("jjam-bubble/src/util/wrapExecCmd");
+const { wrapExecCmd } = require("./util/wrapExecCmd");
 
 async function getRepoInfo() {
   let nameWithOwner = await wrapExecCmd(
