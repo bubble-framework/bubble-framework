@@ -10,7 +10,7 @@ const {
   commandsOutOfOrder
 } = require("../util/messages");
 
-const { existingAwsUser } = require("../util/deleteUser");
+const { existingAwsUser } = require("../util/deleteUser").default;
 
 const detail = async () => {
   try {

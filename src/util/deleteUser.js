@@ -1,29 +1,20 @@
-const {
-  bubbleGeneral,
-  bubbleErr,
-  bubbleSuccess
-} = require("./logger");
+import { bubbleGeneral, bubbleErr, bubbleSuccess } from "./logger";
+import { DELETING_BUBBLE_USER_MSG, NONEXISTENT_BUBBLE_AWS_USER_MSG } from "./messages";
+import { wrapExecCmd } from "./wrapExecCmd";
+import { getRepoInfo } from '../constants';
 
-const {
-  DELETING_BUBBLE_USER_MSG,
-  NONEXISTENT_BUBBLE_AWS_USER_MSG
-} = require("./messages");
+import awsService from "../services/awsService";
+// const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
+// const { getUserAccessKey } = require("../aws/getUserAccessKey");
+// const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
 
-const { wrapExecCmd } = require("./wrapExecCmd");
-
-const { getRepoInfo } = require('../constants');
-const { checkExistingUser } = require("../aws/checkExistingUser");
-const { deleteUser } = require("../aws/deleteUser");
-const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
-const { getUserAccessKey } = require("../aws/getUserAccessKey");
-const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
-const { deleteGithubSecrets } = require("./deleteGithubSecrets");
-const { deleteConfig, deleteCredentials } = require('./deleteAwsProfile');
+import { deleteGithubSecrets } from "./deleteGithubSecrets";
+import { deleteConfig, deleteCredentials } from './deleteAwsProfile';
 
 const existingAwsUser = async () => {
   try {
     const { repo } = await getRepoInfo();
-    await wrapExecCmd(checkExistingUser(repo));
+    await wrapExecCmd(awsService.checkExistingUser(repo));
     return true;
   } catch {
     return false;
@@ -34,7 +25,7 @@ const deleteAwsUser = async (repo) => {
   await wrapExecCmd(deleteUserPolicy(repo));
   const { AccessKeyMetadata } = JSON.parse(await wrapExecCmd(getUserAccessKey(repo)));
   await wrapExecCmd(deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo));
-  await wrapExecCmd(deleteUser(repo));
+  await wrapExecCmd(awsService.deleteUser(repo));
 }
 
 const deleteUserAll = async () => {
@@ -55,4 +46,4 @@ const deleteUserAll = async () => {
   }
 }
 
-module.exports = { deleteUserAll, existingAwsUser }
+export default { deleteUserAll, existingAwsUser }

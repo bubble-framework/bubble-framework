@@ -1,6 +1,6 @@
 const { getLambdaFunctions } = require('../aws/getLambdaFunctions');
 const { getLambdaPrefixFromDb } = require('../aws/getLambdaPrefixFromDb');
-const { deleteLambda } = require('../aws/deleteLambda');
+const { deleteLambda } = require('../services/awsService');
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { getRepoInfo } = require("../constants");

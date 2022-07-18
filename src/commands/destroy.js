@@ -1,30 +1,13 @@
-const { deleteApps } = require('../util/deleteApps');
-const { deleteLocalFiles } = require('../util/deleteLocalFiles');
+import { deleteApps } from '../util/deleteApps';
+import { deleteLocalFiles } from '../util/deleteLocalFiles';
 
-const { wrapExecCmd } = require("../util/wrapExecCmd");
-const { getRepoInfo } = require('../util/addGithubSecrets');
-const {
-  bubbleIntro,
-  bubbleLoading,
-  bubblePunchline,
-  bubbleConclusionPrimary,
-  bubbleConclusionSecondary,
-  bubbleWarn
-} = require("../util/logger");
-const {
-  WAIT_TO_DESTROY_MSG,
-  DESTROY_WORKFLOWS_COMPLETING_MSG,
-  commandsOutOfOrder,
-  randomJokeSetup,
-  waitForJokeSetup,
-  waitForJokePunchline,
-  instructTeardown
-} = require("../util/messages");
-const {
-  validateGithubConnection
-} = require("../util/addGithubSecrets");
+import { wrapExecCmd } from "../util/wrapExecCmd";
+import { getRepoInfo } from '../util/addGithubSecrets';
+import { bubbleIntro, bubbleLoading, bubblePunchline, bubbleConclusionPrimary, bubbleConclusionSecondary, bubbleWarn } from "../util/logger";
+import { WAIT_TO_DESTROY_MSG, DESTROY_WORKFLOWS_COMPLETING_MSG, commandsOutOfOrder, randomJokeSetup, waitForJokeSetup, waitForJokePunchline, instructTeardown } from "../util/messages";
+import { validateGithubConnection } from "../util/addGithubSecrets";
 
-const { existingAwsUser } = require("../util/deleteUser");
+import { existingAwsUser } from "../util/deleteUser";
 
 const destroy = async () => {
   try {
@@ -58,4 +41,4 @@ const destroy = async () => {
   }
 }
 
-module.exports = { destroy };
+export default { destroy };

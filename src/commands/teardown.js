@@ -1,30 +1,15 @@
-const fs = require("fs");
-const { deleteLambdas } = require('../util/deleteLambdas');
-const { deleteDatabase } = require('../util/deleteDatabase');
-const { deleteUserAll } = require('../util/deleteUser');
-const {
-  bubbleErr,
-  bubbleWarn,
-  bubbleIntro,
-  bubbleSetup,
-  bubblePunchline,
-  bubbleConclusionPrimary
-} = require('../util/logger');
-const {
-  WAIT_TO_TEARDOWN_MSG,
-  TEARDOWN_DONE_MSG,
-  LAMBDA_TEARDOWN_ERROR_MSG,
-  commandsOutOfOrder,
-  randomJokeSetup,
-  waitForJokeSetup,
-  waitForJokePunchline
-} = require("../util/messages");
+import { existsSync } from "fs";
+import { deleteLambdas } from '../util/deleteLambdas';
+import { deleteDatabase } from '../util/deleteDatabase';
+import { deleteUserAll } from '../util/deleteUser';
+import { bubbleErr, bubbleWarn, bubbleIntro, bubbleSetup, bubblePunchline, bubbleConclusionPrimary } from '../util/logger';
+import { WAIT_TO_TEARDOWN_MSG, TEARDOWN_DONE_MSG, LAMBDA_TEARDOWN_ERROR_MSG, commandsOutOfOrder, randomJokeSetup, waitForJokeSetup, waitForJokePunchline } from "../util/messages";
 
-const { existingAwsUser } = require("../util/deleteUser");
+import { existingAwsUser } from "../util/deleteUser";
 
 const teardown = async () => {
   try {
-    if (!existingAwsUser() || fs.existsSync("./.github")) {
+    if (!existingAwsUser() || existsSync("./.github")) {
       throw new Error();
     }
 
@@ -51,4 +36,4 @@ const teardown = async () => {
   }
 }
 
-module.exports = { teardown };
+export default { teardown };

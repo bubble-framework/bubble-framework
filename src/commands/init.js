@@ -1,69 +1,26 @@
-const { wrapExecCmd } = require("../util/wrapExecCmd");
+import { wrapExecCmd } from "../util/wrapExecCmd";
 
-const { createUser } = require("../aws/createUser");
-const { createAccessKey } = require("../aws/createAccessKey");
-const { attachUserPolicy } = require("../aws/attachUserPolicy");
-const { createDynamoTable } = require("../aws/createDynamoTable");
-const { inRootDirectory } = require('../util/fs');
-const { getRepoInfo } = require('../constants');
-const { getGithubSecrets } = require('../services/githubService');
+import awsService from "../services/awsService";
 
-const {
-  addGithubSecrets,
-  checkBubbleAwsSecretsAdded,
-  checkNonBubbleAwsSecretsAdded
-} = require("../util/manageGithubSecrets");
+import { inRootDirectory } from '../util/fs';
+import { getRepoInfo } from '../constants';
+import { getGithubSecrets } from '../services/githubService';
 
-const { getGitHubToken } = require('../util/deleteApps');
+import { addGithubSecrets, checkBubbleAwsSecretsAdded, checkNonBubbleAwsSecretsAdded } from "../util/manageGithubSecrets";
 
-const {
-  modifyConfig,
-  modifyCredentials,
-} = require('../util/modifyAwsProfile');
+import { getGitHubToken } from '../util/deleteApps';
 
-const {
-  createWorkflowDir,
-  copyGithubActions,
-  createConfigFile,
-  isRepo
-} = require("../util/fs");
+import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile';
 
-const {
-  bubbleErr,
-  bubbleSuccess,
-  bubbleHelp,
-  bubbleGeneral,
-  bubbleLoading,
-  bubbleWelcome,
-  bubbleIntro,
-  bubbleWarn,
-  bubblePunchline,
-  bubbleConclusionPrimary,
-  bubbleConclusionSecondary
-} = require("../util/logger");
+import { createWorkflowDir, copyGithubActions, createConfigFile, isRepo } from "../util/fs";
 
-const {
-  NOT_A_REPO_MSG,
-  WELCOME_MSG,
-  PREREQ_MSG,
-  NONBUBBLE_AWS_KEYS_IN_REPO_MSG,
-  CREATING_IAM_USER_MSG,
-  BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG,
-  INIT_FINISHED_MSG,
-  WAIT_FOR_DB_MSG,
-  WAIT_FOR_DB_JOKE_DRUM,
-  DB_CREATED_MSG,
-  DB_NOT_CREATED_MSG,
-  randomJokeSetup,
-  waitForJokeSetup,
-  waitForJokePunchline,
-  waitForDBJokeCrickets,
-  duplicateBubbleInit
-} = require("../util/messages");
+import { bubbleErr, bubbleSuccess, bubbleHelp, bubbleGeneral, bubbleLoading, bubbleWelcome, bubbleIntro, bubbleWarn, bubblePunchline, bubbleConclusionPrimary, bubbleConclusionSecondary } from "../util/logger";
 
-const { existingAwsUser } = require("../util/deleteUser");
+import { NOT_A_REPO_MSG, WELCOME_MSG, PREREQ_MSG, NONBUBBLE_AWS_KEYS_IN_REPO_MSG, CREATING_IAM_USER_MSG, BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG, INIT_FINISHED_MSG, WAIT_FOR_DB_MSG, WAIT_FOR_DB_JOKE_DRUM, DB_CREATED_MSG, DB_NOT_CREATED_MSG, randomJokeSetup, waitForJokeSetup, waitForJokePunchline, waitForDBJokeCrickets, duplicateBubbleInit } from "../util/messages";
 
-const { userPolicyPath } = require("../util/paths");
+import { existingAwsUser } from "../util/deleteUser";
+
+import { userPolicyPath } from "../util/paths";
 
 const init = async () => {
   try {
@@ -102,11 +59,11 @@ const init = async () => {
     if (!bubbleAwsSecretsAdded) {
       bubbleGeneral(CREATING_IAM_USER_MSG);
 
-      await wrapExecCmd(createUser(repo));
+      await wrapExecCmd(awsService.createUser(repo));
 
       bubbleSuccess("created", "IAM User: ");
 
-      const accessKeyInfo = await wrapExecCmd(createAccessKey(repo));
+      const accessKeyInfo = await wrapExecCmd(awsService.createAccessKey(repo));
       bubbleSuccess("created", "IAM User Access Key: ");
       const accessKeyInfoObj = JSON.parse(accessKeyInfo);
       const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
@@ -116,7 +73,7 @@ const init = async () => {
       modifyCredentials(accessKeyId, secretKey, repo);
       bubbleSuccess("created", "AWS Command Line Profile: ")
 
-      await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
+      await wrapExecCmd(awsService.attachUserPolicy(userPolicyPath, repo));
       bubbleSuccess("saved", "IAM User Restrictions: ");
 
       const token = getGitHubToken();
@@ -156,7 +113,7 @@ const init = async () => {
 
     setTimeout(async () => {
       try {
-        await wrapExecCmd(createDynamoTable(repo));
+        await wrapExecCmd(awsService.createDynamoTable(repo));
         bubbleConclusionPrimary(DB_CREATED_MSG, 1);
         bubbleConclusionSecondary(INIT_FINISHED_MSG, 1);
       } catch {
@@ -168,4 +125,4 @@ const init = async () => {
   }
 };
 
-module.exports = { init };
+export default { init };

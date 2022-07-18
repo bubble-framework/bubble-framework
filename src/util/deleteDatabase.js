@@ -1,18 +1,11 @@
-const { wrapExecCmd } = require("../util/wrapExecCmd");
+import { wrapExecCmd } from "../util/wrapExecCmd";
 
-const { deleteTable } = require('../aws/deleteTable');
-const { getRepoInfo } = require('../constants');
+import { deleteTable } from '../services/awsService';
+import { getRepoInfo } from '../constants';
 
-const {
-  bubbleGeneral,
-  bubbleSuccess,
-  bubbleErr,
-  bubbleWarn
-} = require("./logger");
+import { bubbleGeneral, bubbleSuccess, bubbleErr, bubbleWarn } from "./logger";
 
-const {
-  dbDeletionError
-} = require("./messages");
+import { dbDeletionError } from "./messages";
 
 const deleteDatabase = async (name) => {
   const { repo } = await getRepoInfo();
@@ -27,4 +20,4 @@ const deleteDatabase = async (name) => {
   }
 };
 
-module.exports = { deleteDatabase };
+export default { deleteDatabase };
