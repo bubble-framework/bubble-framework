@@ -1,7 +1,7 @@
 import getExistingApps from '../util/getExistingApps';
 import existingAwsUser from '../util/deleteUser';
 
-import { outputTableFromArray } from '../util/consoleMessage';
+import outputTableFromArray from '../util/consoleMessage';
 import { bubbleGeneral, bubbleWarn } from '../util/logger';
 
 import {
