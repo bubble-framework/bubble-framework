@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ env.PR_NUMBER }}
+          commit-sha: ${{ env.COMMIT_ID }}
           id: deploy-preview
           message: "Starting deployment of this pull request."
       - name: Checkout
@@ -129,7 +129,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ env.PR_NUMBER }}
+          commit-sha: ${{ env.COMMIT_ID }}
           id: deploy-preview
           message: |
             Deployment of a preview for this pull request was successful. The link is at ${{ steps.url.outputs.prop }}
