@@ -1,33 +1,31 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const { readConfigFile } = require("../util/fs");
-const { encrypt } = require('../util/encrypt');
+import { readConfigFile } from '../util/fs';
+import { encrypt } from '../util/encrypt';
+import { configPath } from '../util/paths';
 
-const {
+import {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn,
-  bubbleSecrets
-} = require("../util/logger");
+  bubbleSecrets,
+} from '../util/logger';
 
-const {
-  GITHUB_CONNECTION_FAILURE_MSG
-} = require("../util/messages");
+import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages';
 
-const { configPath } = require('../util/paths');
-const { getRepoInfo } = require('../constants');
+import { getRepoInfo } from '../constants';
 
 const HEADER_OBJ = (() => {
-  const configObj = readConfigFile(configPath, "JSON");
+  const configObj = readConfigFile(configPath, 'JSON');
   const githubAccessToken = configObj.github_access_token;
 
-  return (obj = {
+  return {
     headers: {
       Authorization: `token ${githubAccessToken}`,
-      "Content-Type": "application/json",
-      Accept: "application/vnd.github.v3+json",
+      'Content-Type': 'application/json',
+      Accept: 'application/vnd.github.v3+json',
     },
-  });
+  };
 })();
 
 async function getPublicKey() {
@@ -46,8 +44,7 @@ async function getPublicKey() {
   } catch (e) {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
-    
-    process.exit();
+    return process.exit();
   }
 }
 
@@ -59,14 +56,14 @@ async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   bubbleSecrets(`${secretName} has been encrypted.`);
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
-  
+
   const data = {
     encrypted_value: encryptedSecretVal,
     key_id: keyId,
   };
 
   await axios.put(url, data, HEADER_OBJ);
-  bubbleSuccess("created", `${secretName} secret has been:`);
+  bubbleSuccess('created', `${secretName} secret has been:`);
 }
 
 async function getGithubSecrets() {
@@ -78,7 +75,7 @@ async function getGithubSecrets() {
   return secrets;
 }
 
-module.exports = {
+export default {
   getPublicKey,
   addGithubSecret,
   getGithubSecrets,
