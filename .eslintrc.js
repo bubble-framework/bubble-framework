@@ -11,11 +11,10 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-		'indent': [
-			'error',
-			'spaces',
-			2
-		],
+		indent: [
+      "error",
+      2,
+    ],
 		'linebreak-style': [
 			'error',
 			'unix'
