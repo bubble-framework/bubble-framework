@@ -1,5 +1,5 @@
 const open = require("open");
-const { getExistingApps } = require('../util/getExistingApps');
+// const { getExistingApps } = require('../util/getExistingApps');
 const prompts = require("prompts");
 
 const {
@@ -19,7 +19,7 @@ const list = async () => {
       throw new Error();
     }
 
-    const apps = await getExistingApps();
+    // const apps = await getExistingApps();
     if (apps.length > 0) {
       commitMessages = apps.map(app => app.commit_message);
       const selectList = {

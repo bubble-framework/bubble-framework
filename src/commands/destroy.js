@@ -2,7 +2,7 @@ const { deleteApps } = require('../util/deleteApps');
 const { deleteLocalFiles } = require('../util/deleteLocalFiles');
 
 const { wrapExecCmd } = require("../util/wrapExecCmd");
-const { getRepoInfo } = require('../util/addGithubSecrets');
+const { getRepoInfo } = require('../constants');
 const {
   bubbleIntro,
   bubbleLoading,
@@ -21,8 +21,8 @@ const {
   instructTeardown
 } = require("../util/messages");
 const {
-  validateGithubConnection
-} = require("../util/addGithubSecrets");
+  getPublicKey
+} = require("../services/githubService");
 
 const { existingAwsUser } = require("../util/deleteUser");
 
@@ -32,7 +32,7 @@ const destroy = async () => {
       throw new Error();
     }
 
-    await validateGithubConnection();
+    await getPublicKey();
 
     bubbleIntro(WAIT_TO_DESTROY_MSG, 2);
     const { repo } = await getRepoInfo();
@@ -45,7 +45,7 @@ const destroy = async () => {
 
     spinner.succeed();
     bubblePunchline(waitForJokePunchline(randomJoke, 'DESTROY'), 2);
-    
+
     const goToDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
     process.chdir(goToDirectory.trim());
 

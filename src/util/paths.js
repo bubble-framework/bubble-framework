@@ -62,6 +62,7 @@ const frameworkDestroy = path.join(
 
 const dataFolderPath = path.join(process.env.HOME, "/.bubble");
 const configPath = path.join(process.env.HOME, "/.bubble/config.json");
+const activeReposPath = path.join(process.env.HOME, "/.bubble/activeRepos.json");
 const gitPath = path.join(process.cwd(), "/.git");
 const awsConfigPath = path.join(process.env.HOME, "/.aws/config");
 const awsCredentialsPath = path.join(process.env.HOME, "/.aws/credentials");
@@ -83,6 +84,7 @@ module.exports = {
   userPolicyPath,
   dataFolderPath,
   configPath,
+  activeReposPath,
   gitPath,
   awsConfigPath,
   awsCredentialsPath,

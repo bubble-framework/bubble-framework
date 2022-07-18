@@ -18,6 +18,7 @@ const {
   frameworkDestroy,
   dataFolderPath,
   configPath,
+  activeReposPath,
   gitPath
 } = require("./paths");
 
@@ -146,8 +147,23 @@ const deleteWorkflowFolder = () => {
 const inRootDirectory = async () => {
   const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
   const currentDirectory = process.cwd();
-  return repoDirectory === currentDirectory
-}
+  return repoDirectory.trim() === currentDirectory.trim();
+};
+
+const activeReposWithoutCurrent = (activeRepos, currentRepoName) => {
+  return activeRepos.filter(repo => repo !== currentRepoName);
+};
+
+const addToActiveReposFile = (repoName) => {
+  let activeRepos = [];
+  if (fs.existsSync(activeReposPath)) {
+    activeRepos = JSON.parse(fs.readFileSync(activeReposPath, { encoding: 'utf8', flag: 'r' }));
+  }
+  activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
+  activeRepos.push(repoName);
+  fs.writeFileSync(activeReposPath, JSON.stringify(activeRepos));
+  bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
+};
 
 module.exports = {
   createWorkflowDir,
@@ -159,4 +175,5 @@ module.exports = {
   isRepo,
   deleteWorkflowFolder,
   inRootDirectory,
+  addToActiveReposFile
 };

@@ -46,7 +46,7 @@ async function getPublicKey() {
   } catch (e) {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
-    
+
     process.exit();
   }
 }
@@ -59,7 +59,7 @@ async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   bubbleSecrets(`${secretName} has been encrypted.`);
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
-  
+
   const data = {
     encrypted_value: encryptedSecretVal,
     key_id: keyId,
@@ -73,9 +73,17 @@ async function getGithubSecrets() {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
-  const secrets = await axios.get(url, HEADER_OBJ);
 
-  return secrets;
+  try {
+    const secrets = await axios.get(url, HEADER_OBJ);
+
+    return secrets;
+  } catch (e) {
+    bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
+    bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
+
+    process.exit();
+  }
 }
 
 module.exports = {
