@@ -41,4 +41,4 @@ const getExistingApps = async () => {
   return parsed;
 }
 
-export default { getExistingApps };
+export default getExistingApps;
