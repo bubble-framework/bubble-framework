@@ -23,7 +23,7 @@ const {
 const {
   getPublicKey
 } = require("../services/githubService");
-const { updateStatusInActiveReposFile } = require("../util/fs");
+const { updateStatusToDestroyedInActiveReposFile } = require("../util/fs");
 
 const { existingAwsUser } = require("../util/deleteUser");
 
@@ -51,7 +51,7 @@ const destroy = async () => {
     process.chdir(goToDirectory.trim());
 
     await deleteLocalFiles();
-    updateStatusInActiveReposFile(repo);
+    updateStatusToDestroyedInActiveReposFile(repo);
 
     bubbleConclusionPrimary(DESTROY_WORKFLOWS_COMPLETING_MSG, 2);
     bubbleConclusionSecondary(instructTeardown(repo), 2);

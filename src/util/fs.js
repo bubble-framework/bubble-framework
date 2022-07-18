@@ -165,7 +165,7 @@ const addToActiveReposFile = (repoName) => {
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
-const updateStatusInActiveReposFile = (currentRepoName) => {
+const updateStatusToDestroyedInActiveReposFile = (currentRepoName) => {
   let activeRepos = readConfigFile(activeReposPath, "JSON");
   activeRepos = activeRepos.map(repo => repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo);
   writeToConfigFile(activeRepos, activeReposPath, "JSON");
@@ -190,6 +190,6 @@ module.exports = {
   deleteWorkflowFolder,
   inRootDirectory,
   addToActiveReposFile,
-  updateStatusInActiveReposFile,
+  updateStatusToDestroyedInActiveReposFile,
   removeFromActiveReposFile,
 };
