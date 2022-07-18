@@ -1,10 +1,13 @@
-const prompts = require("prompts");
+const {
+  bubbleGeneral,
+  bubbleErr,
+  bubbleSuccess
+} = require("./logger");
 
 const {
-  bubbleErr,
-  bubbleSuccess,
-  bubbleWarn
-} = require("./logger");
+  DELETING_BUBBLE_USER_MSG,
+  NONEXISTENT_BUBBLE_AWS_USER_MSG
+} = require("./messages");
 
 const { wrapExecCmd } = require("./wrapExecCmd");
 
@@ -38,17 +41,18 @@ const deleteUserAll = async () => {
   let { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
+      bubbleGeneral(DELETING_BUBBLE_USER_MSG);
       await deleteGithubSecrets();
       await deleteAwsUser(repo);
       deleteConfig(repo);
       deleteCredentials(repo);
-      bubbleSuccess("deleted", "The user and its Github secrets have been deleted");
+      bubbleSuccess("deleted", "User and its Github secrets: ");
     } catch (err) {
-      bubbleErr(`user deletion failed, ${err}`);
+      bubbleErr(`User deletion failed due to: ${err}.`);
     }
   } else {
-    bubbleErr("There is no user created for this repo yet.");
+    bubbleErr(NONEXISTENT_BUBBLE_AWS_USER_MSG);
   }
 }
 
-module.exports = { deleteUserAll }
+module.exports = { deleteUserAll, existingAwsUser }

@@ -3,7 +3,8 @@
 const { init } = require("../src/commands/init");
 const { destroy } = require('../src/commands/destroy');
 const { list } = require('../src/commands/list');
-const { teardown } = require('../src/commands/teardown')
+const { teardown } = require('../src/commands/teardown');
+const { detail } = require('../src/commands/detail');
 
 const prompts = require("prompts");
 const { program } = require("commander");
@@ -29,7 +30,7 @@ program
 program
   .command("list")
   .alias("l")
-  .description("List all preview apps for this repo")
+  .description("Select a preview app to go to its url")
   .action(list);
 
 //teardown
@@ -38,5 +39,12 @@ program
   .alias("t")
   .description("tear down leftover Lambdas functions and delete user")
   .action(teardown);
+
+//table detail
+program
+  .command("detail")
+  .alias("de")
+  .description("display details about bubbles")
+  .action(detail);
 
 program.parse(process.argv);

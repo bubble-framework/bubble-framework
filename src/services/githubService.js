@@ -7,7 +7,12 @@ const {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn,
+  bubbleSecrets
 } = require("../util/logger");
+
+const {
+  GITHUB_CONNECTION_FAILURE_MSG
+} = require("../util/messages");
 
 const { configPath } = require('../util/paths');
 const { getRepoInfo } = require('../constants');
@@ -39,9 +44,8 @@ async function getPublicKey() {
 
     return response;
   } catch (e) {
-    bubbleErr(
-      `Couldn't connect to Github due to: ${e}.\n Please validate your Github token, git remote value, remote repo permissions, Bubble arguments.`
-    );
+    bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
+    bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
     
     process.exit();
   }
@@ -52,7 +56,7 @@ async function addGithubSecret(secretName, secretVal, publicKeyObj) {
 
   const { key: publicKey, key_id: keyId } = publicKeyObj;
   const encryptedSecretVal = await encrypt(publicKey, secretVal);
-  bubbleWarn(`${secretName} has been encrypted.`);
+  bubbleSecrets(`${secretName} has been encrypted.`);
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
   

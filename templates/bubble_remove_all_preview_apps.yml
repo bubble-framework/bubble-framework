@@ -1,4 +1,4 @@
-name: Remove All Preview Apps for all Pull Requests in Repo
+name: Bubble--Remove All Preview Apps
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
         run: |
           for PR_NUMBER in ${{ inputs.pr-numbers }}
           do
-            gh workflow run delete_PR_preview_apps.yml -f pr-number=$PR_NUMBER --repo ${{ env.REPO_NAME_WITH_OWNER }} -r main
+            gh workflow run bubble_remove_branch_preview_apps.yml -f pr-number=$PR_NUMBER --repo ${{ env.REPO_NAME_WITH_OWNER }} -r main
           done
         env:
           GITHUB_TOKEN: ${{ secrets.BUBBLE_GITHUB_TOKEN }}

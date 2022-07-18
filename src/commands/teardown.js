@@ -1,18 +1,54 @@
+const fs = require("fs");
 const { deleteLambdas } = require('../util/deleteLambdas');
 const { deleteDatabase } = require('../util/deleteDatabase');
 const { deleteUserAll } = require('../util/deleteUser');
-const { bubbleErr } = require('../util/logger');
+const {
+  bubbleErr,
+  bubbleWarn,
+  bubbleIntro,
+  bubbleSetup,
+  bubblePunchline,
+  bubbleConclusionPrimary
+} = require('../util/logger');
+const {
+  WAIT_TO_TEARDOWN_MSG,
+  TEARDOWN_DONE_MSG,
+  LAMBDA_TEARDOWN_ERROR_MSG,
+  commandsOutOfOrder,
+  randomJokeSetup,
+  waitForJokeSetup,
+  waitForJokePunchline
+} = require("../util/messages");
+
+const { existingAwsUser } = require("../util/deleteUser");
 
 const teardown = async () => {
   try {
-    await deleteLambdas();
-  } catch {
-    bubbleErr("Lambdas are not ready to be deleted yet; we recommend waiting at least a few hours before trying again later!")
-    return;
-  }
+    if (!existingAwsUser() || fs.existsSync("./.github")) {
+      throw new Error();
+    }
 
-  await deleteDatabase('Lambdas')
-  await deleteUserAll();
+    bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
+    const randomJoke = randomJokeSetup('TEARDOWN');
+    bubbleSetup(waitForJokeSetup(randomJoke), 2);
+
+    try {
+      await deleteLambdas();
+    } catch (err) {
+      bubbleErr(err);
+      bubbleWarn(LAMBDA_TEARDOWN_ERROR_MSG);
+      return;
+    }
+
+    bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
+
+    await deleteDatabase('Lambdas')
+    await deleteUserAll();
+
+    bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
+  } catch {
+    bubbleWarn(commandsOutOfOrder('teardown'));
+  }
 }
 
 module.exports = { teardown };
