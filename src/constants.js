@@ -1,4 +1,6 @@
-const { wrapExecCmd } = require("./util/wrapExecCmd");
+import { wrapExecCmd } from './util/wrapExecCmd';
+import { readConfigFile } from './util/fs';
+import { configPath } from './util/paths';
 
 async function getRepoInfo() {
   let nameWithOwner = await wrapExecCmd(
@@ -12,4 +14,17 @@ async function getRepoInfo() {
   return { owner, repo };
 };
 
-module.exports = { getRepoInfo };
+const GH_HEADER_OBJ = (() => {
+  const configObj = readConfigFile(configPath, 'JSON');
+  const githubAccessToken = configObj.github_access_token;
+
+  return {
+    headers: {
+      Authorization: `token ${githubAccessToken}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/vnd.github.v3+json',
+    },
+  };
+})();
+
+export default { getRepoInfo, GH_HEADER_OBJ };
