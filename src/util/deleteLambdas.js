@@ -1,31 +1,29 @@
 import awsService from '../services/awsService';
-import { wrapExecCmd } from "../util/wrapExecCmd";
+import { wrapExecCmd } from './wrapExecCmd';
 
-import { getRepoInfo } from "../constants";
+import { getRepoInfo } from '../constants';
 import { bubbleSuccess } from './logger';
 
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();
   let prefixes = JSON.parse(await wrapExecCmd(awsService.getLambdaPrefixFromDb(repo)));
-  prefixes = prefixes.Items.flatMap(lambda => lambda.LambdaPrefix.S);
+  prefixes = prefixes.Items.flatMap((lambda) => lambda.LambdaPrefix.S);
 
-  const functions = [];
-  for (let i = 0; i < prefixes.length; i++) {
-    const result = await wrapExecCmd(
-      awsService.getLambdaFunctions(prefixes[i], repo)
-    );
+  let functionNames = await Promise.all(prefixes.map((prefix) => (
+    wrapExecCmd(awsService.getLambdaFunctions(prefix, repo))
+  )));
 
-    functions.push(result.trim());
-  }
+  functionNames = functionNames.map((functionName) => functionName.trim());
 
   try {
-    for (let i = 0; i < functions.length; i++) {
-      await wrapExecCmd(awsService.deleteLambda(functions[i], repo))
-    }
-    bubbleSuccess('deleted', "Lambdas: ")
+    await Promise.all(functionNames.map((functionName) => (
+      wrapExecCmd(awsService.deleteLambda(functionName, repo))
+    )));
+
+    bubbleSuccess('deleted', 'Lambdas: ');
   } catch (err) {
     throw new Error(err);
   }
-}
+};
 
 export default { deleteLambdas };
