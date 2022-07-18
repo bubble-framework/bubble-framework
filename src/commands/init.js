@@ -1,11 +1,11 @@
-const prompts = require("prompts");
 const { wrapExecCmd } = require("../util/wrapExecCmd");
 
 const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-
+const { inRootDirectory } = require('../util/fs');
+const { getRepoInfo } = require('../constants');
 const { getGithubSecrets } = require('../services/githubService');
 
 const {
@@ -31,22 +31,62 @@ const {
 const {
   bubbleErr,
   bubbleSuccess,
+  bubbleHelp,
+  bubbleGeneral,
+  bubbleLoading,
+  bubbleWelcome,
+  bubbleIntro,
   bubbleWarn,
-  bubbleBold,
-  bubbleHelp
+  bubblePunchline,
+  bubbleConclusionPrimary,
+  bubbleConclusionSecondary
 } = require("../util/logger");
 
-const { getRepoInfo } = require('../constants');
+const {
+  NOT_A_REPO_MSG,
+  WELCOME_MSG,
+  PREREQ_MSG,
+  NONBUBBLE_AWS_KEYS_IN_REPO_MSG,
+  CREATING_IAM_USER_MSG,
+  BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG,
+  INIT_FINISHED_MSG,
+  WAIT_FOR_DB_MSG,
+  WAIT_FOR_DB_JOKE_DRUM,
+  DB_CREATED_MSG,
+  DB_NOT_CREATED_MSG,
+  randomJokeSetup,
+  waitForJokeSetup,
+  waitForJokePunchline,
+  waitForDBJokeCrickets,
+  duplicateBubbleInit
+} = require("../util/messages");
+
+const { existingAwsUser } = require("../util/deleteUser");
+
 const { userPolicyPath } = require("../util/paths");
 
-const init = async (args) => {
+const init = async () => {
   try {
     if (!isRepo()) {
-      throw `Current directory is not a git repository or it is not tied to a GitHub Origin`;
+      throw `${NOT_A_REPO_MSG}`;
+    }
+    
+    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
+    const inRoot = await inRootDirectory();
+    if (!inRoot) {
+      bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
+      return;
     }
 
-    bubbleBold('Welcome to the Bubble CLI!\n');
-    bubbleHelp('Before we get started, please make sure you have your AWS credentials configured with AWS CLI.\n');
+    const { repo } = await getRepoInfo();
+
+    if (await existingAwsUser()) {
+      bubbleWarn(`${duplicateBubbleInit(repo)}`);
+      return;
+    }
+
+    bubbleWelcome(WELCOME_MSG);
+    bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
 
@@ -54,14 +94,13 @@ const init = async (args) => {
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
 
     if (nonBubbleAwsSecretsAlreadyAdded) {
-      bubbleWarn("Looks like you already have AWS credentials saved in your Github repository! Not to worry, those can stay safe and sound where they are, but to provision your preview apps, we will create a new IAM user with the proper permissions. The credentials for this new user will be saved in your Github repository prepended with 'BUBBLE'.\n");
+      bubbleWarn(NONBUBBLE_AWS_KEYS_IN_REPO_MSG);
     }
 
     const bubbleAwsSecretsAdded = checkBubbleAwsSecretsAdded(currentSecrets);
-    const { repo } = await getRepoInfo();
 
     if (!bubbleAwsSecretsAdded) {
-      bubbleBold('Creating AWS IAM User credentials and saving in your Github repository...\n');
+      bubbleGeneral(CREATING_IAM_USER_MSG);
 
       await wrapExecCmd(createUser(repo));
 
@@ -90,18 +129,42 @@ const init = async (args) => {
 
       await addGithubSecrets(secrets);
     } else {
-      bubbleSuccess("already created and saved", "AWS IAM User, Access Keys and Github Token: ");
+      bubbleWarn(BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG);
     }
 
     createWorkflowDir();
     copyGithubActions();
 
+    bubbleIntro(WAIT_FOR_DB_MSG, 1);
+    const randomDBJoke = randomJokeSetup('DB');
+    let spinner;
     setTimeout(async () => {
-      await wrapExecCmd(createDynamoTable(repo));
-      bubbleSuccess("created", "Dynamo table created:");
+      spinner = bubbleLoading(waitForJokeSetup(randomDBJoke), 1);
+      spinner.start();
+    }, 2000);
+    setTimeout(async () => {
+      spinner.succeed();
+      bubblePunchline(waitForJokePunchline(randomDBJoke, 'DB'), 1);
+    }, 7000);
+    setTimeout(async () => {
+      bubblePunchline(WAIT_FOR_DB_JOKE_DRUM, 1);
+    }, 8000);
+    setTimeout(async () => {
+      bubblePunchline(waitForDBJokeCrickets(), 1);
+    }, 10000);
+
+
+    setTimeout(async () => {
+      try {
+        await wrapExecCmd(createDynamoTable(repo));
+        bubbleConclusionPrimary(DB_CREATED_MSG, 1);
+        bubbleConclusionSecondary(INIT_FINISHED_MSG, 1);
+      } catch {
+        bubbleConclusionPrimary(DB_NOT_CREATED_MSG, 1);
+      }
     }, 13000);
   } catch (err) {
-    bubbleErr(`Could not initialize app:\n${err}`);
+    bubbleErr(`Couldn't finish initializing Bubble:\n${err}`);
   }
 };
 

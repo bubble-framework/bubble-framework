@@ -7,7 +7,7 @@ const { configPath } = require('./paths');
 const axios = require('axios');
 const { bubbleErr, bubbleWarn } = require('./logger');
 
-const DELETE_ALL_WORKFLOW_FILE = 'destroy.yml';
+const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
