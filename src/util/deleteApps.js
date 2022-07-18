@@ -5,9 +5,7 @@ const { readConfigFile } = require('./fs');
 const { configPath } = require('./paths');
 
 const axios = require('axios');
-const {
-  bubbleErr
-} = require('./logger');
+const { bubbleErr, bubbleWarn } = require('./logger');
 
 const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
@@ -40,7 +38,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   const token = getGitHubToken();
 
   const headerData = {
-    headers: {
+    headers: { 
       accept: 'application/vnd.github+json',
       authorization: `token ${token}`,
     },
@@ -55,8 +53,12 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
 
   try {
     await axios.post(url, body, headerData);
-  } catch (err) {
-    bubbleErr(`Remote Preview Apps Teardown Failed due to: ${err}\n`);
+  } catch (e) {
+    if (e.response.status === 422 && e.response.data.message.includes("'pr-numbers'")) {
+      bubbleWarn("Looks like there are no preview apps to be deleted for this repository!");
+    } else {
+      bubbleErr(`Remote Preview Apps Teardown Failed ${err}`);
+    }
   }
 };
 
