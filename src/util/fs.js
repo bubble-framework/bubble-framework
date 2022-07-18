@@ -143,6 +143,12 @@ const deleteWorkflowFolder = () => {
   });
 };
 
+const inRootDirectory = async () => {
+  const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
+  const currentDirectory = process.cwd();
+  return repoDirectory === currentDirectory
+}
+
 module.exports = {
   createWorkflowDir,
   copyGithubActions,
@@ -152,4 +158,5 @@ module.exports = {
   writeToConfigFile,
   isRepo,
   deleteWorkflowFolder,
+  inRootDirectory,
 };

@@ -4,7 +4,8 @@ const { createUser } = require("../aws/createUser");
 const { createAccessKey } = require("../aws/createAccessKey");
 const { attachUserPolicy } = require("../aws/attachUserPolicy");
 const { createDynamoTable } = require("../aws/createDynamoTable");
-
+const { inRootDirectory } = require('../util/fs');
+const { getRepoInfo } = require('../constants');
 const { getGithubSecrets } = require('../services/githubService');
 
 const {
@@ -41,8 +42,6 @@ const {
   bubbleConclusionSecondary
 } = require("../util/logger");
 
-const { getRepoInfo } = require('../constants');
-
 const {
   NOT_A_REPO_MSG,
   WELCOME_MSG,
@@ -70,6 +69,13 @@ const init = async () => {
   try {
     if (!isRepo()) {
       throw `${NOT_A_REPO_MSG}`;
+    }
+    
+    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
+    const inRoot = await inRootDirectory();
+    if (!inRoot) {
+      bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
+      return;
     }
 
     const { repo } = await getRepoInfo();

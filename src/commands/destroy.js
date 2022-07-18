@@ -1,5 +1,7 @@
 const { deleteApps } = require('../util/deleteApps');
 const { deleteLocalFiles } = require('../util/deleteLocalFiles');
+
+const { wrapExecCmd } = require("../util/wrapExecCmd");
 const { getRepoInfo } = require('../util/addGithubSecrets');
 const {
   bubbleIntro,
@@ -43,6 +45,9 @@ const destroy = async () => {
 
     spinner.succeed();
     bubblePunchline(waitForJokePunchline(randomJoke, 'DESTROY'), 2);
+    
+    const goToDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
+    process.chdir(goToDirectory.trim());
 
     await deleteLocalFiles();
 
