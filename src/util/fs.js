@@ -1,4 +1,5 @@
-import fs from 'fs/promises';
+import fs from 'fs';
+import fsAsync from 'fs/promises';
 import prompts from 'prompts';
 
 import wrapExecCmd from './wrapExecCmd.js';
@@ -123,7 +124,7 @@ const isRepo = async () => {
 
 const deleteWorkflowFolder = async () => {
   try {
-    await fs.rm('./.github', { recursive: true });
+    await fsAsync.rm('./.github', { recursive: true });
     bubbleSuccess('deleted', ' Workflow folder:');
   } catch (e) {
     bubbleWarn(FOLDER_ALREADY_DELETED);
