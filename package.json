@@ -41,7 +41,8 @@
     "node-emoji": "^1.11.0",
     "open": "^8.4.0",
     "ora": "^5.4.0",
-    "prompts": "^2.4.0"
+    "prompts": "^2.4.0",
+    "util": "^0.12.4"
   },
   "devDependencies": {
     "eslint": "^8.20.0",
