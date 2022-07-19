@@ -6,6 +6,8 @@ const PREREQ_MSG = 'Before we get started, please make sure you have your AWS cr
 const GITHUB_CONNECTION_FAILURE_MSG = `Please validate your Github token, git remote value, remote repo permissions, and make sure you set your remote repo URL to HTTPS (https://docs.github.com/en/get-started/getting-started-with-git/managing-remote-repositories#switching-remote-urls-from-ssh-to-https)\n`;
 const GITHUB_PAT_MSG = `Please provide a valid github access token with 'repo' permission (https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) ${emoji.get('coin')}\nEnter token: `;
 const REUSE_GH_PAT_MSG = `Would you like to use the same Github access token as the last time you ran \`bubble init\`?`;
+const DASHBOARD_CLONE_MSG = "Getting your dashboard set up for easy viewing of all your bubbles...";
+const DASHBOARD_INSTALL_MSG = `Nearly done with your dashboard! Just installing a few things ${emoji.get('wrench')} so we don't run into any bubble trouble later...`;
 const NONBUBBLE_AWS_KEYS_IN_REPO_MSG = "Looks like you already have AWS credentials saved in your Github repository! Not to worry, those can stay safe and sound where they are, but to provision your preview apps, we will create a new IAM user with the proper permissions. The credentials for this new user will be saved in your Github repository prepended with 'BUBBLE'.\n";
 const CREATING_IAM_USER_MSG = '\nCreating AWS IAM User credentials and saving in your Github repository...\n';
 const BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG = "Your Bubble-created AWS IAM user has already previously been created and saved in your Github repository!";
@@ -128,6 +130,8 @@ module.exports = {
   GITHUB_CONNECTION_FAILURE_MSG,
   GITHUB_PAT_MSG,
   REUSE_GH_PAT_MSG,
+  DASHBOARD_CLONE_MSG,
+  DASHBOARD_INSTALL_MSG,
   NONBUBBLE_AWS_KEYS_IN_REPO_MSG,
   CREATING_IAM_USER_MSG,
   BUBBLE_AWS_SECRETS_ALREADY_SAVED_MSG,

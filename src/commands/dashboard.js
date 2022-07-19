@@ -13,6 +13,7 @@ const {
 } = require("../util/messages");
 
 const { spawn } = require("child_process");
+const { existingAwsUser } = require("../util/deleteUser");
 const { getRepoInfo } = require('../constants');
 
 const dashboard = async () => {
