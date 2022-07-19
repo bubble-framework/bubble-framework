@@ -63,6 +63,8 @@ const frameworkDestroy = path.join(
 const dataFolderPath = path.join(process.env.HOME, "/.bubble");
 const configPath = path.join(process.env.HOME, "/.bubble/config.json");
 const activeReposPath = path.join(process.env.HOME, "/.bubble/activeRepos.json");
+const bubbleDashboardRootFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard");
+const bubbleDashboardClientFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard/client");
 const bubbleDashboardServerFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard/server");
 const gitPath = path.join(process.cwd(), "/.git");
 const awsConfigPath = path.join(process.env.HOME, "/.aws/config");
@@ -86,6 +88,8 @@ module.exports = {
   dataFolderPath,
   configPath,
   activeReposPath,
+  bubbleDashboardRootFolderPath,
+  bubbleDashboardClientFolderPath,
   bubbleDashboardServerFolderPath,
   gitPath,
   awsConfigPath,
