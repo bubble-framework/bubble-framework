@@ -124,7 +124,7 @@ jobs:
           run: |
             aws dynamodb get-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}'
 
-      - name: Output Commit ID for Existing Pull Request
+      - name: Output Commit ID for Existing PR
         uses: satackey/action-js-inline@v0.0.2
         if: ${{ steps.previewappdata.outputs.stdout }}
         id: getindex
@@ -135,7 +135,7 @@ jobs:
             let index = commitsArray.Item.Commits.L.length
             core.setOutput('index', index)
 
-      - name: Create entry for Pull Request in DynamoDB
+      - name: Create Entry for PR in DynamoDB
         if: ${{ !steps.previewappdata.outputs.stdout }}
         run: |
           aws dynamodb put-item --table-name ${{ env.REPO_NAME }}-PreviewApps --item '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}" }}'
