@@ -136,7 +136,7 @@ const inRootDirectory = async () => {
   return repoDirectory === currentDirectory;
 };
 
-export default {
+export {
   createWorkflowDir,
   copyGithubActions,
   addToken,

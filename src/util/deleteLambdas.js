@@ -26,4 +26,4 @@ const deleteLambdas = async () => {
   }
 };
 
-export default { deleteLambdas };
+export default deleteLambdas;

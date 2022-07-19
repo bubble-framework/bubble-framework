@@ -66,7 +66,7 @@ const gitPath = join(process.cwd(), '/.git');
 const awsConfigPath = join(process.env.HOME, '/.aws/config');
 const awsCredentialsPath = join(process.env.HOME, '/.aws/credentials');
 
-export default {
+export {
   githubFolderPath,
   rootFrameworkPath,
   workflowFolderPath,

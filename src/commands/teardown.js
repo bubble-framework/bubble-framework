@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 
-import { deleteLambdas } from '../util/deleteLambdas';
-import { deleteDatabase } from '../util/deleteDatabase';
+import deleteLambdas from '../util/deleteLambdas';
+import deleteDatabase from '../util/deleteDatabase';
 import { deleteUserAll, existingAwsUser } from '../util/deleteUser';
 
 import {

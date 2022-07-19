@@ -35,7 +35,7 @@ function checkNonBubbleAwsSecretsAdded(currentSecrets) {
   )) && !checkBubbleAwsSecretsAdded(currentSecrets);
 }
 
-export default {
+export {
   addGithubSecrets,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded,

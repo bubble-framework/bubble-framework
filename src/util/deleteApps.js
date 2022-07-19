@@ -28,7 +28,7 @@ const getActivePullRequestIdsString = (appsData) => {
   return activePullRequests.join(' ');
 };
 
-const getGitHubToken = () => {
+export const getGitHubToken = () => {
   const configObj = readConfigFile(configPath, 'JSON');
 
   return configObj.github_access_token;
@@ -63,12 +63,10 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   }
 };
 
-const deleteApps = async () => {
+export const deleteApps = async () => {
   const { owner, repo } = await getRepoInfo();
   const appsDetails = await getAppsDetails(repo);
 
   const activePullRequestIds = getActivePullRequestIdsString(appsDetails);
   await triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
 };
-
-export default { deleteApps, getGitHubToken };

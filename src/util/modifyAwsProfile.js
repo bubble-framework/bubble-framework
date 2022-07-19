@@ -19,4 +19,4 @@ aws_secret_access_key = ${key}`;
   writeToConfigFile(originalConfig + newConfig, awsCredentialsPath);
 };
 
-export default { modifyConfig, modifyCredentials };
+export { modifyConfig, modifyCredentials };

@@ -113,7 +113,7 @@ const dbDeletionError = (repo, name) => (
   `Oops! Couldn't delete the ${repo}-${name} DynamoDB table.`
 );
 
-export default {
+export {
   NOT_A_REPO_MSG,
   WELCOME_MSG,
   PREREQ_MSG,

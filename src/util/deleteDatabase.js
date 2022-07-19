@@ -25,4 +25,4 @@ const deleteDatabase = async (name) => {
   }
 };
 
-export default { deleteDatabase };
+export default deleteDatabase;

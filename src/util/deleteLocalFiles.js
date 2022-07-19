@@ -6,4 +6,4 @@ const deleteLocalFiles = async () => {
   await deleteWorkflowFolder();
 };
 
-export default { deleteLocalFiles };
+export default deleteLocalFiles;

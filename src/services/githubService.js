@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { encrypt } from '../util/encrypt';
+import encrypt from '../util/encrypt';
 
 import {
   bubbleErr,

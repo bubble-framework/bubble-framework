@@ -14,4 +14,4 @@ const encrypt = async (publicKey, secretVal) => {
   return encrypted;
 };
 
-export default { encrypt };
+export default encrypt;
