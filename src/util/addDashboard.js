@@ -59,11 +59,11 @@ const addDashboardFolder = async () => {
       // childResult.on('close', code => {
       //   console.log(`child process exited with code ${code}`);
       // });
-      console.log(childResult);
+      // console.log(childResult);
 
       // console.log(childResult);
       // await wrapExecCmd(`cd ${dataFolderPath} && git clone https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`);
-      // await wrapExecCmd(`cd ${bubbleDashboardRootFolderPath} && rm -r .git`);
+      await wrapExecCmd(`cd ${bubbleDashboardRootFolderPath} && rm -r .git`);
       bubbleGeneral(`Nearly done with your dashboard! Just installing a few things ${emoji.get('wrench')}...`);
       // await wrapExecCmd(`cd ${bubbleDashboardClientFolderPath} && npm install`);
       // await wrapExecCmd(`cd ${bubbleDashboardServerFolderPath} && npm install`);
