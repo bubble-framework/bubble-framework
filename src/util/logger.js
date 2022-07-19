@@ -1,13 +1,14 @@
-const ora = require('ora');
-const chalk = require('chalk');
-const reset = "\x1b[0m";
+import ora from 'ora';
+import chalk from 'chalk';
+
+const reset = '\x1b[0m';
 
 const bubbleWelcome = (text) => {
-  console.log(chalk.bold.hex("#023a8c")(text));
-}
+  console.log(chalk.bold.hex('#023a8c')(text));
+};
 
 const bubbleGeneral = (text) => {
-  console.log(chalk.bold.hex("#003d47")(text));
+  console.log(chalk.bold.hex('#003d47')(text));
 };
 
 const bubbleLoading = (text, opt) => {
@@ -49,26 +50,26 @@ const bubbleConclusionSecondary = (text, opt) => {
 };
 
 const bubbleHelp = (text) => {
-  console.log(chalk.bold.hex("#0357d2")(text));
+  console.log(chalk.bold.hex('#0357d2')(text));
 };
 
 const bubbleSuccess = (successText, text) => {
-  console.log(chalk.hex("#003d47")(text), chalk.hex("#0098b2")(successText), reset);
+  console.log(chalk.hex('#003d47')(text), chalk.hex('#0098b2')(successText), reset);
 };
 
 const bubbleErr = (text) => {
-  console.log(chalk.bold.hex("#eb0000")('Error: '), chalk.hex("#ff7676")(text), reset);
+  console.log(chalk.bold.hex('#eb0000')('Error: '), chalk.hex('#ff7676')(text), reset);
 };
 
 const bubbleWarn = (text) => {
-  console.log(chalk.bold.hex("#ffa500")(text));
+  console.log(chalk.bold.hex('#ffa500')(text));
 };
 
 const bubbleSecrets = (text) => {
-  console.log(chalk.hex("#00d6f9")(text));
-}
+  console.log(chalk.hex('#00d6f9')(text));
+};
 
-module.exports = {
+export default {
   bubbleSuccess,
   bubbleErr,
   bubbleHelp,
@@ -76,11 +77,10 @@ module.exports = {
   bubbleLoading,
   bubbleSecrets,
   bubbleWelcome,
-  bubbleLoading,
   bubbleIntro,
   bubbleSetup,
   bubblePunchline,
   bubbleConclusionPrimary,
   bubbleConclusionSecondary,
-  bubbleWarn
+  bubbleWarn,
 };
