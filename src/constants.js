@@ -3,16 +3,17 @@ import { readConfigFile } from './util/fs';
 import { configPath } from './util/paths';
 
 export async function getRepoInfo() {
-  let nameWithOwner = await wrapExecCmd(
-    "gh repo view --json nameWithOwner -q '.nameWithOwner'"
+  const nameWithOwner = await wrapExecCmd(
+    'gh repo view --json nameWithOwner -q \'.nameWithOwner\'',
   );
 
+  // eslint-disable-next-line array-bracket-spacing
   const [ owner, repo ] = nameWithOwner
     .trim()
     .split('/');
-  
+
   return { owner, repo };
-};
+}
 
 export const GH_HEADER_OBJ = (() => {
   const configObj = readConfigFile(configPath, 'JSON');
@@ -26,5 +27,3 @@ export const GH_HEADER_OBJ = (() => {
     },
   };
 })();
-
-// export default { getRepoInfo, GH_HEADER_OBJ };
