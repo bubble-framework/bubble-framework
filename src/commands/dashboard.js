@@ -1,7 +1,8 @@
 const {
   bubbleGeneral,
   bubbleErr,
-  bubbleWarn
+  bubbleWarn,
+  bubbleConclusionSecondary
 } = require("../util/logger");
 
 const { bubbleDashboardServerFolderPath } = require("../util/paths");
@@ -30,7 +31,7 @@ const dashboard = async () => {
       const childResult = spawn('npm', ['run', 'dashboard'], {cwd: bubbleDashboardServerFolderPath});
       childResult.stdout.on('data', data => {
         if (data.includes('You can now view bubble-dashboard in the browser')) {
-          bubbleGeneral(dashboardUrlMessage(repo));
+          bubbleConclusionSecondary(dashboardUrlMessage(repo), 1);
         }
       });
     } catch (err) {

@@ -52,7 +52,7 @@ program
 program
   .command("dashboard")
   .alias("da")
-  .description("display dashboard to view bubbles for all repos")
+  .description("display dashboard to view bubbles for all active repos currently using Bubble")
   .action(dashboard);
 
 program.parse(process.argv);
