@@ -107,7 +107,7 @@ const waitForDBJokeCrickets = () => {
 };
 
 const dashboardUrlMessage = (repo) => {
-  return `Your dashboard is live at http://localhost:3000/${repo}! Cmd/Ctrl + bubble-click on the url and hop aboard this chew chew train ${emoji.get('train')} to check out all the bubbles we've blown up for ya!`;
+  return `Your dashboard is live at http://localhost:3000/${repo}! Cmd/Ctrl + bubble-click on the url and hop aboard this chew chew train ${emoji.get('train')} to check out all the bubbles we've blown up for ya!\nWhen you're done with the dashboard, just hit Ctrl+C to exit. Enjoy! ${emoji.get('wave')}`;
 }
 
 const instructTeardown = (repo) => {
