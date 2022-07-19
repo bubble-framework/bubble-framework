@@ -1,7 +1,7 @@
 import { getPublicKey, addGithubSecret } from '../services/githubService.js';
 import { bubbleSuccess } from './logger.js';
 
-async function addGithubSecrets(secrets) {
+const addGithubSecrets = async (secrets) => {
   const { data: publicKeyObj } = await getPublicKey();
   bubbleSuccess('retrieved', 'Public key:');
 
@@ -11,7 +11,7 @@ async function addGithubSecrets(secrets) {
   }));
 }
 
-function checkBubbleAwsSecretsAdded(currentSecrets) {
+const checkBubbleAwsSecretsAdded = async (currentSecrets) => {
   const secretNames = currentSecrets.data.secrets.map((secretObj) => secretObj.name);
   const bubbleSecretNames = [
     'BUBBLE_AWS_ACCESS_KEY_ID',
@@ -23,7 +23,7 @@ function checkBubbleAwsSecretsAdded(currentSecrets) {
   ));
 }
 
-function checkNonBubbleAwsSecretsAdded(currentSecrets) {
+const checkNonBubbleAwsSecretsAdded = async (currentSecrets) => {
   const secretNames = currentSecrets.data.secrets.map((secretObj) => secretObj.name);
   const awsSecretNames = [
     'AWS_ACCESS_KEY_ID',

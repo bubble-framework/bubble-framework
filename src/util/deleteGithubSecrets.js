@@ -4,7 +4,7 @@ import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
 import { getPublicKey } from '../services/githubService.js';
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
-async function deleteGithubSecrets() {
+const deleteGithubSecrets = async () => {
   await getPublicKey();
 
   bubbleSuccess('retrieved', 'Public key:');
