@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
+import fs from 'fs/promises';
 
 import init from '../src/commands/init.js';
 import destroy from '../src/commands/destroy.js';
@@ -8,7 +9,13 @@ import list from '../src/commands/list.js';
 import teardown from '../src/commands/teardown.js';
 import detail from '../src/commands/detail.js';
 
-import { version } from '../package.json';
+const packageJson = JSON.parse(
+  await fs.readFile(
+    new URL('../package.json', import.meta.url)
+  )
+);
+
+const { version } = packageJson;
 
 program.version(version).description('Bubble Framework');
 
