@@ -1,8 +1,8 @@
-import getExistingApps from '../util/getExistingApps';
-import existingAwsUser from '../util/deleteUser';
+import getExistingApps from '../util/getExistingApps.js';
+import existingAwsUser from '../util/deleteUser.js';
 
-import outputTableFromArray from '../util/consoleMessage';
-import { bubbleGeneral, bubbleWarn } from '../util/logger';
+import outputTableFromArray from '../util/consoleMessage.js';
+import { bubbleGeneral, bubbleWarn } from '../util/logger.js';
 
 import {
   SHORT_NO_BUBBLES_MSG,

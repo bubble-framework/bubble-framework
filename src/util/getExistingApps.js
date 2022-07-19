@@ -1,9 +1,9 @@
-import wrapExecCmd from './wrapExecCmd';
-import awsService from '../services/awsService';
-import { getRepoInfo } from '../constants';
-import { bubbleErr } from './logger';
+import wrapExecCmd from './wrapExecCmd.js';
+import awsService from '../services/awsService.js';
+import { getRepoInfo } from '../constants.js';
+import { bubbleErr } from './logger.js';
 
-import { PREVIEWS_TABLE_DELETED_MSG, NO_PREVIEW_DETAILS_RETRIEVED_MSG } from './messages';
+import { PREVIEWS_TABLE_DELETED_MSG, NO_PREVIEW_DETAILS_RETRIEVED_MSG } from './messages.js';
 
 const TABLE_DELETED_ERROR_CODE = 255;
 

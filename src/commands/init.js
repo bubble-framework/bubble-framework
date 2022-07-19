@@ -1,16 +1,16 @@
-import wrapExecCmd from '../util/wrapExecCmd';
-import { getGitHubToken } from '../util/deleteApps';
-import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile';
-import { existingAwsUser } from '../util/deleteUser';
-import { userPolicyPath } from '../util/paths';
+import wrapExecCmd from '../util/wrapExecCmd.js';
+import { getGitHubToken } from '../util/deleteApps.js';
+import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile.js';
+import { existingAwsUser } from '../util/deleteUser.js';
+import { userPolicyPath } from '../util/paths.js';
 
 import {
   addGithubSecrets,
   checkBubbleAwsSecretsAdded,
   checkNonBubbleAwsSecretsAdded,
-} from '../util/manageGithubSecrets';
+} from '../util/manageGithubSecrets.js';
 
-import awsService from '../services/awsService';
+import awsService from '../services/awsService.js';
 
 import {
   inRootDirectory,
@@ -18,10 +18,10 @@ import {
   copyGithubActions,
   createConfigFile,
   isRepo,
-} from '../util/fs';
+} from '../util/fs.js';
 
-import { getRepoInfo } from '../constants';
-import { getGithubSecrets } from '../services/githubService';
+import { getRepoInfo } from '../constants.js';
+import { getGithubSecrets } from '../services/githubService.js';
 
 import {
   bubbleErr,
@@ -35,7 +35,7 @@ import {
   bubblePunchline,
   bubbleConclusionPrimary,
   bubbleConclusionSecondary,
-} from '../util/logger';
+} from '../util/logger.js';
 
 import {
   NOT_A_REPO_MSG,
@@ -54,7 +54,7 @@ import {
   waitForJokePunchline,
   waitForDBJokeCrickets,
   duplicateBubbleInit,
-} from '../util/messages';
+} from '../util/messages.js';
 
 const init = async () => {
   try {

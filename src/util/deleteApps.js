@@ -1,14 +1,14 @@
 import axios from 'axios';
 
-import awsService from '../services/awsService';
-import wrapExecCmd from './wrapExecCmd';
-import { getRepoInfo } from '../constants';
-import { readConfigFile } from './fs';
-import { configPath } from './paths';
+import awsService from '../services/awsService.js';
+import wrapExecCmd from './wrapExecCmd.js';
+import { getRepoInfo } from '../constants.js';
+import { readConfigFile } from './fs.js';
+import { configPath } from './paths.js';
 
-import { bubbleErr, bubbleWarn } from './logger';
+import { bubbleErr, bubbleWarn } from './logger.js';
 
-const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
+const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml.js';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(awsService.getPreviewAppsDetails(repoName));

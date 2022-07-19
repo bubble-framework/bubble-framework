@@ -1,8 +1,8 @@
-import awsService from '../services/awsService';
-import wrapExecCmd from './wrapExecCmd';
+import awsService from '../services/awsService.js';
+import wrapExecCmd from './wrapExecCmd.js';
 
-import { getRepoInfo } from '../constants';
-import { bubbleSuccess } from './logger';
+import { getRepoInfo } from '../constants.js';
+import { bubbleSuccess } from './logger.js';
 
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();

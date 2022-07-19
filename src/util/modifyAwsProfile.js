@@ -1,5 +1,5 @@
-import { readConfigFile, writeToConfigFile } from './fs';
-import { awsConfigPath, awsCredentialsPath } from './paths';
+import { readConfigFile, writeToConfigFile } from './fs.js';
+import { awsConfigPath, awsCredentialsPath } from './paths.js';
 
 const modifyConfig = (repo) => {
   const originalConfig = readConfigFile(awsConfigPath);

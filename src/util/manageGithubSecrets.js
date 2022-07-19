@@ -1,5 +1,5 @@
-import { getPublicKey, addGithubSecret } from '../services/githubService';
-import { bubbleSuccess } from './logger';
+import { getPublicKey, addGithubSecret } from '../services/githubService.js';
+import { bubbleSuccess } from './logger.js';
 
 async function addGithubSecrets(secrets) {
   const { data: publicKeyObj } = await getPublicKey();

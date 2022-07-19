@@ -1,17 +1,17 @@
 import axios from 'axios';
 
-import encrypt from '../util/encrypt';
+import encrypt from '../util/encrypt.js';
 
 import {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn,
   bubbleSecrets,
-} from '../util/logger';
+} from '../util/logger.js';
 
-import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages';
+import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 
-import { getRepoInfo, GH_HEADER_OBJ } from '../constants';
+import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
 export async function getPublicKey() {
   const { owner, repo } = await getRepoInfo();

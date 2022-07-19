@@ -1,12 +1,12 @@
-import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger';
-import { DELETING_BUBBLE_USER_MSG, NONEXISTENT_BUBBLE_AWS_USER_MSG } from './messages';
-import wrapExecCmd from './wrapExecCmd';
-import { getRepoInfo } from '../constants';
+import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
+import { DELETING_BUBBLE_USER_MSG, NONEXISTENT_BUBBLE_AWS_USER_MSG } from './messages.js';
+import wrapExecCmd from './wrapExecCmd.js';
+import { getRepoInfo } from '../constants.js';
 
-import awsService from '../services/awsService';
+import awsService from '../services/awsService.js';
 
-import deleteGithubSecrets from './deleteGithubSecrets';
-import { deleteConfig, deleteCredentials } from './deleteAwsProfile';
+import deleteGithubSecrets from './deleteGithubSecrets.js';
+import { deleteConfig, deleteCredentials } from './deleteAwsProfile.js';
 
 export const existingAwsUser = async () => {
   try {

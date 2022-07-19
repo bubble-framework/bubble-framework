@@ -1,10 +1,10 @@
 import open from 'open';
 import prompts from 'prompts';
 
-import getExistingApps from '../util/getExistingApps';
-import { bubbleWarn } from '../util/logger';
-import { NO_BUBBLES_MSG, commandsOutOfOrder } from '../util/messages';
-import { existingAwsUser } from '../util/deleteUser';
+import getExistingApps from '../util/getExistingApps.js';
+import { bubbleWarn } from '../util/logger.js';
+import { NO_BUBBLES_MSG, commandsOutOfOrder } from '../util/messages.js';
+import { existingAwsUser } from '../util/deleteUser.js';
 
 const list = async () => {
   try {

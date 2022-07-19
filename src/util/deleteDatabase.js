@@ -1,16 +1,16 @@
-import wrapExecCmd from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd.js';
 
-import awsService from '../services/awsService';
-import { getRepoInfo } from '../constants';
+import awsService from '../services/awsService.js';
+import { getRepoInfo } from '../constants.js';
 
 import {
   bubbleGeneral,
   bubbleSuccess,
   bubbleErr,
   bubbleWarn,
-} from './logger';
+} from './logger.js';
 
-import { dbDeletionError } from './messages';
+import { dbDeletionError } from './messages.js';
 
 const deleteDatabase = async (name) => {
   const { repo } = await getRepoInfo();

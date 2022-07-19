@@ -1,7 +1,7 @@
-import { deleteApps } from '../util/deleteApps';
-import deleteLocalFiles from '../util/deleteLocalFiles';
-import wrapExecCmd from '../util/wrapExecCmd';
-import { existingAwsUser } from '../util/deleteUser';
+import { deleteApps } from '../util/deleteApps.js';
+import deleteLocalFiles from '../util/deleteLocalFiles.js';
+import wrapExecCmd from '../util/wrapExecCmd.js';
+import { existingAwsUser } from '../util/deleteUser.js';
 
 import {
   bubbleIntro,

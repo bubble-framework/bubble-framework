@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger';
-import { getPublicKey } from '../services/githubService';
-import { getRepoInfo, GH_HEADER_OBJ } from '../constants';
+import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
+import { getPublicKey } from '../services/githubService.js';
+import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
 async function deleteGithubSecrets() {
   await getPublicKey();

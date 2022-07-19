@@ -1,8 +1,8 @@
 import { existsSync } from 'fs';
 
-import deleteLambdas from '../util/deleteLambdas';
-import deleteDatabase from '../util/deleteDatabase';
-import { deleteUserAll, existingAwsUser } from '../util/deleteUser';
+import deleteLambdas from '../util/deleteLambdas.js';
+import deleteDatabase from '../util/deleteDatabase.js';
+import { deleteUserAll, existingAwsUser } from '../util/deleteUser.js';
 
 import {
   bubbleErr,
@@ -11,7 +11,7 @@ import {
   bubbleSetup,
   bubblePunchline,
   bubbleConclusionPrimary,
-} from '../util/logger';
+} from '../util/logger.js';
 
 import {
   WAIT_TO_TEARDOWN_MSG,
@@ -21,7 +21,7 @@ import {
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
-} from '../util/messages';
+} from '../util/messages.js';
 
 const teardown = async () => {
   try {

@@ -1,5 +1,5 @@
-import { bubbleGeneral } from './logger';
-import { deleteWorkflowFolder } from './fs';
+import { bubbleGeneral } from './logger.js';
+import { deleteWorkflowFolder } from './fs.js';
 
 const deleteLocalFiles = async () => {
   bubbleGeneral('Deleting workflow files...');

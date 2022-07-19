@@ -1,6 +1,6 @@
-import wrapExecCmd from './util/wrapExecCmd';
-import { readConfigFile } from './util/fs';
-import { configPath } from './util/paths';
+import wrapExecCmd from './util/wrapExecCmd.js';
+import { readConfigFile } from './util/fs.js';
+import { configPath } from './util/paths.js';
 
 export async function getRepoInfo() {
   const nameWithOwner = await wrapExecCmd(
