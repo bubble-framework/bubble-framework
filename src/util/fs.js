@@ -19,7 +19,7 @@ import {
   dataFolderPath,
   configPath,
   gitPath,
-} from './paths';
+} from './paths.js';
 
 import { bubbleSuccess, bubbleWarn } from './logger.js';
 
