@@ -4,13 +4,12 @@ import { configPath } from './util/paths.js';
 
 export async function getRepoInfo() {
   const nameWithOwner = await wrapExecCmd(
-    'gh repo view --json nameWithOwner -q \'.nameWithOwner\'',
+    'git config --get remote.origin.url'
   );
 
-  // eslint-disable-next-line array-bracket-spacing
-  const [ owner, repo ] = nameWithOwner
-    .trim()
-    .split('/');
+  const parts = nameWithOwner.split('/');
+  const owner = parts[parts.length - 2];
+  const repo = parts[parts.length - 1].split('.')[0];
 
   return { owner, repo };
 }

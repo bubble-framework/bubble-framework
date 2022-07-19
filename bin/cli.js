@@ -8,6 +8,7 @@ import destroy from '../src/commands/destroy.js';
 import list from '../src/commands/list.js';
 import teardown from '../src/commands/teardown.js';
 import detail from '../src/commands/detail.js';
+import dashboard from '../src/commands/dashboard.js';
 
 const packageJson = JSON.parse(
   await fs.readFile(
@@ -53,5 +54,12 @@ program
   .alias('de')
   .description('display details about bubbles')
   .action(detail);
+
+//dashboard
+program
+  .command("dashboard")
+  .alias("da")
+  .description("start dashboard to view bubbles for all active repos currently using Bubble")
+  .action(dashboard);
 
 program.parse(process.argv);

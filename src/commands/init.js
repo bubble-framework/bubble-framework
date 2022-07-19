@@ -18,6 +18,7 @@ import {
   copyGithubActions,
   createConfigFile,
   isRepo,
+  addToActiveReposFile,
 } from '../util/fs.js';
 
 import { getRepoInfo } from '../constants.js';
@@ -56,6 +57,8 @@ import {
   duplicateBubbleInit,
 } from '../util/messages.js';
 
+const { addDashboardFolder } = require("../util/addDashboard");
+
 const init = async () => {
   try {
     if (!isRepo()) {
@@ -64,6 +67,7 @@ const init = async () => {
 
     const repoDir = await wrapExecCmd('git rev-parse --show-toplevel');
     const inRoot = await inRootDirectory();
+    
     if (!inRoot) {
       bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
       return;
@@ -80,6 +84,8 @@ const init = async () => {
     bubbleHelp(PREREQ_MSG);
 
     await createConfigFile();
+    addToActiveReposFile(repo);
+    await addDashboardFolder();
 
     const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);
