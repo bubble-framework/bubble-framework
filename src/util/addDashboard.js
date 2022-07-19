@@ -24,7 +24,7 @@ const addDashboardFolder = async () => {
     if (!fs.existsSync(bubbleDashboardRootFolderPath)) {
       bubbleGeneral(DASHBOARD_CLONE_MSG);
 
-      const ghPAT = readConfigFile(configPath, "JSON")["github_access_token"];
+      const ghPAT = readConfigFile(configPath, "JSON").github_access_token;
       spawnSync('git', ['clone', `https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`], {cwd: dataFolderPath});
       await wrapExecCmd(`cd ${bubbleDashboardRootFolderPath} && rm -r .git`);
 
