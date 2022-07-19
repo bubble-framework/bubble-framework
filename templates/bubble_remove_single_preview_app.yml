@@ -15,7 +15,9 @@ on:
 
 jobs:
   delete-resource-set:
+    name: Pop Bubble
     runs-on: ubuntu-latest
+
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
@@ -30,9 +32,11 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Delete s3 bucket
+
+      - name: Delete S3 Bucket
         run: aws s3 rb s3://${{ inputs.bucket }} --force || echo "Bucket ${{ inputs.bucket }} could not be deleted" && continue
-      - name: Delete Cloudfront distribution id
+
+      - name: Delete Cloudfront Distribution
         run: |
           sudo apt-get update
           sudo apt-get -y install jq
@@ -41,7 +45,8 @@ jobs:
           aws cloudfront update-distribution --id ${{ inputs.distro }} --if-match $(jq .ETag tmp.json -r) --distribution-config file://tmp2.json
           aws cloudfront wait distribution-deployed --id ${{ inputs.distro }}
           aws cloudfront delete-distribution --id ${{ inputs.distro }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.distro }} | jq .ETag -r)
-      - name: Delete all Lambdas and save all lambdas to database for future batch delete
+
+      - name: Delete Lambdas and Save Info for Future Teardown
         run: |
           FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${{ inputs.lambda }}')].FunctionName" --output text)
           for FUNCTION in $FUNCTIONS
