@@ -10,7 +10,7 @@ import {
   bubbleConclusionPrimary,
   bubbleConclusionSecondary,
   bubbleWarn,
-} from '../util/logger';
+} from '../util/logger.js';
 
 import {
   WAIT_TO_DESTROY_MSG,
@@ -20,10 +20,10 @@ import {
   waitForJokeSetup,
   waitForJokePunchline,
   instructTeardown,
-} from '../util/messages';
+} from '../util/messages.js';
 
-import { getPublicKey } from '../services/githubService';
-import { getRepoInfo } from '../constants';
+import { getPublicKey } from '../services/githubService.js';
+import { getRepoInfo } from '../constants.js';
 
 const destroy = async () => {
   try {
