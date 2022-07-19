@@ -22,6 +22,8 @@ const NO_BUBBLES_MSG = `Bubble bath's empty! Looks like you don't have any previ
 const PREVIEWS_TABLE_DELETED_MSG = "Looks like your bubble-tracking DynamoDB table hasn't been set up yet, or has already been destroyed. Try running \`bubble init\`.";
 const NO_PREVIEW_DETAILS_RETRIEVED_MSG = "Sorry, we couldn't get the details for your bubbles!";
 
+const DASHBOARD_STARTUP_MSG = "Bubblin' up your dashboard...\n";
+
 const WAIT_TO_DESTROY_MSG = `We'll get started popping all active bubbles in your repo! Grab a bubble tea ${emoji.get('bubble_tea')} and chew on this bubble-related pun while you wait...\n`;
 const DESTROY_WORKFLOWS_COMPLETING_MSG = "\nAll Bubble-related files in your local project folder should now be deleted, and AWS resources provisioned for your bubbles are well on their way to being fully removed.\n";
 const FOLDER_ALREADY_DELETED = `Looks like your local Bubble-related workflow files were already deleted! We love an easy cleanup... ${emoji.get('broom')}`;
@@ -104,6 +106,10 @@ const waitForDBJokeCrickets = () => {
   return `${cricketEmoji}${cricketEmoji}${cricketEmoji}...\n`;
 };
 
+const dashboardUrlMessage = (repo) => {
+  return `Your dashboard is live at http://localhost:3000/${repo}! Cmd/Ctrl + bubble-click on the url and hop aboard this chew chew train ${emoji.get('train')} to check out all the bubbles we've blown up for ya!`;
+}
+
 const instructTeardown = (repo) => {
   const clockEmoji = emoji.get('mantelpiece_clock');
   const sudsEmoji = emoji.get('soap');
@@ -135,6 +141,7 @@ module.exports = {
   NO_BUBBLES_MSG,
   PREVIEWS_TABLE_DELETED_MSG,
   NO_PREVIEW_DETAILS_RETRIEVED_MSG,
+  DASHBOARD_STARTUP_MSG,
   WAIT_TO_DESTROY_MSG,
   DESTROY_WORKFLOWS_COMPLETING_MSG,
   WAIT_TO_TEARDOWN_MSG,
@@ -149,6 +156,7 @@ module.exports = {
   waitForJokeSetup,
   waitForJokePunchline,
   waitForDBJokeCrickets,
+  dashboardUrlMessage,
   instructTeardown,
   dbDeletionError,
 };
