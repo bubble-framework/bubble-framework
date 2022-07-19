@@ -1,35 +1,30 @@
-const { wrapExecCmd } = require("../util/wrapExecCmd");
+import wrapExecCmd from '../util/wrapExecCmd.js';
+import { getGitHubToken } from '../util/deleteApps.js';
+import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile.js';
+import { existingAwsUser } from '../util/deleteUser.js';
+import { userPolicyPath } from '../util/paths.js';
 
-const { createUser } = require("../aws/createUser");
-const { createAccessKey } = require("../aws/createAccessKey");
-const { attachUserPolicy } = require("../aws/attachUserPolicy");
-const { createDynamoTable } = require("../aws/createDynamoTable");
-const { inRootDirectory } = require('../util/fs');
-const { getRepoInfo } = require('../constants');
-const { getGithubSecrets } = require('../services/githubService');
-
-const {
+import {
   addGithubSecrets,
   checkBubbleAwsSecretsAdded,
-  checkNonBubbleAwsSecretsAdded
-} = require("../util/manageGithubSecrets");
+  checkNonBubbleAwsSecretsAdded,
+} from '../util/manageGithubSecrets.js';
 
-const { getGitHubToken } = require('../util/deleteApps');
+import awsService from '../services/awsService.js';
 
-const {
-  modifyConfig,
-  modifyCredentials,
-} = require('../util/modifyAwsProfile');
-
-const {
+import {
+  inRootDirectory,
   createWorkflowDir,
   copyGithubActions,
   createConfigFile,
   isRepo,
-  addToActiveReposFile
-} = require("../util/fs");
+  addToActiveReposFile,
+} from '../util/fs.js';
 
-const {
+import { getRepoInfo } from '../constants.js';
+import { getGithubSecrets } from '../services/githubService.js';
+
+import {
   bubbleErr,
   bubbleSuccess,
   bubbleHelp,
@@ -40,10 +35,10 @@ const {
   bubbleWarn,
   bubblePunchline,
   bubbleConclusionPrimary,
-  bubbleConclusionSecondary
-} = require("../util/logger");
+  bubbleConclusionSecondary,
+} from '../util/logger.js';
 
-const {
+import {
   NOT_A_REPO_MSG,
   WELCOME_MSG,
   PREREQ_MSG,
@@ -59,23 +54,20 @@ const {
   waitForJokeSetup,
   waitForJokePunchline,
   waitForDBJokeCrickets,
-  duplicateBubbleInit
-} = require("../util/messages");
-
-const { existingAwsUser } = require("../util/deleteUser");
-
-const { userPolicyPath } = require("../util/paths");
+  duplicateBubbleInit,
+} from '../util/messages.js';
 
 const { addDashboardFolder } = require("../util/addDashboard");
 
 const init = async () => {
   try {
     if (!isRepo()) {
-      throw `${NOT_A_REPO_MSG}`;
+      throw new Error(`${NOT_A_REPO_MSG}`);
     }
 
-    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel')
+    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel');
     const inRoot = await inRootDirectory();
+    
     if (!inRoot) {
       bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
       return;
@@ -107,29 +99,29 @@ const init = async () => {
     if (!bubbleAwsSecretsAdded) {
       bubbleGeneral(CREATING_IAM_USER_MSG);
 
-      await wrapExecCmd(createUser(repo));
+      await wrapExecCmd(awsService.createUser(repo));
 
-      bubbleSuccess("created", "IAM User: ");
+      bubbleSuccess('created', 'IAM User: ');
 
-      const accessKeyInfo = await wrapExecCmd(createAccessKey(repo));
-      bubbleSuccess("created", "IAM User Access Key: ");
+      const accessKeyInfo = await wrapExecCmd(awsService.createAccessKey(repo));
+      bubbleSuccess('created', 'IAM User Access Key: ');
       const accessKeyInfoObj = JSON.parse(accessKeyInfo);
-      const accessKeyId = accessKeyInfoObj["AccessKey"]["AccessKeyId"];
-      const secretKey = accessKeyInfoObj["AccessKey"]["SecretAccessKey"];
+      const accessKeyId = accessKeyInfoObj.AccessKey.AccessKeyId;
+      const secretKey = accessKeyInfoObj.AccessKey.SecretAccessKey;
 
       modifyConfig(repo);
       modifyCredentials(accessKeyId, secretKey, repo);
-      bubbleSuccess("created", "AWS Command Line Profile: ")
+      bubbleSuccess('created', 'AWS Command Line Profile: ');
 
-      await wrapExecCmd(attachUserPolicy(userPolicyPath, repo));
-      bubbleSuccess("saved", "IAM User Restrictions: ");
+      await wrapExecCmd(awsService.attachUserPolicy(userPolicyPath, repo));
+      bubbleSuccess('saved', 'IAM User Restrictions: ');
 
       const token = getGitHubToken();
 
       const secrets = {
-        "BUBBLE_AWS_ACCESS_KEY_ID": accessKeyId,
-        "BUBBLE_AWS_SECRET_ACCESS_KEY": secretKey,
-        "BUBBLE_GITHUB_TOKEN": token,
+        BUBBLE_AWS_ACCESS_KEY_ID: accessKeyId,
+        BUBBLE_AWS_SECRET_ACCESS_KEY: secretKey,
+        BUBBLE_GITHUB_TOKEN: token,
       };
 
       await addGithubSecrets(secrets);
@@ -160,7 +152,7 @@ const init = async () => {
 
     setTimeout(async () => {
       try {
-        await wrapExecCmd(createDynamoTable(repo));
+        await wrapExecCmd(awsService.createDynamoTable(repo));
         bubbleConclusionPrimary(DB_CREATED_MSG, 1);
         bubbleConclusionSecondary(INIT_FINISHED_MSG, 1);
       } catch {
@@ -172,4 +164,4 @@ const init = async () => {
   }
 };
 
-module.exports = { init };
+export default init;

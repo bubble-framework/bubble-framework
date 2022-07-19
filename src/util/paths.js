@@ -1,76 +1,79 @@
-const path = require("path");
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const rootFrameworkPath = path.join(__dirname, "/../..");
-const templateFolderPath = path.join(rootFrameworkPath, "/templates");
-const githubFolderPath = path.join(process.cwd(), "/.github");
-const workflowFolderPath = path.join(process.cwd(), "/.github/workflows");
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const userDeployReviewAppPath = path.join(
+const rootFrameworkPath = join(__dirname, '/../..');
+const templateFolderPath = join(rootFrameworkPath, '/templates');
+const githubFolderPath = join(process.cwd(), '/.github');
+const workflowFolderPath = join(process.cwd(), '/.github/workflows');
+
+const userDeployReviewAppPath = join(
   workflowFolderPath,
-  "/bubble_deploy_preview_app.yml"
+  '/bubble_deploy_preview_app.yml',
 );
 
-const userHandleFailedAppPath = path.join(
+const userHandleFailedAppPath = join(
   workflowFolderPath,
-  "/bubble_log_deploy_error.yml"
+  '/bubble_log_deploy_error.yml',
 );
 
-const userRemovePRAppsPath = path.join(
+const userRemovePRAppsPath = join(
   workflowFolderPath,
-  "/bubble_remove_branch_preview_apps.yml"
+  '/bubble_remove_branch_preview_apps.yml',
 );
 
-const frameworkRemovePRAppsPath = path.join(
+const frameworkRemovePRAppsPath = join(
   templateFolderPath,
-  "/bubble_remove_branch_preview_apps.yml"
+  '/bubble_remove_branch_preview_apps.yml',
 );
 
-const frameworkDeployReviewAppPath = path.join(
+const frameworkDeployReviewAppPath = join(
   templateFolderPath,
-  "/bubble_deploy_preview_app.yml"
+  '/bubble_deploy_preview_app.yml',
 );
 
-const frameworkHandleFailedAppPath = path.join(
+const frameworkHandleFailedAppPath = join(
   templateFolderPath,
-  "/bubble_log_deploy_error.yml"
+  '/bubble_log_deploy_error.yml',
 );
 
-const userPolicyPath = path.join(
+const userPolicyPath = join(
   rootFrameworkPath,
-  `/src/aws/userPolicy.json`
+  '/src/aws/userPolicy.json',
 );
 
-const userRemoveAppPath = path.join(
+const userRemoveAppPath = join(
   workflowFolderPath,
-  "/bubble_remove_single_preview_app.yml"
+  '/bubble_remove_single_preview_app.yml',
 );
 
-const frameworkRemoveAppPath = path.join(
+const frameworkRemoveAppPath = join(
   templateFolderPath,
-  "/bubble_remove_single_preview_app.yml"
+  '/bubble_remove_single_preview_app.yml',
 );
 
-const userDestroy = path.join(
+const userDestroy = join(
   workflowFolderPath,
-  "/bubble_remove_all_preview_apps.yml"
+  '/bubble_remove_all_preview_apps.yml',
 );
 
-const frameworkDestroy = path.join(
+const frameworkDestroy = join(
   templateFolderPath,
-  "/bubble_remove_all_preview_apps.yml"
+  '/bubble_remove_all_preview_apps.yml',
 );
 
-const dataFolderPath = path.join(process.env.HOME, "/.bubble");
-const configPath = path.join(process.env.HOME, "/.bubble/config.json");
-const activeReposPath = path.join(process.env.HOME, "/.bubble/activeRepos.json");
-const bubbleDashboardRootFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard");
-const bubbleDashboardClientFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard/client");
-const bubbleDashboardServerFolderPath = path.join(process.env.HOME, "/.bubble/bubble-dashboard/server");
-const gitPath = path.join(process.cwd(), "/.git");
-const awsConfigPath = path.join(process.env.HOME, "/.aws/config");
-const awsCredentialsPath = path.join(process.env.HOME, "/.aws/credentials");
+const dataFolderPath = join(process.env.HOME, '/.bubble');
+const configPath = join(process.env.HOME, '/.bubble/config.json');
+const gitPath = join(process.cwd(), '/.git');
+const awsConfigPath = join(process.env.HOME, '/.aws/config');
+const awsCredentialsPath = join(process.env.HOME, '/.aws/credentials');
+const activeReposPath = path.join(process.env.HOME, '/.bubble/activeRepos.json');
+const bubbleDashboardRootFolderPath = path.join(process.env.HOME, '/.bubble/bubble-dashboard');
+const bubbleDashboardClientFolderPath = path.join(process.env.HOME, '/.bubble/bubble-dashboard/client');
+const bubbleDashboardServerFolderPath = path.join(process.env.HOME, '/.bubble/bubble-dashboard/server');
 
-module.exports = {
+export {
   githubFolderPath,
   rootFrameworkPath,
   workflowFolderPath,

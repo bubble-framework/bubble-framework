@@ -1,31 +1,31 @@
-const { deleteApps } = require('../util/deleteApps');
-const { deleteLocalFiles } = require('../util/deleteLocalFiles');
+import { deleteApps } from '../util/deleteApps.js';
+import deleteLocalFiles from '../util/deleteLocalFiles.js';
+import wrapExecCmd from '../util/wrapExecCmd.js';
+import { existingAwsUser } from '../util/deleteUser.js';
 
-const { wrapExecCmd } = require("../util/wrapExecCmd");
-const { getRepoInfo } = require('../constants');
-const {
+import { updateStatusToDestroyedInActiveReposFile } from '../util/fs';
+
+import {
   bubbleIntro,
   bubbleLoading,
   bubblePunchline,
   bubbleConclusionPrimary,
   bubbleConclusionSecondary,
-  bubbleWarn
-} = require("../util/logger");
-const {
+  bubbleWarn,
+} from '../util/logger.js';
+
+import {
   WAIT_TO_DESTROY_MSG,
   DESTROY_WORKFLOWS_COMPLETING_MSG,
   commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
   waitForJokePunchline,
-  instructTeardown
-} = require("../util/messages");
-const {
-  getPublicKey
-} = require("../services/githubService");
-const { updateStatusToDestroyedInActiveReposFile } = require("../util/fs");
+  instructTeardown,
+} from '../util/messages.js';
 
-const { existingAwsUser } = require("../util/deleteUser");
+import { getPublicKey } from '../services/githubService.js';
+import { getRepoInfo } from '../constants.js';
 
 const destroy = async () => {
   try {
@@ -38,8 +38,7 @@ const destroy = async () => {
     bubbleIntro(WAIT_TO_DESTROY_MSG, 2);
     const { repo } = await getRepoInfo();
     const randomJoke = randomJokeSetup('DESTROY');
-    let spinner;
-    spinner = bubbleLoading(waitForJokeSetup(randomJoke), 2);
+    const spinner = bubbleLoading(waitForJokeSetup(randomJoke), 2);
     spinner.start();
 
     await deleteApps();
@@ -58,6 +57,6 @@ const destroy = async () => {
   } catch {
     bubbleWarn(commandsOutOfOrder('destroy'));
   }
-}
+};
 
-module.exports = { destroy };
+export default destroy;

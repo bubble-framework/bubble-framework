@@ -4,7 +4,8 @@
   "description": "Review Apps for Dynamic Frontend Applications",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "contributors": [
     {
@@ -31,6 +32,7 @@
     "bubble": "bin/cli.js"
   },
   "preferGlobal": true,
+  "type": "module",
   "dependencies": {
     "axios": "^0.27.2",
     "chalk": "^4.1.2",
@@ -39,6 +41,11 @@
     "node-emoji": "^1.11.0",
     "open": "^8.4.0",
     "ora": "^5.4.0",
-    "prompts": "^2.4.0"
+    "prompts": "^2.4.0",
+    "util": "^0.12.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.20.0",
+    "eslint-config-airbnb-base": "^15.0.0"
   }
 }

@@ -1,30 +1,31 @@
-const { getLambdaFunctions } = require('../aws/getLambdaFunctions');
-const { getLambdaPrefixFromDb } = require('../aws/getLambdaPrefixFromDb');
-const { deleteLambda } = require('../aws/deleteLambda');
-const { wrapExecCmd } = require("../util/wrapExecCmd");
+import awsService from '../services/awsService.js';
+import wrapExecCmd from './wrapExecCmd.js';
 
-const { getRepoInfo } = require("../constants");
-const { bubbleSuccess } = require('./logger');
+import { getRepoInfo } from '../constants.js';
+import { bubbleSuccess } from './logger.js';
 
 const deleteLambdas = async () => {
   const { repo } = await getRepoInfo();
-  let prefixes = JSON.parse(await wrapExecCmd(getLambdaPrefixFromDb(repo)));
-  prefixes = prefixes.Items.flatMap(lambda => lambda.LambdaPrefix.S);
+  let prefixes = JSON.parse(await wrapExecCmd(awsService.getLambdaPrefixFromDb(repo)));
+  prefixes = prefixes.Items.flatMap((lambda) => lambda.LambdaPrefix.S);
 
-  const functions = [];
-  for (let i = 0; i < prefixes.length; i++) {
-    const result = await wrapExecCmd(getLambdaFunctions(prefixes[i], repo))
-    functions.push(result.trim());
-  }
+  let functionNames = await Promise.all(prefixes.map((prefix) => (
+    wrapExecCmd(awsService.getLambdaFunctions(prefix, repo))
+  )));
+
+  functionNames = functionNames
+    .map((functionName) => functionName.trim())
+    .filter((functionName) => !!functionName);
 
   try {
-    for (let i = 0; i < functions.length; i++) {
-      await wrapExecCmd(deleteLambda(functions[i], repo))
-    }
-    bubbleSuccess('deleted', "Lambdas: ")
+    await Promise.all(functionNames.map((functionName) => (
+      wrapExecCmd(awsService.deleteLambda(functionName, repo))
+    )));
+
+    bubbleSuccess('deleted', 'Lambdas: ');
   } catch (err) {
     throw new Error(err);
   }
 };
 
-module.exports = { deleteLambdas };
+export default deleteLambdas;

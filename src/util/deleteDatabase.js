@@ -1,30 +1,28 @@
-const { wrapExecCmd } = require("../util/wrapExecCmd");
+import wrapExecCmd from './wrapExecCmd.js';
 
-const { deleteTable } = require('../aws/deleteTable');
-const { getRepoInfo } = require('../constants');
+import awsService from '../services/awsService.js';
+import { getRepoInfo } from '../constants.js';
 
-const {
+import {
   bubbleGeneral,
   bubbleSuccess,
   bubbleErr,
-  bubbleWarn
-} = require("./logger");
+  bubbleWarn,
+} from './logger.js';
 
-const {
-  dbDeletionError
-} = require("./messages");
+import { dbDeletionError } from './messages.js';
 
 const deleteDatabase = async (name) => {
   const { repo } = await getRepoInfo();
   bubbleGeneral(`Deleting the ${repo}-${name} database...`);
 
   try {
-    await wrapExecCmd(deleteTable(repo, name));
-    bubbleSuccess("deleted", `${name} database: `);
+    await wrapExecCmd(awsService.deleteTable(repo, name));
+    bubbleSuccess('deleted', `${name} database: `);
   } catch (err) {
     bubbleErr(err);
     bubbleWarn(dbDeletionError(repo, name));
   }
 };
 
-module.exports = { deleteDatabase };
+export default deleteDatabase;

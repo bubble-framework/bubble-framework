@@ -1,9 +1,10 @@
-const fs = require("fs");
-const prompts = require("prompts");
+import fs from 'fs';
+import fsAsync from 'fs/promises';
+import prompts from 'prompts';
 
-const { wrapExecCmd } = require("./wrapExecCmd");
+import wrapExecCmd from './wrapExecCmd.js';
 
-const {
+import {
   githubFolderPath,
   workflowFolderPath,
   userDeployReviewAppPath,
@@ -19,24 +20,17 @@ const {
   dataFolderPath,
   configPath,
   activeReposPath,
-  gitPath
-} = require("./paths");
+  gitPath,
+} from './paths.js';
 
-const {
-  bubbleSuccess,
-  bubbleWarn
-} = require("./logger");
+import { bubbleSuccess, bubbleWarn } from './logger.js';
 
-const {
-  GITHUB_PAT_MSG,
-  REUSE_GH_PAT_MSG,
-  FOLDER_ALREADY_DELETED
-} = require("./messages");
+import { GITHUB_PAT_MSG, REUSE_GH_PAT_MSG, FOLDER_ALREADY_DELETED } from './messages.js';
 
 const createFolder = (path) => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path);
-    bubbleSuccess(path, "Bubble folder created: ");
+    bubbleSuccess(path, 'Bubble folder created: ');
   }
 };
 
@@ -48,36 +42,58 @@ const createWorkflowDir = () => {
 const copyGithubActions = () => {
   fs.copyFileSync(frameworkDeployReviewAppPath, userDeployReviewAppPath);
 
-  bubbleSuccess("created", "Create preview app Github action: ");
+  bubbleSuccess('created', 'Create preview app Github action: ');
 
   fs.copyFileSync(frameworkHandleFailedAppPath, userHandleFailedAppPath);
 
-  bubbleSuccess("created", "Handle failed preview app deployment Github action: ");
+  bubbleSuccess('created', 'Handle failed preview app deployment Github action: ');
 
   fs.copyFileSync(frameworkRemoveAppPath, userRemoveAppPath);
 
-  bubbleSuccess("created", "Remove single preview app Github action: ");
+  bubbleSuccess('created', 'Remove single preview app Github action: ');
 
   fs.copyFileSync(frameworkRemovePRAppsPath, userRemovePRAppsPath);
 
-  bubbleSuccess("created", "Remove all preview apps for pull request Github action: ");
+  bubbleSuccess('created', 'Remove all preview apps for pull request Github action: ');
 
   fs.copyFileSync(frameworkDestroy, userDestroy);
 
-  bubbleSuccess("created", "Remove all preview apps for all pull requests in repo Github action: ");
+  bubbleSuccess('created', 'Remove all preview apps for all pull requests in repo Github action: ');
+};
+
+const readConfigFile = (path, output) => {
+  const rawUserAppsConfig = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
+
+  switch (output) {
+  case 'JSON':
+    return JSON.parse(rawUserAppsConfig);
+  default:
+    return rawUserAppsConfig;
+  }
+};
+
+const writeToConfigFile = (config, path, output) => {
+  switch (output) {
+  case 'JSON':
+    fs.writeFileSync(path, JSON.stringify(config));
+    break;
+  default:
+    fs.writeFileSync(path, config);
+    break;
+  }
 };
 
 const addToken = async () => {
   const question = {
-    type: "text",
-    name: "githubToken",
+    type: 'text',
+    name: 'githubToken',
     message: GITHUB_PAT_MSG,
   };
 
   const result = await prompts(question);
 
-  writeToConfigFile({ github_access_token: result["githubToken"] }, configPath, "JSON");
-  bubbleSuccess(`saved in ${configPath}`, "Bubble configuration: ");
+  writeToConfigFile({ github_access_token: result.githubToken }, configPath, 'JSON');
+  bubbleSuccess(`saved in ${configPath}`, 'Bubble configuration: ');
 };
 
 const createConfigFile = async () => {
@@ -87,8 +103,8 @@ const createConfigFile = async () => {
     await addToken();
   } else {
     const question = {
-      type: "confirm",
-      name: "useToken",
+      type: 'confirm',
+      name: 'useToken',
       message: REUSE_GH_PAT_MSG,
       initial: true,
     };
@@ -101,52 +117,25 @@ const createConfigFile = async () => {
   }
 };
 
-const readConfigFile = (path, output) => {
-  const rawUserAppsConfig = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
-
-  switch (output) {
-    case "JSON":
-      return JSON.parse(rawUserAppsConfig);
-    default:
-      return rawUserAppsConfig;
-  }
-};
-
-const writeToConfigFile = (config, path, output) => {
-  switch (output) {
-    case "JSON":
-      fs.writeFileSync(path, JSON.stringify(config));
-      break;
-    default:
-      fs.writeFileSync(path, config);
-      break;
-  };
-};
-
-const isRepo = () => {
+const isRepo = async () => {
   if (!fs.existsSync(gitPath)) return false;
-  return wrapExecCmd("git config --get remote.origin.url").then((url) => {
-    return !!url;
-  });
+  const url = await wrapExecCmd('git config --get remote.origin.url');
+  return !!url;
 };
 
-const deleteWorkflowFolder = () => {
-  return new Promise(res => {
-    fs.rm("./.github", { recursive: true }, (err) => {
-      if (err) {
-        bubbleWarn(FOLDER_ALREADY_DELETED);
-        res();
-      } else {
-        bubbleSuccess("deleted", " Workflow folder:")
-        res();
-      }
-    });
-  });
+const deleteWorkflowFolder = async () => {
+  try {
+    await fsAsync.rm('./.github', { recursive: true });
+    bubbleSuccess('deleted', ' Workflow folder:');
+  } catch (e) {
+    bubbleWarn(FOLDER_ALREADY_DELETED);
+  }
 };
 
 const inRootDirectory = async () => {
   const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
   const currentDirectory = process.cwd();
+
   return repoDirectory.trim() === currentDirectory.trim();
 };
 
@@ -180,7 +169,7 @@ const removeFromActiveReposFile = (repoName) => {
   bubbleSuccess(`removed from ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
-module.exports = {
+export {
   createWorkflowDir,
   copyGithubActions,
   addToken,

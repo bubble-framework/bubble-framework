@@ -1,12 +1,9 @@
-const {
-  bubbleGeneral,
-} = require("./logger");
-
-const { deleteWorkflowFolder } = require("./fs")
+import { bubbleGeneral } from './logger.js';
+import { deleteWorkflowFolder } from './fs.js';
 
 const deleteLocalFiles = async () => {
-  bubbleGeneral("Deleting workflow files...");
+  bubbleGeneral('Deleting workflow files...');
   await deleteWorkflowFolder();
-}
+};
 
-module.exports = { deleteLocalFiles }
+export default deleteLocalFiles;

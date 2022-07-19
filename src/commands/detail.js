@@ -1,16 +1,14 @@
-const { getExistingApps } = require('../util/getExistingApps');
-const { outputTableFromArray } = require('../util/consoleMessage');
-const {
-  bubbleGeneral,
-  bubbleWarn
-} = require("../util/logger");
-const {
+import getExistingApps from '../util/getExistingApps.js';
+import { existingAwsUser } from '../util/deleteUser.js';
+
+import outputTableFromArray from '../util/consoleMessage.js';
+import { bubbleGeneral, bubbleWarn } from '../util/logger.js';
+
+import {
   SHORT_NO_BUBBLES_MSG,
   DETAIL_INTRO_MSG,
-  commandsOutOfOrder
-} = require("../util/messages");
-
-const { existingAwsUser } = require("../util/deleteUser");
+  commandsOutOfOrder,
+} from '../util/messages.js';
 
 const detail = async () => {
   try {
@@ -21,6 +19,7 @@ const detail = async () => {
     bubbleGeneral(DETAIL_INTRO_MSG);
 
     const apps = await getExistingApps();
+
     if (apps.length === 0) {
       apps.push(SHORT_NO_BUBBLES_MSG);
     }
@@ -28,6 +27,6 @@ const detail = async () => {
   } catch {
     bubbleWarn(commandsOutOfOrder('detail'));
   }
-}
+};
 
-module.exports = { detail }
+export default detail;

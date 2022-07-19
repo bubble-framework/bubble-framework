@@ -1,20 +1,22 @@
-const { readConfigFile, writeToConfigFile } = require('./fs');
-const { awsConfigPath, awsCredentialsPath } = require('./paths');
+import { readConfigFile, writeToConfigFile } from './fs.js';
+import { awsConfigPath, awsCredentialsPath } from './paths.js';
 
-const deleteConfig = (repo) => {
+export const deleteConfig = (repo) => {
   const originalConfig = readConfigFile(awsConfigPath);
-  let arr = originalConfig.split('\n');
-  let idx = arr.indexOf(`[profile ${repo}-bubble-user]`);
-  arr.splice(idx, 3);
-  writeToConfigFile(arr.join("\n"), awsConfigPath);
-}
 
-const deleteCredentials = (repo) => {
+  const configLines = originalConfig.split('\n');
+  const firstBubbleIdx = configLines.indexOf(`[profile ${repo}-bubble-user]`);
+  configLines.splice(firstBubbleIdx, 3);
+
+  writeToConfigFile(configLines.join('\n'), awsConfigPath);
+};
+
+export const deleteCredentials = (repo) => {
   const originalConfig = readConfigFile(awsCredentialsPath);
-  let arr = originalConfig.split('\n');
-  let idx = arr.indexOf(`[${repo}-bubble-user]`);
-  arr.splice(idx, 3);
-  writeToConfigFile(arr.join("\n"), awsCredentialsPath);
-}
 
-module.exports = { deleteConfig, deleteCredentials };
+  const configLines = originalConfig.split('\n');
+  const firstBubbleIdx = configLines.indexOf(`[${repo}-bubble-user]`);
+  configLines.splice(firstBubbleIdx, 3);
+
+  writeToConfigFile(configLines.join('\n'), awsCredentialsPath);
+};

@@ -1,44 +1,39 @@
-const {
-  bubbleGeneral,
-  bubbleErr,
-  bubbleSuccess
-} = require("./logger");
+import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
+import { DELETING_BUBBLE_USER_MSG, NONEXISTENT_BUBBLE_AWS_USER_MSG } from './messages.js';
+import wrapExecCmd from './wrapExecCmd.js';
+import { getRepoInfo } from '../constants.js';
 
-const {
-  DELETING_BUBBLE_USER_MSG,
-  NONEXISTENT_BUBBLE_AWS_USER_MSG
-} = require("./messages");
+import awsService from '../services/awsService.js';
 
-const { wrapExecCmd } = require("./wrapExecCmd");
+import deleteGithubSecrets from './deleteGithubSecrets.js';
+import { deleteConfig, deleteCredentials } from './deleteAwsProfile.js';
 
-const { getRepoInfo } = require('../constants');
-const { checkExistingUser } = require("../aws/checkExistingUser");
-const { deleteUser } = require("../aws/deleteUser");
-const { deleteUserPolicy } = require("../aws/deleteUserPolicy");
-const { getUserAccessKey } = require("../aws/getUserAccessKey");
-const { deleteUserAccessKey } = require("../aws/deleteUserAccessKey");
-const { deleteGithubSecrets } = require("./deleteGithubSecrets");
-const { deleteConfig, deleteCredentials } = require('./deleteAwsProfile');
-
-const existingAwsUser = async () => {
+export const existingAwsUser = async () => {
   try {
     const { repo } = await getRepoInfo();
-    await wrapExecCmd(checkExistingUser(repo));
+    await wrapExecCmd(awsService.checkExistingUser(repo));
     return true;
   } catch {
     return false;
   }
-}
+};
 
-const deleteAwsUser = async (repo) => {
-  await wrapExecCmd(deleteUserPolicy(repo));
-  const { AccessKeyMetadata } = JSON.parse(await wrapExecCmd(getUserAccessKey(repo)));
-  await wrapExecCmd(deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo));
-  await wrapExecCmd(deleteUser(repo));
-}
+export const deleteAwsUser = async (repo) => {
+  await wrapExecCmd(awsService.deleteUserPolicy(repo));
 
-const deleteUserAll = async () => {
-  let { repo } = await getRepoInfo();
+  const { AccessKeyMetadata } = JSON.parse(
+    await wrapExecCmd(awsService.getUserAccessKey(repo)),
+  );
+
+  await wrapExecCmd(
+    awsService.deleteUserAccessKey(AccessKeyMetadata[0].AccessKeyId, repo),
+  );
+
+  await wrapExecCmd(awsService.deleteUser(repo));
+};
+
+export const deleteUserAll = async () => {
+  const { repo } = await getRepoInfo();
   if (existingAwsUser()) {
     try {
       bubbleGeneral(DELETING_BUBBLE_USER_MSG);
@@ -46,13 +41,11 @@ const deleteUserAll = async () => {
       await deleteAwsUser(repo);
       deleteConfig(repo);
       deleteCredentials(repo);
-      bubbleSuccess("deleted", "User and its Github secrets: ");
+      bubbleSuccess('deleted', 'User and its Github secrets: ');
     } catch (err) {
       bubbleErr(`User deletion failed due to: ${err}.`);
     }
   } else {
     bubbleErr(NONEXISTENT_BUBBLE_AWS_USER_MSG);
   }
-}
-
-module.exports = { deleteUserAll, existingAwsUser }
+};

@@ -1,42 +1,25 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const { readConfigFile } = require("../util/fs");
-const { encrypt } = require('../util/encrypt');
+import encrypt from '../util/encrypt.js';
 
-const {
+import {
   bubbleErr,
   bubbleSuccess,
   bubbleWarn,
-  bubbleSecrets
-} = require("../util/logger");
+  bubbleSecrets,
+} from '../util/logger.js';
 
-const {
-  GITHUB_CONNECTION_FAILURE_MSG
-} = require("../util/messages");
+import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 
-const { configPath } = require('../util/paths');
-const { getRepoInfo } = require('../constants');
+import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
-const HEADER_OBJ = (() => {
-  const configObj = readConfigFile(configPath, "JSON");
-  const githubAccessToken = configObj.github_access_token;
-
-  return (obj = {
-    headers: {
-      Authorization: `token ${githubAccessToken}`,
-      "Content-Type": "application/json",
-      Accept: "application/vnd.github.v3+json",
-    },
-  });
-})();
-
-async function getPublicKey() {
+export async function getPublicKey() {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
 
   try {
-    const response = await axios.get(url, HEADER_OBJ);
+    const response = await axios.get(url, GH_HEADER_OBJ);
 
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,12 +29,11 @@ async function getPublicKey() {
   } catch (e) {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
-
-    process.exit();
+    return process.exit();
   }
 }
 
-async function addGithubSecret(secretName, secretVal, publicKeyObj) {
+export async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   const { owner, repo } = await getRepoInfo();
 
   const { key: publicKey, key_id: keyId } = publicKeyObj;
@@ -65,18 +47,17 @@ async function addGithubSecret(secretName, secretVal, publicKeyObj) {
     key_id: keyId,
   };
 
-  await axios.put(url, data, HEADER_OBJ);
-  bubbleSuccess("created", `${secretName} secret has been:`);
+  await axios.put(url, data, GH_HEADER_OBJ);
+  bubbleSuccess('created', `${secretName} secret has been:`);
 }
 
-async function getGithubSecrets() {
+export async function getGithubSecrets() {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
 
   try {
-    const secrets = await axios.get(url, HEADER_OBJ);
-
+    const secrets = await axios.get(url, GH_HEADER_OBJ);
     return secrets;
   } catch (e) {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
@@ -84,10 +65,4 @@ async function getGithubSecrets() {
 
     process.exit();
   }
-}
-
-module.exports = {
-  getPublicKey,
-  addGithubSecret,
-  getGithubSecrets,
 }

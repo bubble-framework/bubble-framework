@@ -1,16 +1,17 @@
-const { getPreviewAppsDetails } = require('../aws/getPreviewAppsDetails');
-const { wrapExecCmd } = require('./wrapExecCmd');
-const { getRepoInfo } = require('../constants');
-const { readConfigFile } = require('./fs');
-const { configPath } = require('./paths');
+import axios from 'axios';
 
-const axios = require('axios');
-const { bubbleErr, bubbleWarn } = require('./logger');
+import awsService from '../services/awsService.js';
+import wrapExecCmd from './wrapExecCmd.js';
+import { getRepoInfo } from '../constants.js';
+import { readConfigFile } from './fs.js';
+import { configPath } from './paths.js';
+
+import { bubbleErr, bubbleWarn } from './logger.js';
 
 const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
-  const rawAppsDetails = await wrapExecCmd(getPreviewAppsDetails(repoName));
+  const rawAppsDetails = await wrapExecCmd(awsService.getPreviewAppsDetails(repoName));
 
   return JSON.parse(rawAppsDetails).Items;
 };
@@ -27,8 +28,8 @@ const getActivePullRequestIdsString = (appsData) => {
   return activePullRequests.join(' ');
 };
 
-const getGitHubToken = () => {
-  const configObj = readConfigFile(configPath, "JSON");
+export const getGitHubToken = () => {
+  const configObj = readConfigFile(configPath, 'JSON');
 
   return configObj.github_access_token;
 };
@@ -38,7 +39,7 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   const token = getGitHubToken();
 
   const headerData = {
-    headers: { 
+    headers: {
       accept: 'application/vnd.github+json',
       authorization: `token ${token}`,
     },
@@ -54,20 +55,18 @@ const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) =>
   try {
     await axios.post(url, body, headerData);
   } catch (e) {
-    if (e.response.status === 422 && e.response.data.message.includes("'pr-numbers'")) {
-      bubbleWarn("Looks like there are no preview apps to be deleted for this repository!");
+    if (e.response.status === 422 && e.response.data.message.includes('pr-numbers')) {
+      bubbleWarn('Looks like there are no preview apps to be deleted for this repository!');
     } else {
-      bubbleErr(`Remote Preview Apps Teardown Failed ${err}`);
+      bubbleErr(`Remote Preview Apps Teardown Failed ${e}`);
     }
   }
 };
 
-const deleteApps = async () => {
+export const deleteApps = async () => {
   const { owner, repo } = await getRepoInfo();
   const appsDetails = await getAppsDetails(repo);
 
   const activePullRequestIds = getActivePullRequestIdsString(appsDetails);
   await triggerRemoteRepoAppsTeardown({ owner, repo, pullRequestIds: activePullRequestIds });
 };
-
-module.exports = { deleteApps, getGitHubToken };

@@ -1,31 +1,34 @@
-const fs = require("fs");
-const { deleteLambdas } = require('../util/deleteLambdas');
-const { deleteDatabase } = require('../util/deleteDatabase');
-const { deleteUserAll } = require('../util/deleteUser');
-const {
+import { existsSync } from 'fs';
+
+import deleteLambdas from '../util/deleteLambdas.js';
+import deleteDatabase from '../util/deleteDatabase.js';
+import { deleteUserAll, existingAwsUser } from '../util/deleteUser.js';
+import { getRepoInfo } from '../constants.js';
+
+import { removeFromActiveReposFile } from '../util/fs';
+
+import {
   bubbleErr,
   bubbleWarn,
   bubbleIntro,
   bubbleSetup,
   bubblePunchline,
-  bubbleConclusionPrimary
-} = require('../util/logger');
-const {
+  bubbleConclusionPrimary,
+} from '../util/logger.js';
+
+import {
   WAIT_TO_TEARDOWN_MSG,
   TEARDOWN_DONE_MSG,
   LAMBDA_TEARDOWN_ERROR_MSG,
   commandsOutOfOrder,
   randomJokeSetup,
   waitForJokeSetup,
-  waitForJokePunchline
-} = require("../util/messages");
-const { removeFromActiveReposFile } = require("../util/fs");
-const { getRepoInfo } = require('../constants');
-const { existingAwsUser } = require("../util/deleteUser");
+  waitForJokePunchline,
+} from '../util/messages.js';
 
 const teardown = async () => {
   try {
-    if (!existingAwsUser() || fs.existsSync("./.github")) {
+    if (!existingAwsUser() || existsSync('./.github')) {
       throw new Error();
     }
 
@@ -53,6 +56,6 @@ const teardown = async () => {
   } catch {
     bubbleWarn(commandsOutOfOrder('teardown'));
   }
-}
+};
 
-module.exports = { teardown };
+export default teardown;

@@ -1,59 +1,33 @@
-const axios = require("axios");
-const { readConfigFile } = require("./fs");
-const { configPath } = require('./paths')
+import axios from 'axios';
 
-const {
-  bubbleGeneral,
-  bubbleErr,
-  bubbleSuccess
-} = require("./logger");
-const { wrapExecCmd } = require("./wrapExecCmd");
+import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
+import { getPublicKey } from '../services/githubService.js';
+import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
 async function deleteGithubSecrets() {
-  const currentPath = process.cwd();
-  const cmd = `git config --get remote.origin.url`;
-  wrapExecCmd(cmd, 'Could not remove secrets')
-    .then(async (remote) => {
+  await getPublicKey();
 
-      wrapExecCmd(`cd ${currentPath}`);
+  bubbleSuccess('retrieved', 'Public key:');
 
-      const parts = remote.split("/");
-      const owner = parts[parts.length - 2];
-      const repo = parts[parts.length - 1].slice(0, -5);
-      const config_obj = readConfigFile(configPath, "JSON");
-      const github_access_token = config_obj.github_access_token;
+  const secrets = [
+    'BUBBLE_AWS_ACCESS_KEY_ID',
+    'BUBBLE_AWS_SECRET_ACCESS_KEY',
+    'BUBBLE_GITHUB_TOKEN',
+  ];
 
-      let url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
+  secrets.forEach(async (secretName) => {
+    const { owner, repo } = await getRepoInfo();
+    const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`;
 
-      const obj = {
-        headers: {
-          Authorization: `token ${github_access_token}`,
-          "Content-Type": "application/json",
-          Accept: "application/vnd.github.v3+json",
-        },
-      };
+    bubbleGeneral(`Removing ${secretName} secret from your Github repository...`);
 
-      // request is made to get public key
-      let response = await axios.get(url, obj);
-      bubbleSuccess("retrieved", "Public key:");
-      const public_key = response.data.key;
-      const key_id = response.data.key_id;
-
-      const secrets = [
-        "BUBBLE_AWS_ACCESS_KEY_ID",
-        "BUBBLE_AWS_SECRET_ACCESS_KEY",
-        "BUBBLE_GITHUB_TOKEN",
-      ];
-
-      secrets.forEach((secret_name) => {
-        url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secret_name}`;
-
-        bubbleGeneral(`Removing ${secret_name} secret from your Github repository...`);
-        axios.delete(url, obj).then(_ => {
-          bubbleSuccess("removed", `${secret_name} secret has been:`);
-        }).catch(err => bubbleErr(`Oops! Could not remove ${secret_name}. Try re-running \`bubble teardown\` and double check your Github repository if you'd like to ensure all secrets prepended with \`BUBBLE\` have been removed.`));
-      });
-    }).catch(err => bubbleErr(err));
+    try {
+      await axios.delete(url, GH_HEADER_OBJ);
+      bubbleSuccess('removed', `${secretName} secret has been:`);
+    } catch (e) {
+      bubbleErr(`Oops! Could not remove ${secretName}. Try re-running \`bubble teardown\` and double check your Github repository if you'd like to ensure all secrets prepended with \`BUBBLE\` have been removed.`);
+    }
+  });
 }
 
-module.exports = { deleteGithubSecrets };
+export default deleteGithubSecrets;
