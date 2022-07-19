@@ -66,6 +66,8 @@ const { existingAwsUser } = require("../util/deleteUser");
 
 const { userPolicyPath } = require("../util/paths");
 
+const { addDashboardFolder } = require("../util/addDashboard");
+
 const init = async () => {
   try {
     if (!isRepo()) {
@@ -91,6 +93,7 @@ const init = async () => {
 
     await createConfigFile();
     addToActiveReposFile(repo);
+    await addDashboardFolder();
 
     const currentSecrets = await getGithubSecrets();
     const nonBubbleAwsSecretsAlreadyAdded = checkNonBubbleAwsSecretsAdded(currentSecrets);

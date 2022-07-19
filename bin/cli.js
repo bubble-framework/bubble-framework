@@ -5,6 +5,7 @@ const { destroy } = require('../src/commands/destroy');
 const { list } = require('../src/commands/list');
 const { teardown } = require('../src/commands/teardown');
 const { detail } = require('../src/commands/detail');
+const { dashboard } = require('../src/commands/dashboard');
 
 const prompts = require("prompts");
 const { program } = require("commander");
@@ -46,5 +47,12 @@ program
   .alias("de")
   .description("display details about bubbles")
   .action(detail);
+
+//dashboard
+program
+  .command("dashboard")
+  .alias("da")
+  .description("start dashboard to view bubbles for all active repos currently using Bubble")
+  .action(dashboard);
 
 program.parse(process.argv);

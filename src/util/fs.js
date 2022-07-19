@@ -160,7 +160,8 @@ const addToActiveReposFile = (repoName) => {
     activeRepos = readConfigFile(activeReposPath, "JSON");
   }
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
-  activeRepos.push({ repoName, status: 'active' });
+  const currentPath = process.cwd();
+  activeRepos.push({ repoName, status: 'active', filePath: currentPath});
   writeToConfigFile(activeRepos, activeReposPath, "JSON");
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
