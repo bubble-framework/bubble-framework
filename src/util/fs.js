@@ -21,9 +21,9 @@ import {
   gitPath,
 } from './paths';
 
-import { bubbleSuccess, bubbleWarn } from './logger';
+import { bubbleSuccess, bubbleWarn } from './logger.js';
 
-import { GITHUB_PAT_MSG, REUSE_GH_PAT_MSG, FOLDER_ALREADY_DELETED } from './messages';
+import { GITHUB_PAT_MSG, REUSE_GH_PAT_MSG, FOLDER_ALREADY_DELETED } from './messages.js';
 
 const createFolder = (path) => {
   if (!fs.existsSync(path)) {
