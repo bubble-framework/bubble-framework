@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-import { ready, crypto_box_seal } from 'libsodium-wrappers.js';
+import { ready, crypto_box_seal } from 'libsodium-wrappers';
 
 const encrypt = async (publicKey, secretVal) => {
   await ready;
