@@ -8,7 +8,7 @@ import {
   SHORT_NO_BUBBLES_MSG,
   DETAIL_INTRO_MSG,
   commandsOutOfOrder,
-} from '../util/messages';
+} from '../util/messages.js';
 
 const detail = async () => {
   try {
