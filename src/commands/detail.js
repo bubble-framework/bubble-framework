@@ -19,6 +19,7 @@ const detail = async () => {
     bubbleGeneral(DETAIL_INTRO_MSG);
 
     const apps = await getExistingApps();
+
     if (apps.length === 0) {
       apps.push(SHORT_NO_BUBBLES_MSG);
     }

@@ -1,9 +1,9 @@
-import { wrapExecCmd } from "./wrapExecCmd";
+import { wrapExecCmd } from './wrapExecCmd';
 import awsService from '../services/awsService';
-import { getRepoInfo } from './addGithubSecrets';
+import { getRepoInfo } from '../constants';
 import { bubbleErr } from './logger';
 
-import { PREVIEWS_TABLE_DELETED_MSG, NO_PREVIEW_DETAILS_RETRIEVED_MSG } from "./messages";
+import { PREVIEWS_TABLE_DELETED_MSG, NO_PREVIEW_DETAILS_RETRIEVED_MSG } from './messages';
 
 const TABLE_DELETED_ERROR_CODE = 255;
 
@@ -20,25 +20,27 @@ const getExistingApps = async () => {
       bubbleErr(NO_PREVIEW_DETAILS_RETRIEVED_MSG);
     }
 
-    return;
+    return [];
   }
 
   const parsed = [];
-  details.forEach(pullRequest => {
+
+  details.forEach((pullRequest) => {
     if (pullRequest.IsActive.BOOL) {
-      pullRequest.Commits.L.forEach(commit => {
+      pullRequest.Commits.L.forEach((commit) => {
         const detail = {};
         detail.pull_request_id = pullRequest.PullRequestId.N;
         detail.pull_request_name = pullRequest.PRName.S;
         detail.commit_id = commit.M.CommitId.S.slice(0, 7);
         detail.commit_message = commit.M.CommitMessageHeader.S;
         detail.created_at = commit.M.CreatedAt.S;
-        detail.url = 'https://' + commit.M.CloudfrontSubdomain.S + '.cloudfront.net';
+        detail.url = `https://${commit.M.CloudfrontSubdomain.S}.cloudfront.net`;
         parsed.push(detail);
-      })
+      });
     }
-  })
+  });
+
   return parsed;
-}
+};
 
 export default getExistingApps;
