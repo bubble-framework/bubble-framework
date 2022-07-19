@@ -1,5 +1,5 @@
 import getExistingApps from '../util/getExistingApps.js';
-import existingAwsUser from '../util/deleteUser.js';
+import { existingAwsUser } from '../util/deleteUser.js';
 
 import outputTableFromArray from '../util/consoleMessage.js';
 import { bubbleGeneral, bubbleWarn } from '../util/logger.js';
