@@ -51,7 +51,7 @@ const BUBBLE_PUNS = {
 };
 
 const commandsOutOfOrder = (command) => {
-  return `Oops! Couldn' finish executing \`bubble ${command}\`. Always make sure you're executing commands in the correct order: init, list/detail, destroy, teardown ${emoji.get('wink')}`;
+  return `Oops! Couldn' finish executing \`bubble ${command}\`. Always make sure you're executing commands in the correct order: init, list/detail, dashboard/destroy, teardown ${emoji.get('wink')}`;
 };
 
 const duplicateBubbleInit = (repo) => {
