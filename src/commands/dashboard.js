@@ -1,4 +1,5 @@
 const {
+  bubbleGeneral,
   bubbleErr,
   bubbleWarn
 } = require("../util/logger");
@@ -10,6 +11,8 @@ const { bubbleDashboardServerFolderPath } = require("../util/paths");
 // const { exec } = require("child_process");
 
 const { spawn } = require("child_process");
+const { getRepoInfo } = require('../constants');
+const emoji = require('node-emoji');
 
 
 const dashboard = async () => {
@@ -19,18 +22,16 @@ const dashboard = async () => {
     // }
 
     try {
+      const { repo } = await getRepoInfo();
       // cp.exec("config.js", {cwd: bubbleDashboardServerFolderPath}, function(error,stdout,stderr){
       // });
       // const spawn = cp.spawn
+      bubbleGeneral("Bubblin' up your dashboard...\n");
       const childResult = spawn('npm', ['run', 'dashboard'], {cwd: bubbleDashboardServerFolderPath});
       childResult.stdout.on('data', data => {
-        console.log(`stdout: ${data}`);
-      });
-      childResult.stderr.on('data', data => {
-        console.error(`stderr: ${data}`);
-      });
-      childResult.on('close', code => {
-        console.log(`child process exited with code ${code}`);
+        if (data.includes('You can now view bubble-dashboard in the browser')) {
+          bubbleGeneral(`Your dashboard is live at http://localhost:3000/${repo}! Cmd/Ctrl + bubble-click on the url and hop aboard this chew chew train ${emoji.get('train')} to check out all the bubbles we've blown up for ya!`);
+        }
       });
       // const result = await wrapExecCmd(`cd ${bubbleDashboardServerFolderPath} && npm run dashboard`)
       // await wrapExecCmd(`cd ${bubbleDashboardServerFolderPath}`) && wrapExecCmd(`node config.js`);
