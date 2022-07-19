@@ -2,13 +2,13 @@
 
 import { program } from 'commander';
 
-import init from '../src/commands/init';
-import destroy from '../src/commands/destroy';
-import list from '../src/commands/list';
-import teardown from '../src/commands/teardown';
-import detail from '../src/commands/detail';
+import init from '../src/commands/init.js';
+import destroy from '../src/commands/destroy.js';
+import list from '../src/commands/list.js';
+import teardown from '../src/commands/teardown.js';
+import detail from '../src/commands/detail.js';
 
-import { version } from '../package.json';
+import { version } from '../package.json.js';
 
 program.version(version).description('Bubble Framework');
 
