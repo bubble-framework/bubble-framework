@@ -134,7 +134,7 @@ const deleteWorkflowFolder = async () => {
 const inRootDirectory = async () => {
   const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
   const currentDirectory = process.cwd();
-  return repoDirectory === currentDirectory;
+  return repoDirectory.trim() === currentDirectory;
 };
 
 export {
