@@ -1,5 +1,7 @@
 import util from  'util';
-const exec = util.promisify(require('child_process').exec);
+import child_process from 'child_process';
+
+const exec = util.promisify(child_process.exec);
 
 const wrapExecCmd = async (cmd, errMsg) => {
   try {
