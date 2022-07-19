@@ -1,4 +1,4 @@
-import { wrapExecCmd } from './util/wrapExecCmd';
+import wrapExecCmd from './util/wrapExecCmd';
 import { readConfigFile } from './util/fs';
 import { configPath } from './util/paths';
 

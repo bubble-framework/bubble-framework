@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import awsService from '../services/awsService';
-import { wrapExecCmd } from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd';
 import { getRepoInfo } from '../constants';
 import { readConfigFile } from './fs';
 import { configPath } from './paths';

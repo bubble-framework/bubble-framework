@@ -1,6 +1,6 @@
 import { deleteApps } from '../util/deleteApps';
 import { deleteLocalFiles } from '../util/deleteLocalFiles';
-import { wrapExecCmd } from '../util/wrapExecCmd';
+import wrapExecCmd from '../util/wrapExecCmd';
 import { existingAwsUser } from '../util/deleteUser';
 
 import {

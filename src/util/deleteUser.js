@@ -1,6 +1,6 @@
 import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger';
 import { DELETING_BUBBLE_USER_MSG, NONEXISTENT_BUBBLE_AWS_USER_MSG } from './messages';
-import { wrapExecCmd } from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd';
 import { getRepoInfo } from '../constants';
 
 import awsService from '../services/awsService';

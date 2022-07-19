@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import prompts from 'prompts';
 
-import { wrapExecCmd } from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd';
 
 import {
   githubFolderPath,

@@ -1,23 +1,18 @@
-const { exec } = require("child_process");
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
-const wrapExecCmd = (cmd, errMsg) => {
-  return new Promise((resolve, reject) => {
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        reject(errMsg || error);
-        return;
-      }
+const wrapExecCmd = async (cmd, errMsg) => {
+  try {
+    const { stdout, stderr } = await exec(cmd);
 
-      if (stderr) {
-        reject(errMsg || stderr);
-        return;
-      }
+    if (stderr) {
+      throw new Error(stderr);
+    }
 
-      resolve(stdout);
-    });
-  });
-}
+    return stdout;
+  } catch (e) {
+    throw new Error(errMsg || e);
+  }
+};
 
-module.exports = {
-  wrapExecCmd
-}
+export default wrapExecCmd;

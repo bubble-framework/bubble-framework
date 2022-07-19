@@ -1,5 +1,5 @@
 import awsService from '../services/awsService';
-import { wrapExecCmd } from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd';
 
 import { getRepoInfo } from '../constants';
 import { bubbleSuccess } from './logger';

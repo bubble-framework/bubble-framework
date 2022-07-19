@@ -1,4 +1,4 @@
-import { wrapExecCmd } from '../util/wrapExecCmd';
+import wrapExecCmd from '../util/wrapExecCmd';
 import { getGitHubToken } from '../util/deleteApps';
 import { modifyConfig, modifyCredentials } from '../util/modifyAwsProfile';
 import { existingAwsUser } from '../util/deleteUser';

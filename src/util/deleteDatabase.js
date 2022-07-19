@@ -1,4 +1,4 @@
-import { wrapExecCmd } from './wrapExecCmd';
+import wrapExecCmd from './wrapExecCmd';
 
 import awsService from '../services/awsService';
 import { getRepoInfo } from '../constants';
