@@ -13,7 +13,7 @@ const {
 } = require("./paths");
 const { wrapExecCmd } = require("./wrapExecCmd");
 const { readConfigFile } = require("./fs");
-const { spawn } = require("child_process");
+const { spawn, spawnSync } = require("child_process");
 
 const emoji = require('node-emoji');
 // const {
@@ -21,14 +21,25 @@ const emoji = require('node-emoji');
 // } = require("./messages");
 
 const wrapSpawnCmd = async (cmd, args, path) => {
-  const childResult = spawn(cmd, args, {cwd: path});
+  const childResult = spawn(cmd, args, {cwd: path, stdio: 'ignore'});
 
-  childResult.stdout.on('data', data => {
-    return data;
-  });
-  childResult.stderr.on('data', data => {
-    return `stderr: ${data}`;
-  });
+  return
+  // childResult.stdout.on('data', data => {
+  //   console.log(`stdout: ${data}`);
+  // });
+  // childResult.stderr.on('data', data => {
+  //   childResult.stderr.pipe(process.stdout);
+  //   // echo no stderr 2>/dev/null
+  //   console.log(`stderr: ${data}`)
+  //   // return `stderr: ${data}`;
+  // });
+  // childResult.on('close', code => {
+  //   if (code === 0) {
+  //     console.log(`close: ${code}`);
+  //     return;
+  //   }
+    // return 'done';
+  // });
 };
 
 const addDashboardFolder = async () => {
@@ -37,8 +48,8 @@ const addDashboardFolder = async () => {
       bubbleGeneral("Getting your dashboard set up for easy viewing of all your bubbles...");
       const ghPAT = readConfigFile(configPath, "JSON")["github_access_token"];
 
-      const childResult = await wrapSpawnCmd('git', ['clone', `https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`], dataFolderPath);
-      // const childResult = spawn('git', ['clone', `https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`], {cwd: dataFolderPath});
+      // const childResult = await wrapSpawnCmd('git', ['clone', `https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`], dataFolderPath);
+      const childResult = spawnSync('git', ['clone', `https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`], {cwd: dataFolderPath});
       // childResult.stdout.on('data', data => {
       //   console.log(`stdout: ${data}`);
       // });
@@ -48,7 +59,9 @@ const addDashboardFolder = async () => {
       // childResult.on('close', code => {
       //   console.log(`child process exited with code ${code}`);
       // });
+      console.log(childResult);
 
+      // console.log(childResult);
       // await wrapExecCmd(`cd ${dataFolderPath} && git clone https://${ghPAT}@github.com/jjam-bubble/bubble-dashboard.git`);
       // await wrapExecCmd(`cd ${bubbleDashboardRootFolderPath} && rm -r .git`);
       bubbleGeneral(`Nearly done with your dashboard! Just installing a few things ${emoji.get('wrench')}...`);
