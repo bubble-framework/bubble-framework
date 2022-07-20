@@ -67,15 +67,15 @@ const dashboard = async () => {
       throw new Error();
     }
 
-    const { repo } = await getRepoInfo();
-
-    const activeRepos = readConfigFile(activeReposPath, 'JSON');
-    if (!isActiveRepo(activeRepos, repo)) {
-      bubbleErr(RUN_FROM_NONBUBBLE_MSG);
-      return;
-    }
-
     try {
+      const { repo } = await getRepoInfo();
+
+      const activeRepos = readConfigFile(activeReposPath, 'JSON');
+      if (!isActiveRepo(activeRepos, repo)) {
+        bubbleErr(RUN_FROM_NONBUBBLE_MSG);
+        return;
+      }
+
       bubbleGeneral(DASHBOARD_STARTUP_MSG);
       // const result = axios.get(`http://localhost:3000/${repo}`);
       // console.log(result.status);
@@ -169,7 +169,11 @@ const dashboard = async () => {
 
       }, 15000)
     } catch (err) {
-      bubbleErr(`Could not start up dashboard due to: ${err}!`);
+      if (err.toString().includes('Command failed: git config --get remote.origin.url')) {
+        bubbleErr(RUN_FROM_NONBUBBLE_MSG);
+      } else {
+        bubbleErr(`Could not start up dashboard due to: ${err}!`);
+      }
     }
   } catch {
     bubbleWarn(commandsOutOfOrder('dashboard'));
