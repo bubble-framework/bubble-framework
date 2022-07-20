@@ -63,6 +63,6 @@ export async function getGithubSecrets() {
     bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
 
-    process.exit();
+    return process.exit();
   }
 }
