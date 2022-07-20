@@ -47,4 +47,4 @@ const addDashboardFolder = async () => {
   }
 };
 
-export default { addDashboardFolder };
+export default addDashboardFolder;

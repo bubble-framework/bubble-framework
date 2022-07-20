@@ -57,7 +57,7 @@ import {
   duplicateBubbleInit,
 } from '../util/messages.js';
 
-const { addDashboardFolder } = require('../util/addDashboard').default;
+import addDashboardFolder from '../util/addDashboard.js';
 
 const init = async () => {
   try {
