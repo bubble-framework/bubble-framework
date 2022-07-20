@@ -23,6 +23,7 @@ import {
   gitPath,
 } from './paths.js';
 
+import { getLocalRepoDirectory } from '../services/githubService.js';
 import { bubbleSuccess, bubbleWarn } from './logger.js';
 
 import { GITHUB_PAT_MSG, REUSE_GH_PAT_MSG, FOLDER_ALREADY_DELETED } from './messages.js';
@@ -65,21 +66,21 @@ const readConfigFile = (path, output) => {
   const rawUserAppsConfig = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
 
   switch (output) {
-  case 'JSON':
-    return JSON.parse(rawUserAppsConfig);
-  default:
-    return rawUserAppsConfig;
+    case 'JSON':
+      return JSON.parse(rawUserAppsConfig);
+    default:
+      return rawUserAppsConfig;
   }
 };
 
 const writeToConfigFile = (config, path, output) => {
   switch (output) {
-  case 'JSON':
-    fs.writeFileSync(path, JSON.stringify(config));
-    break;
-  default:
-    fs.writeFileSync(path, config);
-    break;
+    case 'JSON':
+      fs.writeFileSync(path, JSON.stringify(config));
+      break;
+    default:
+      fs.writeFileSync(path, config);
+      break;
   }
 };
 
@@ -133,7 +134,7 @@ const deleteWorkflowFolder = async () => {
 };
 
 const inRootDirectory = async () => {
-  const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
+  const repoDirectory = await getLocalRepoDirectory();
   const currentDirectory = process.cwd();
 
   return repoDirectory.trim() === currentDirectory.trim();

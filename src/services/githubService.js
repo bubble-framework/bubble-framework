@@ -13,6 +13,8 @@ import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
+import wrapExecCmd from '../util/wrapExecCmd.js';
+
 export async function getPublicKey() {
   const { owner, repo } = await getRepoInfo();
 
@@ -65,4 +67,9 @@ export async function getGithubSecrets() {
 
     return process.exit();
   }
+}
+
+export const getLocalRepoDirectory = async () => {
+  const directory = await wrapExecCmd('git rev-parse --show-toplevel');
+  return directory;
 }

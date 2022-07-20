@@ -22,7 +22,7 @@ import {
 } from '../util/fs.js';
 
 import { getRepoInfo } from '../constants.js';
-import { getGithubSecrets } from '../services/githubService.js';
+import { getGithubSecrets, getLocalRepoDirectory } from '../services/githubService.js';
 
 import {
   bubbleErr,
@@ -65,7 +65,7 @@ const init = async () => {
       throw new Error(`${NOT_A_REPO_MSG}`);
     }
 
-    const repoDir = await wrapExecCmd('git rev-parse --show-toplevel');
+    const repoDir = await getLocalRepoDirectory();
     const inRoot = await inRootDirectory();
 
     if (!inRoot) {
