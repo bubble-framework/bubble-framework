@@ -46,11 +46,10 @@ jobs:
           aws cloudfront wait distribution-deployed --id ${{ inputs.distro }}
           aws cloudfront delete-distribution --id ${{ inputs.distro }} --if-match $(aws cloudfront get-distribution-config --id ${{ inputs.distro }} | jq .ETag -r)
 
-      - name: Delete Lambdas and Save Info for Future Teardown
+      - name: Delete Lambdas
         run: |
           FUNCTIONS=$(aws lambda list-functions --region us-east-1 --query "Functions[?starts_with(FunctionName, '${{ inputs.lambda }}')].FunctionName" --output text)
           for FUNCTION in $FUNCTIONS
             do
-              aws dynamodb put-item --table-name ${{ env.REPO_NAME }}-Lambdas --item '{ "LambdaPrefix": {"S": "${{ inputs.lambda }}" }}'
               aws lambda delete-function --function-name $FUNCTION || echo "Lambda function $FUNCTION could not be deleted" && continue
             done
