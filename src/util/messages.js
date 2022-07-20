@@ -28,6 +28,7 @@ const PREVIEWS_TABLE_DELETED_MSG = 'Looks like your bubble-tracking DynamoDB tab
 const NO_PREVIEW_DETAILS_RETRIEVED_MSG = 'Sorry, we couldn\'t get the details for your bubbles!';
 
 const DASHBOARD_STARTUP_MSG = 'Bubblin\' up your dashboard...\n';
+const RUN_FROM_NONBUBBLE_MSG = 'You can only run Bubble commands from repos that have had Bubble initialized and that have not yet been torn down!';
 
 const WAIT_TO_DESTROY_MSG = `We'll get started popping all active bubbles in your repo! Grab a bubble tea ${emoji.get('bubble_tea')} and chew on this bubble-related pun while you wait...\n`;
 const DESTROY_WORKFLOWS_COMPLETING_MSG = '\nAll Bubble-related files in your local project folder should now be deleted, and AWS resources provisioned for your bubbles are well on their way to being fully removed.\n';
@@ -147,6 +148,7 @@ export {
   PREVIEWS_TABLE_DELETED_MSG,
   NO_PREVIEW_DETAILS_RETRIEVED_MSG,
   DASHBOARD_STARTUP_MSG,
+  RUN_FROM_NONBUBBLE_MSG,
   WAIT_TO_DESTROY_MSG,
   DESTROY_WORKFLOWS_COMPLETING_MSG,
   WAIT_TO_TEARDOWN_MSG,
