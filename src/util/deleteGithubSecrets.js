@@ -28,6 +28,6 @@ const deleteGithubSecrets = async () => {
       bubbleErr(`Oops! Could not remove ${secretName}. Try re-running \`bubble teardown\` and double check your Github repository if you'd like to ensure all secrets prepended with \`BUBBLE\` have been removed.`);
     }
   });
-}
+};
 
 export default deleteGithubSecrets;

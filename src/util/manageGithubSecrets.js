@@ -9,9 +9,9 @@ const addGithubSecrets = async (secrets) => {
     const secretVal = secrets[secretName];
     await addGithubSecret(secretName, secretVal, publicKeyObj);
   }));
-}
+};
 
-const checkBubbleAwsSecretsAdded = async (currentSecrets) => {
+const checkBubbleAwsSecretsAdded = (currentSecrets) => {
   const secretNames = currentSecrets.data.secrets.map((secretObj) => secretObj.name);
   const bubbleSecretNames = [
     'BUBBLE_AWS_ACCESS_KEY_ID',
@@ -21,9 +21,9 @@ const checkBubbleAwsSecretsAdded = async (currentSecrets) => {
   return bubbleSecretNames.every((bubbleSecretName) => (
     secretNames.includes(bubbleSecretName)
   ));
-}
+};
 
-const checkNonBubbleAwsSecretsAdded = async (currentSecrets) => {
+const checkNonBubbleAwsSecretsAdded = (currentSecrets) => {
   const secretNames = currentSecrets.data.secrets.map((secretObj) => secretObj.name);
   const awsSecretNames = [
     'AWS_ACCESS_KEY_ID',
@@ -33,7 +33,7 @@ const checkNonBubbleAwsSecretsAdded = async (currentSecrets) => {
   return awsSecretNames.every((awsSecretName) => (
     secretNames.includes(awsSecretName)
   )) && !checkBubbleAwsSecretsAdded(currentSecrets);
-}
+};
 
 export {
   addGithubSecrets,

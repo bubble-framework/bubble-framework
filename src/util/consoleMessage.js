@@ -23,6 +23,6 @@ const outputTableFromArray = (input) => {
   });
 
   console.log(result);
-}
+};
 
 export default outputTableFromArray;
