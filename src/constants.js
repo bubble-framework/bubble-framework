@@ -4,7 +4,7 @@ import { configPath } from './util/paths.js';
 
 export async function getRepoInfo() {
   const nameWithOwner = await wrapExecCmd(
-    'git config --get remote.origin.url'
+    'git config --get remote.origin.url',
   );
 
   const parts = nameWithOwner.split('/');

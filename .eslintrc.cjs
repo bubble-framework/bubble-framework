@@ -36,6 +36,7 @@ module.exports = {
 		'arrow-spacing': [
 			'error', { 'before': true, 'after': true }
 		],
-		'no-console': 0
+		'no-console': 0,
+    'import/extensions': [1, {'js': "ignorePackages" }],
 	},
 };

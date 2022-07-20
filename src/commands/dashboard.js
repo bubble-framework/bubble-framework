@@ -1,21 +1,22 @@
-const {
+import childProcess from 'child_process';
+
+import {
   bubbleGeneral,
   bubbleErr,
   bubbleWarn,
-  bubbleConclusionSecondary
-} = require("../util/logger");
+  bubbleConclusionSecondary,
+} from '../util/logger.js';
 
-const { bubbleDashboardServerFolderPath } = require("../util/paths");
+import { bubbleDashboardServerFolderPath } from '../util/paths.js';
+import { existingAwsUser } from '../util/deleteUser.js';
 
-const {
+import {
   DASHBOARD_STARTUP_MSG,
   dashboardUrlMessage,
-  commandsOutOfOrder
-} = require("../util/messages");
+  commandsOutOfOrder,
+} from '../util/messages.js';
 
-const { spawn } = require("child_process");
-const { existingAwsUser } = require("../util/deleteUser");
-const { getRepoInfo } = require('../constants');
+import { getRepoInfo } from '../constants.js';
 
 const dashboard = async () => {
   try {
@@ -28,18 +29,23 @@ const dashboard = async () => {
 
       bubbleGeneral(DASHBOARD_STARTUP_MSG);
 
-      const childResult = spawn('npm', ['run', 'dashboard'], {cwd: bubbleDashboardServerFolderPath});
-      childResult.stdout.on('data', data => {
+      const childResult = childProcess.spawn(
+        'npm',
+        ['run', 'dashboard'],
+        { cwd: bubbleDashboardServerFolderPath },
+      );
+
+      childResult.stdout.on('data', (data) => {
         if (data.includes('You can now view bubble-dashboard in the browser')) {
           bubbleConclusionSecondary(dashboardUrlMessage(repo), 1);
         }
       });
     } catch (err) {
-      bubbleErr(`Could not start up dashboard due to: ${err}!`)
+      bubbleErr(`Could not start up dashboard due to: ${err}!`);
     }
   } catch {
     bubbleWarn(commandsOutOfOrder('dashboard'));
   }
-}
+};
 
-module.exports = { dashboard };
+export default dashboard;

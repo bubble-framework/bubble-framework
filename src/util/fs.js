@@ -139,33 +139,37 @@ const inRootDirectory = async () => {
   return repoDirectory.trim() === currentDirectory.trim();
 };
 
-const activeReposWithoutCurrent = (activeRepos, currentRepoName) => {
-  return activeRepos.filter(({ repoName }) => repoName !== currentRepoName);
-};
+const activeReposWithoutCurrent = (activeRepos, currentRepoName) => (
+  activeRepos.filter(({ repoName }) => repoName !== currentRepoName)
+);
 
 const addToActiveReposFile = (repoName) => {
   let activeRepos = [];
   if (fs.existsSync(activeReposPath)) {
-    activeRepos = readConfigFile(activeReposPath, "JSON");
+    activeRepos = readConfigFile(activeReposPath, 'JSON');
   }
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
   const currentPath = process.cwd();
-  activeRepos.push({ repoName, status: 'active', filePath: currentPath});
-  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  activeRepos.push({ repoName, status: 'active', filePath: currentPath });
+  writeToConfigFile(activeRepos, activeReposPath, 'JSON');
   bubbleSuccess(`saved in ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 
 const updateStatusToDestroyedInActiveReposFile = (currentRepoName) => {
-  let activeRepos = readConfigFile(activeReposPath, "JSON");
-  activeRepos = activeRepos.map(repo => repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo);
-  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  let activeRepos = readConfigFile(activeReposPath, 'JSON');
+
+  activeRepos = activeRepos.map((repo) => (
+    repo.repoName === currentRepoName ? { ...repo, status: 'destroyed' } : repo
+  ));
+
+  writeToConfigFile(activeRepos, activeReposPath, 'JSON');
   bubbleSuccess(`updated in ${activeReposPath}`, `Repo ${currentRepoName} status: `);
 };
 
 const removeFromActiveReposFile = (repoName) => {
-  let activeRepos = readConfigFile(activeReposPath, "JSON");
+  let activeRepos = readConfigFile(activeReposPath, 'JSON');
   activeRepos = activeReposWithoutCurrent(activeRepos, repoName);
-  writeToConfigFile(activeRepos, activeReposPath, "JSON");
+  writeToConfigFile(activeRepos, activeReposPath, 'JSON');
   bubbleSuccess(`removed from ${activeReposPath}`, `Repo name ${repoName}: `);
 };
 

@@ -12,8 +12,8 @@ import dashboard from '../src/commands/dashboard.js';
 
 const packageJson = JSON.parse(
   await fs.readFile(
-    new URL('../package.json', import.meta.url)
-  )
+    new URL('../package.json', import.meta.url),
+  ),
 );
 
 const { version } = packageJson;
@@ -55,11 +55,11 @@ program
   .description('display details about bubbles')
   .action(detail);
 
-//dashboard
+// dashboard
 program
-  .command("dashboard")
-  .alias("da")
-  .description("start dashboard to view bubbles for all active repos currently using Bubble")
+  .command('dashboard')
+  .alias('da')
+  .description('start dashboard to view bubbles for all active repos currently using Bubble')
   .action(dashboard);
 
 program.parse(process.argv);

@@ -57,7 +57,7 @@ import {
   duplicateBubbleInit,
 } from '../util/messages.js';
 
-const { addDashboardFolder } = require("../util/addDashboard");
+import addDashboardFolder from '../util/addDashboard.js';
 
 const init = async () => {
   try {
@@ -67,7 +67,7 @@ const init = async () => {
 
     const repoDir = await wrapExecCmd('git rev-parse --show-toplevel');
     const inRoot = await inRootDirectory();
-    
+
     if (!inRoot) {
       bubbleErr(`Please run this command in the root directory of your repo, which should be ${repoDir}`);
       return;

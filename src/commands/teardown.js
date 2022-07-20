@@ -5,7 +5,7 @@ import deleteDatabase from '../util/deleteDatabase.js';
 import { deleteUserAll, existingAwsUser } from '../util/deleteUser.js';
 import { getRepoInfo } from '../constants.js';
 
-import { removeFromActiveReposFile } from '../util/fs';
+import { removeFromActiveReposFile } from '../util/fs.js';
 
 import {
   bubbleErr,
