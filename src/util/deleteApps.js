@@ -8,7 +8,7 @@ import { configPath } from './paths.js';
 
 import { bubbleErr, bubbleWarn } from './logger.js';
 
-const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml.js';
+const DELETE_ALL_WORKFLOW_FILE = 'bubble_remove_all_preview_apps.yml';
 
 const getAppsDetails = async (repoName) => {
   const rawAppsDetails = await wrapExecCmd(awsService.getPreviewAppsDetails(repoName));

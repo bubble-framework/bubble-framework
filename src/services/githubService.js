@@ -55,7 +55,14 @@ export const getGithubSecrets = async () => {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
-  const secrets = await axios.get(url, GH_HEADER_OBJ);
 
-  return secrets;
+  try {
+    const secrets = await axios.get(url, GH_HEADER_OBJ);
+    return secrets;
+  } catch (e) {
+    bubbleErr(`Couldn't connect to Github due to: ${e}.\n`);
+    bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
+
+    return process.exit();
+  }
 }

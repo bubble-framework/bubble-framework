@@ -1,15 +1,13 @@
 import sodium from 'libsodium-wrappers';
 
-const { ready, crypto_box_seal } = sodium;
-
 const encrypt = async (publicKey, secretVal) => {
-  await ready;
+  await sodium.ready;
   const key = publicKey;
 
   const messageBytes = Buffer.from(secretVal);
   const keyBytes = Buffer.from(key, 'base64');
 
-  const encryptedBytes = crypto_box_seal(messageBytes, keyBytes);
+  const encryptedBytes = sodium.crypto_box_seal(messageBytes, keyBytes);
 
   const encrypted = Buffer.from(encryptedBytes).toString('base64');
   return encrypted;

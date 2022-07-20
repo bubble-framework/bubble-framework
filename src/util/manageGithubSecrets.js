@@ -5,8 +5,8 @@ const addGithubSecrets = async (secrets) => {
   const { data: publicKeyObj } = await getPublicKey();
   bubbleSuccess('retrieved', 'Public key:');
 
-  await Promise.all(Object.keys(secrets).forEach(async (secretName) => {
-    const secretVal = secrets.secretName;
+  await Promise.all(Object.keys(secrets).map(async (secretName) => {
+    const secretVal = secrets[secretName];
     await addGithubSecret(secretName, secretVal, publicKeyObj);
   }));
 }

@@ -3,6 +3,9 @@ import { existsSync } from 'fs';
 import deleteLambdas from '../util/deleteLambdas.js';
 import deleteDatabase from '../util/deleteDatabase.js';
 import { deleteUserAll, existingAwsUser } from '../util/deleteUser.js';
+import { getRepoInfo } from '../constants.js';
+
+import { removeFromActiveReposFile } from '../util/fs.js';
 
 import {
   bubbleErr,
@@ -29,6 +32,8 @@ const teardown = async () => {
       throw new Error();
     }
 
+    const { repo } = await getRepoInfo();
+
     bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
     const randomJoke = randomJokeSetup('TEARDOWN');
     bubbleSetup(waitForJokeSetup(randomJoke), 2);
@@ -46,6 +51,7 @@ const teardown = async () => {
     await deleteDatabase('Lambdas');
     await deleteUserAll();
 
+    removeFromActiveReposFile(repo);
     bubbleConclusionPrimary(TEARDOWN_DONE_MSG);
   } catch {
     bubbleWarn(commandsOutOfOrder('teardown'));

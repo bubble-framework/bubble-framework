@@ -3,6 +3,8 @@ import deleteLocalFiles from '../util/deleteLocalFiles.js';
 import wrapExecCmd from '../util/wrapExecCmd.js';
 import { existingAwsUser } from '../util/deleteUser.js';
 
+import { updateStatusToDestroyedInActiveReposFile } from '../util/fs.js';
+
 import {
   bubbleIntro,
   bubbleLoading,
@@ -48,6 +50,7 @@ const destroy = async () => {
     process.chdir(goToDirectory.trim());
 
     await deleteLocalFiles();
+    updateStatusToDestroyedInActiveReposFile(repo);
 
     bubbleConclusionPrimary(DESTROY_WORKFLOWS_COMPLETING_MSG, 2);
     bubbleConclusionSecondary(instructTeardown(repo), 2);
@@ -56,4 +59,4 @@ const destroy = async () => {
   }
 };
 
-export default { destroy };
+export default destroy;

@@ -2,12 +2,11 @@ import wrapExecCmd from './util/wrapExecCmd.js';
 import { readConfigFile } from './util/fs.js';
 import { configPath } from './util/paths.js';
 
-const getRepoInfo = async () => {
+export const getRepoInfo = async () => {
   const nameWithOwner = await wrapExecCmd(
-    'gh repo view --json nameWithOwner -q \'.nameWithOwner\'',
+    'git config --get remote.origin.url',
   );
-
-  // eslint-disable-next-line array-bracket-spacing
+  
   const [owner, repo] = nameWithOwner
     .trim()
     .split('/');
