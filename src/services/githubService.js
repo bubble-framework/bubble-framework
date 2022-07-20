@@ -31,7 +31,7 @@ export const getPublicKey = async () => {
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
     return process.exit();
   }
-}
+};
 
 export const addGithubSecret = async (secretName, secretVal, publicKeyObj) => {
   const { owner, repo } = await getRepoInfo();
@@ -49,7 +49,7 @@ export const addGithubSecret = async (secretName, secretVal, publicKeyObj) => {
 
   await axios.put(url, data, GH_HEADER_OBJ);
   bubbleSuccess('created', `${secretName} secret has been:`);
-}
+};
 
 export const getGithubSecrets = async () => {
   const { owner, repo } = await getRepoInfo();
@@ -65,4 +65,4 @@ export const getGithubSecrets = async () => {
 
     return process.exit();
   }
-}
+};
