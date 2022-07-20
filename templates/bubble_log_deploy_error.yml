@@ -10,6 +10,13 @@ jobs:
   comment-failure:
     runs-on: ubuntu-latest
     steps:
-      - uses: quipper/comment-failure-action@v0.1.1
+      - name: Notify about deployment failure
+        uses: hasura/comment-progress@v2.1.0
         with:
-          message: "Oops! Looks like an error occurred while your bubble was being deployed. Take a look at the logs in the link below, and try again!"
+          github-token: ${{ secrets.BUBBLE_GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          commit-sha: ${{ github.event.workflow_run.head_sha }}
+          id: deploy-preview
+          message: "Oops! Looks like an error occurred while your bubble was being deployed. Try again!"
+        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+      - uses: quipper/comment-failure-action@v0.1.1
