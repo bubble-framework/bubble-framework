@@ -13,7 +13,7 @@ import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
-export async function getPublicKey() {
+export const getPublicKey = async () => {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
@@ -33,7 +33,7 @@ export async function getPublicKey() {
   }
 }
 
-export async function addGithubSecret(secretName, secretVal, publicKeyObj) {
+export const addGithubSecret = async (secretName, secretVal, publicKeyObj) => {
   const { owner, repo } = await getRepoInfo();
 
   const { key: publicKey, key_id: keyId } = publicKeyObj;
@@ -51,7 +51,7 @@ export async function addGithubSecret(secretName, secretVal, publicKeyObj) {
   bubbleSuccess('created', `${secretName} secret has been:`);
 }
 
-export async function getGithubSecrets() {
+export const getGithubSecrets = async () => {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
