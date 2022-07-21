@@ -13,9 +13,8 @@ import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
-import wrapExecCmd from '../util/wrapExecCmd.js';
+export const getPublicKey = async () => {
 
-export async function getPublicKey() {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
@@ -33,9 +32,9 @@ export async function getPublicKey() {
     bubbleWarn(GITHUB_CONNECTION_FAILURE_MSG);
     return process.exit();
   }
-}
+};
 
-export async function addGithubSecret(secretName, secretVal, publicKeyObj) {
+export const addGithubSecret = async (secretName, secretVal, publicKeyObj) => {
   const { owner, repo } = await getRepoInfo();
 
   const { key: publicKey, key_id: keyId } = publicKeyObj;
@@ -51,9 +50,9 @@ export async function addGithubSecret(secretName, secretVal, publicKeyObj) {
 
   await axios.put(url, data, GH_HEADER_OBJ);
   bubbleSuccess('created', `${secretName} secret has been:`);
-}
+};
 
-export async function getGithubSecrets() {
+export const getGithubSecrets = async () => {
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets`;
@@ -67,9 +66,4 @@ export async function getGithubSecrets() {
 
     return process.exit();
   }
-}
-
-export const getLocalRepoDirectory = async () => {
-  const directory = await wrapExecCmd('git rev-parse --show-toplevel');
-  return directory;
-}
+};

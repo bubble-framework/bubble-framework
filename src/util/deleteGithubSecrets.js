@@ -4,7 +4,7 @@ import { bubbleGeneral, bubbleErr, bubbleSuccess } from './logger.js';
 import { getPublicKey } from '../services/githubService.js';
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
-async function deleteGithubSecrets() {
+const deleteGithubSecrets = async () => {
   await getPublicKey();
 
   bubbleSuccess('retrieved', 'Public key:');
@@ -28,6 +28,6 @@ async function deleteGithubSecrets() {
       bubbleErr(`Oops! Could not remove ${secretName}. Try re-running \`bubble teardown\` and double check your Github repository if you'd like to ensure all secrets prepended with \`BUBBLE\` have been removed.`);
     }
   });
-}
+};
 
 export default deleteGithubSecrets;

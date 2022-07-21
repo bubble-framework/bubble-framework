@@ -1,7 +1,7 @@
 import { Console } from 'console';
 import { Transform } from 'stream';
 
-function outputTableFromArray(input) {
+const outputTableFromArray = (input) => {
   const ts = new Transform({
     transform: (chunk, _enc, cb) => cb(null, chunk),
   });
@@ -23,6 +23,6 @@ function outputTableFromArray(input) {
   });
 
   console.log(result);
-}
+};
 
 export default outputTableFromArray;
