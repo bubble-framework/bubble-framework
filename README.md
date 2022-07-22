@@ -70,7 +70,7 @@ To learn more, please read our [case study](<link to case study>).
 ### Setting Up Your AWS IAM User
 
 - Every time you run `bubble init` in a new repo, we create IAM user credentials that have strict permissions in order to enable secure access to your provisioned bubble resources
-- This new IAM user will be named {repo-name}-bubble-user, and its credentials will be stored locally in `.aws/credentials` within your home directory, as well as encrypted within your GitHub repository secrets under `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY`
+- This new IAM user will be named `{repo-name}-bubble-user`, and its credentials will be stored locally in `.aws/credentials` within your home directory, as well as encrypted within your GitHub repository secrets under `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY`
 
 ### Setting Up Your GitHub Actions
 
