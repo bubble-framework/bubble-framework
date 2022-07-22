@@ -197,3 +197,18 @@ jobs:
           id: deploy-preview
           message: "Yay! \U0001F389 Your bubble was successfully deployed and is ready to be viewed in all its glory. Check out the link at ${{ steps.url.outputs.prop }}."
           recreate: true
+
+  upload_artifact:
+    name: Upload Artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: mkdir -p cache/
+      - run: echo "RUN_ID=${{ github.run_id }}" > cache/run_id.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: run_id
+          path: cache/run_id.txt
