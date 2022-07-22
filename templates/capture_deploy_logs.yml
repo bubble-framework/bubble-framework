@@ -189,7 +189,7 @@ jobs:
             const rawLog = await getLog();
             const rawLogLines = splitLogIntoNestedArray(rawLog);
             const logLines = parseSpecialCharacterLines(rawLogLines);
-            const logAsObjects = transformLogRowsToObjects(noDuplicateLines);
+            const logAsObjects = transformLogRowsToObjects(logLines);
             const logStringToSave = JSON.stringify(logAsObjects);
 
             // console.log('logStringToSave', logStringToSave);
