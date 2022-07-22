@@ -88,7 +88,7 @@ To learn more, please read our [case study](<link to case study>).
 
 ### Pushing Your `./github` folder to your GitHub Repository
 
-- As a last step, ensure the `./github` folder is pushed to your repository's `main` branch. The Bubble-generated GitHub Actions workflow files must be present on this branch for successful automation of the bubble process.
+- As a last step, please ensure the `./github` folder is pushed to your repository's `main` branch. The Bubble-generated GitHub Actions workflow files must be present on this branch for successful automation of the bubble process
 
 # Workflow
 
