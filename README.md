@@ -69,6 +69,8 @@ module.exports = {
 
 - Run the command `npm i -g jjam-bubble` to globally install Bubble on your machine
 
+Lambda explanation
+
 # Integrate Bubble with your application
 
 - Navigate to the root of your project directory
@@ -134,7 +136,7 @@ _See code: [src/commands/init.js](https://github.com/jjam-bubble/bubble-framewor
 
 - Displays bubbles for all active Pull Requests in your repository in a table format
 - Includes the commit id, commit message, creation timestamp, and bubble URL for each Pull Request
-- You may open the URL for each bubble in your browser by Cmd/Ctrl + double-clicking
+- You may open the URL for each bubble in your browser by `Cmd/Ctrl` + double-clicking
 
 _See code: [src/commands/detail.js](https://github.com/jjam-bubble/bubble-framework/blob/main/src/commands/detail.js)_
 
@@ -154,7 +156,7 @@ _See code: [src/commands/list.js](https://github.com/jjam-bubble/bubble-framewor
 - If the bubbles in your repo are still active, you may click the Destroy App button in order to pop all bubbles in the repo. This effectively provides the same functionality as directly executing `bubble destroy` from the terminal
 - If you have already destroyed your repo, you will have the option to Teardown App from the dashboard. This effectively provides the same functionality as directly executing `bubble teardown` from the terminal
 - There will also be a sidebar where you may view all active Bubble-integrated repos, to which you can navigate in order to view and manage those projects' bubbles
-- Press Ctrl + C in your terminal to exit out of the dashboard
+- Press `Ctrl + C` in your terminal to exit out of the dashboard
 
 _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-framework/blob/main/src/commands/dashboard.js)_
 
@@ -163,7 +165,7 @@ _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-fra
 - Tears down resources for all bubbles across your project repository
 - This command will remove:
   - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed a day or two after `bubble destroy` in order to remove any remaining Lambdas
-  - `{repo-name}-PreviewApps DynamoDB table that was used to track all the bubbles in your repo
+  - `{repo-name}-PreviewApps DynamoDB` table that was used to track all the bubbles in your repo
   - Bubble-related workflow files in your local project directory's `.github` folder
   - You may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository
 
@@ -175,7 +177,7 @@ _See code: [src/commands/destroy.js](https://github.com/jjam-bubble/bubble-frame
 - This command will remove:
 
   - Remaining Lambda functions that were not able to be deleted during `bubble destroy`. During this step, you may receive a message informing you that some Lambdas are still not ready to be deleted yet. If that is the case, the following pieces will not yet be removed, and you should wait at least a few hours before trying `bubble teardown` again
-  - `{repo-name}-Lambdas DynamoDB table that was used to track all Lambdas for every bubble in your repo
+  - `{repo-name}-Lambdas DynamoDB` table that was used to track all Lambdas for every bubble in your repo
   - Bubble-created AWS IAM user
   - GitHub repository secrets `BUBBLE_GITHUB_TOKEN`, `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY` that were saved by Bubble during the initialization process
   - Project-related information from your local machine's `.bubble` datastore
