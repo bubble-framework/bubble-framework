@@ -151,6 +151,29 @@ jobs:
               }, []);
             };
 
+            const parseSpecialCharacterLines = (rows) => {
+              const LOG_DETAIL_INDEX = 3;
+              const SPECIAL_CHAR_TO_REMOVE = '[NaNA[G[J';
+              const SPECIAL_CHAR_TO_ADJUST_LINE = '›';
+              const ADJUST_LINE_ENDING = 'ing';
+              const ADJUST_LINE_ENDING_LENGTH_OF_ENDING = ADJUST_LINE_ENDING.length;
+
+              return rows.reduce((processed, row, index) => {
+                if (row[LOG_DETAIL_INDEX].includes(SPECIAL_CHAR_TO_ADJUST_LINE)) {
+                  const indexToEndLine = row[LOG_DETAIL_INDEX].lastIndexOf(ADJUST_LINE_ENDING) + ADJUST_LINE_ENDING_LENGTH_OF_ENDING;
+                  const adjustedLine = row;
+
+                  adjustedLine[LOG_DETAIL_INDEX] = adjustedLine[LOG_DETAIL_INDEX].slice(0, indexToEndLine);
+
+                  processed.push(adjustedLine);
+                } else if (!row[LOG_DETAIL_INDEX].includes(SPECIAL_CHAR_TO_REMOVE)) { //&& row[LOG_DETAIL_INDEX].length > 0) {
+                  processed.push(row);
+                }
+
+                return processed;
+              }, []);
+            };
+
             const transformLogRowsToObjects = (rows) => {
               return rows.map((row, index) => {
                 const PROPERTY_NAMES = ['jobName', 'stepName', 'timestamp', 'logDetail'];
@@ -164,8 +187,8 @@ jobs:
             };
 
             const rawLog = await getLog();
-            const logLines = splitLogIntoNestedArray(rawLog);
-            const noDuplicateLines = removeDuplicateRowsIgnoringTimestamp(logLines);
+            const rawLogLines = splitLogIntoNestedArray(rawLog);
+            const logLines = parseSpecialCharacterLines(rawLogLines);
             const logAsObjects = transformLogRowsToObjects(noDuplicateLines);
 
             console.log('logAsObjects', logAsObjects);
