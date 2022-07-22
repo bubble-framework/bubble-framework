@@ -1,0 +1,171 @@
+name: Capture Bubble Deploy logs
+
+on:
+  workflow_dispatch:
+
+  workflow_run:
+    workflows: [Logging testing, Bubble--Make Preview App]
+    types:
+      - completed
+
+jobs:
+  get_log:
+    name: Retrieve log
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.BUBBLE_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.BUBBLE_AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+      REPO_NAME: ${{ github.event.repository.name }}
+
+    steps:
+      - name: Download Saved Run ID Artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: bubble_deploy_preview_app.yml
+          name: run_id
+
+      - name: Extract Run ID from Artifact
+        uses: actions/github-script@v6
+        id: run_id
+
+        with:
+          script: |
+            let text;
+
+            try {
+              const fs = require('node:fs/promises');
+
+              const runIdFile = await fs.open('./run_id.txt');
+              text = await runIdFile.readFile({encoding: 'utf8'});
+            } catch (error) {
+              console.log('Unable to retrieve run_id from file—', error);
+            }
+
+            const runId = text.slice(text.indexOf('=') + 1);
+            console.log('id alone is', runId);
+
+            core.setOutput('id', runId);
+
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Process Log for Previous Workflow Run
+        uses: actions/github-script@v6
+        id: get_log
+
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        with:
+          script: |
+            const getLog = async () => {
+              const runId = ${{ steps.run_id.outputs.id }}
+
+              let logOutput = '';
+              let error = '';
+
+              const options = {};
+              options.listeners = {};
+              options.listeners.stdout = (data) => {
+                  logOutput += data.toString();
+              };
+              options.listeners.stderr = (data) => {
+                  error += data.toString();
+              };
+
+              await exec.exec(`gh run view ${runId} --log`, [], options);
+
+              return logOutput;
+            };
+
+            const splitLogIntoNestedArray = (log) => {
+              const INDEX_WITH_TIMESTAMP = 2;
+
+              const removeEmptyStrings = (rows) => {
+                return rows.reduce((nonEmptyRows, row) => {
+                  if (row.length > 0) {
+                    nonEmptyRows.push(row);
+                  }
+
+                  return nonEmptyRows;
+                }, []);
+              };
+
+              const splitThreeColumns = (row) => {
+                const firstTabIndex = row.indexOf('\t');
+                const secondTabIndex = row.indexOf('\t', firstTabIndex + 1);
+
+                return [row.slice(0, firstTabIndex), row.slice(firstTabIndex + 1, secondTabIndex), row.slice(secondTabIndex + 1)];
+              };
+
+              const rawRows = log.split('\n');
+              const rows = removeEmptyStrings(rawRows);
+
+              const splitRows = rows.map((row) => {
+                const components = splitThreeColumns(row);
+
+                return components.reduce((newRow, component, index) => {
+                  if (index < INDEX_WITH_TIMESTAMP) {
+                    newRow.push(component);
+                  } else {
+                    const afterTimestamp = component.indexOf('Z') + 1;
+
+                    const [timestamp, logDetail] = [component.slice(0, afterTimestamp), component.slice(afterTimestamp + 1)];
+
+                    const adjustedLogDetail = (logDetail.slice(0, 2) === '##') ? logDetail.slice(2) : logDetail;
+
+                    newRow.push(timestamp, adjustedLogDetail);
+                  }
+
+                  return newRow;
+                }, []);
+              });
+
+              return splitRows;
+            };
+
+            const removeDuplicateRowsIgnoringTimestamp = (logArray) => {
+              const differentFromNextRow = (firstRow, secondRow) => {
+                const TIMESTAMP_INDEX = 2;
+
+                if (firstRow.length !== secondRow.length) return true;
+
+                for (let i = 0; i < firstRow.length; i++) {
+                  if (i === TIMESTAMP_INDEX) continue;
+
+                  if (firstRow[i] !== secondRow[i]) return true;
+                }
+
+                return false;
+              };
+
+              return logArray.reduce((uniqueRows, row, index) => {
+                if (index === logArray.length - 1 || differentFromNextRow(row, logArray[index + 1])) {
+                  uniqueRows.push(row);
+                }
+
+                return uniqueRows;
+              }, []);
+            };
+
+            const transformLogRowsToObjects = (rows) => {
+              return rows.map((row, index) => {
+                const PROPERTY_NAMES = ['jobName', 'stepName', 'timestamp', 'logDetail'];
+
+                return row.reduce((rowObj, logComponent, index) => {
+                  rowObj[PROPERTY_NAMES[index]] = logComponent;
+
+                  return rowObj;
+                }, {});
+              });
+            };
+
+            const rawLog = await getLog();
+            const logLines = splitLogIntoNestedArray(rawLog);
+            const noDuplicateLines = removeDuplicateRowsIgnoringTimestamp(logLines);
+            const logAsObjects = transformLogRowsToObjects(noDuplicateLines);
+
+            console.log('logAsObjects', logAsObjects);
