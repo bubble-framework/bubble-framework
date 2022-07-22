@@ -69,8 +69,6 @@ module.exports = {
 
 - Run the command `npm i -g jjam-bubble` to globally install Bubble on your machine
 
-Lambda explanation
-
 # Integrate Bubble with your application
 
 - Navigate to the root of your project directory
@@ -110,10 +108,11 @@ Lambda explanation
 
 # Workflow
 
-- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble-generated workflow will blow a new bubble for you. The first time this occurs, a `${repo-name}-Lambdas` DynamoDB table will be provisioned with your Bubble-created IAM credentials in order to keep track of Lambdas associated with each bubble. This will be useful when you initiate teardown of your bubbles in the future.
+- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble-generated workflow will blow a new bubble for you. Each bubble is provisioned with its own set of AWS resources using your Bubble-created IAM credentials. This includes an S3 bucket to store your application's static assets, Lambda@Edge functions for handling server-side rendered routes, and a CloudFront distribution to serve up the assets from S3 and trigger the Lambdas
+- The first time we blow a new bubble for your project, a `${repo-name}-Lambdas` DynamoDB table will be provisioned with your Bubble-created IAM credentials in order to keep track of Lambdas associated with each bubble. This will be useful when you initiate teardown of your bubbles in the future
 - You may view the deployment progress within each Pull Request in your GitHub repository. The shareable URL for your new bubble will be displayed once ready
 - You may also view the build logs of bubble deployment and removal workflows in the Actions tab of your GitHub repository.
-- When a Pull Request is closed or merged, Bubble will automatically pop all bubbles associated with that particular Pull Request. You may also manually pop all bubbles across your entire repository with the `bubble destroy` CLI command or through the dashboard.
+- When a Pull Request is closed or merged, Bubble will automatically pop all bubbles associated with that particular Pull Request. You may also manually pop all bubbles across your entire repository with the `bubble destroy` CLI command or through the dashboard
 
 # Commands
 
@@ -165,7 +164,7 @@ _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-fra
 - Tears down resources for all bubbles across your project repository
 - This command will remove:
   - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed a day or two after `bubble destroy` in order to remove any remaining Lambdas
-  - `{repo-name}-PreviewApps DynamoDB` table that was used to track all the bubbles in your repo
+  - `{repo-name}-PreviewApps` DynamoDB table that was used to track all the bubbles in your repo
   - Bubble-related workflow files in your local project directory's `.github` folder
   - You may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository
 
@@ -177,7 +176,7 @@ _See code: [src/commands/destroy.js](https://github.com/jjam-bubble/bubble-frame
 - This command will remove:
 
   - Remaining Lambda functions that were not able to be deleted during `bubble destroy`. During this step, you may receive a message informing you that some Lambdas are still not ready to be deleted yet. If that is the case, the following pieces will not yet be removed, and you should wait at least a few hours before trying `bubble teardown` again
-  - `{repo-name}-Lambdas DynamoDB` table that was used to track all Lambdas for every bubble in your repo
+  - `{repo-name}-Lambdas` DynamoDB table that was used to track all Lambdas for every bubble in your repo
   - Bubble-created AWS IAM user
   - GitHub repository secrets `BUBBLE_GITHUB_TOKEN`, `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY` that were saved by Bubble during the initialization process
   - Project-related information from your local machine's `.bubble` datastore
