@@ -72,4 +72,4 @@ export const getGithubSecrets = async () => {
 export const getLocalRepoDirectory = async () => {
   const directory = await wrapExecCmd('git rev-parse --show-toplevel');
   return directory;
-} 
+};
