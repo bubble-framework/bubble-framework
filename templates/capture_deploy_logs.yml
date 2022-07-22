@@ -189,7 +189,8 @@ jobs:
             const rawLog = await getLog();
             const rawLogLines = splitLogIntoNestedArray(rawLog);
             const logLines = parseSpecialCharacterLines(rawLogLines);
-            const logAsObjects = transformLogRowsToObjects(logLines);
+            const noDuplicateLines = removeDuplicateRowsIgnoringTimestamp(logLines);
+            const logAsObjects = transformLogRowsToObjects(noDuplicateLines);
             const logStringToSave = JSON.stringify(logAsObjects);
 
             // console.log('logStringToSave', logStringToSave);
