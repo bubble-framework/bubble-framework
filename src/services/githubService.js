@@ -2,6 +2,8 @@ import axios from 'axios';
 
 import encrypt from '../util/encrypt.js';
 
+import wrapExecCmd from '../util/wrapExecCmd.js';
+
 import {
   bubbleErr,
   bubbleSuccess,
@@ -66,3 +68,8 @@ export const getGithubSecrets = async () => {
     return process.exit();
   }
 };
+
+export const getLocalRepoDirectory = async () => {
+  const directory = await wrapExecCmd('git rev-parse --show-toplevel');
+  return directory;
+} 
