@@ -36,7 +36,6 @@ export const getGitHubToken = () => {
 
 const triggerRemoteRepoAppsTeardown = async ({ owner, repo, pullRequestIds }) => {
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${DELETE_ALL_WORKFLOW_FILE}/dispatches`;
-  const token = getGitHubToken();
 
   const body = {
     ref: 'main',

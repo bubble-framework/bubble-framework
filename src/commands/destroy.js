@@ -1,6 +1,5 @@
 import { deleteApps } from '../util/deleteApps.js';
 import deleteLocalFiles from '../util/deleteLocalFiles.js';
-import wrapExecCmd from '../util/wrapExecCmd.js';
 import { existingAwsUser } from '../util/deleteUser.js';
 
 import { updateStatusToDestroyedInActiveReposFile } from '../util/fs.js';

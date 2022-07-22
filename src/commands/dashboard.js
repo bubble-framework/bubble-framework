@@ -22,9 +22,9 @@ import {
 
 import { getRepoInfo } from '../constants.js';
 
-const isActiveRepo = (activeRepos, currentRepoName) => {
-  return activeRepos.some(({repoName}) => repoName === currentRepoName);
-}
+const isActiveRepo = (activeRepos, currentRepoName) => (
+  activeRepos.some(({ repoName }) => repoName === currentRepoName)
+);
 
 const dashboard = async () => {
   try {
@@ -61,7 +61,7 @@ const dashboard = async () => {
       setTimeout(async () => {
         if (!startedUp) {
           try {
-            const { status } = await axios.get(`http://localhost:3000`);
+            const { status } = await axios.get('http://localhost:3000');
 
             if (status === 200) {
               bubbleConclusionSecondary(dashboardUrlMessage(repo), 1);

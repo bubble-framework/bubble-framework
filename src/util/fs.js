@@ -66,21 +66,21 @@ const readConfigFile = (path, output) => {
   const rawUserAppsConfig = fs.readFileSync(path, { encoding: 'utf8', flag: 'r' });
 
   switch (output) {
-    case 'JSON':
-      return JSON.parse(rawUserAppsConfig);
-    default:
-      return rawUserAppsConfig;
+  case 'JSON':
+    return JSON.parse(rawUserAppsConfig);
+  default:
+    return rawUserAppsConfig;
   }
 };
 
 const writeToConfigFile = (config, path, output) => {
   switch (output) {
-    case 'JSON':
-      fs.writeFileSync(path, JSON.stringify(config));
-      break;
-    default:
-      fs.writeFileSync(path, config);
-      break;
+  case 'JSON':
+    fs.writeFileSync(path, JSON.stringify(config));
+    break;
+  default:
+    fs.writeFileSync(path, config);
+    break;
   }
 };
 

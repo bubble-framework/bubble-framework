@@ -14,7 +14,6 @@ import { GITHUB_CONNECTION_FAILURE_MSG } from '../util/messages.js';
 import { getRepoInfo, GH_HEADER_OBJ } from '../constants.js';
 
 export const getPublicKey = async () => {
-
   const { owner, repo } = await getRepoInfo();
 
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`;
