@@ -1,6 +1,5 @@
 import { deleteApps } from '../util/deleteApps.js';
 import deleteLocalFiles from '../util/deleteLocalFiles.js';
-import wrapExecCmd from '../util/wrapExecCmd.js';
 import { existingAwsUser } from '../util/deleteUser.js';
 
 import { updateStatusToDestroyedInActiveReposFile } from '../util/fs.js';
@@ -24,7 +23,7 @@ import {
   instructTeardown,
 } from '../util/messages.js';
 
-import { getPublicKey } from '../services/githubService.js';
+import { getPublicKey, getLocalRepoDirectory } from '../services/githubService.js';
 import { getRepoInfo } from '../constants.js';
 
 const destroy = async () => {
@@ -46,7 +45,7 @@ const destroy = async () => {
     spinner.succeed();
     bubblePunchline(waitForJokePunchline(randomJoke, 'DESTROY'), 2);
 
-    const goToDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
+    const goToDirectory = await getLocalRepoDirectory();
     process.chdir(goToDirectory.trim());
 
     await deleteLocalFiles();

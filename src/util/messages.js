@@ -28,7 +28,7 @@ const PREVIEWS_TABLE_DELETED_MSG = 'Looks like your bubble-tracking DynamoDB tab
 const NO_PREVIEW_DETAILS_RETRIEVED_MSG = 'Sorry, we couldn\'t get the details for your bubbles!';
 
 const DASHBOARD_STARTUP_MSG = 'Bubblin\' up your dashboard...\n';
-const DASHBOARD_HOLDUP_MSG = "Looks like the dashboard's taking a while to start up. Bubbles sure can be pesky sometimes! Try re-running the command!";
+const DASHBOARD_HOLDUP_MSG = 'Looks like the dashboard\'s taking a while to start up. Bubbles sure can be pesky sometimes! Try re-running the command!';
 const RUN_FROM_NONBUBBLE_MSG = 'You can only run Bubble commands from repos that have had Bubble initialized and that have not yet been torn down!';
 
 const WAIT_TO_DESTROY_MSG = `We'll get started popping all active bubbles in your repo! Grab a bubble tea ${emoji.get('bubble_tea')} and chew on this bubble-related pun while you wait...\n`;

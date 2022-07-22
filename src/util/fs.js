@@ -23,6 +23,7 @@ import {
   gitPath,
 } from './paths.js';
 
+import { getLocalRepoDirectory } from '../services/githubService.js';
 import { bubbleSuccess, bubbleWarn } from './logger.js';
 
 import { GITHUB_PAT_MSG, REUSE_GH_PAT_MSG, FOLDER_ALREADY_DELETED } from './messages.js';
@@ -133,7 +134,7 @@ const deleteWorkflowFolder = async () => {
 };
 
 const inRootDirectory = async () => {
-  const repoDirectory = await wrapExecCmd('git rev-parse --show-toplevel');
+  const repoDirectory = await getLocalRepoDirectory();
   const currentDirectory = process.cwd();
 
   return repoDirectory.trim() === currentDirectory.trim();

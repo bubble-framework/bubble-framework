@@ -39,4 +39,12 @@ module.exports = {
 		'no-console': 0,
     'import/extensions': [1, {'js': "ignorePackages" }],
 	},
+  "overrides": [
+    {
+      "files": ["*"],
+      "rules": {
+        "import/no-cycle": "off",
+      }
+    }
+  ]
 };
