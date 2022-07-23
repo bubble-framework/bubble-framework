@@ -113,13 +113,13 @@ module.exports = {
 - You may view the deployment progress within each Pull Request in your GitHub repository
 
 <p align="center">
-  <img src="images/bubble_deploy_wait_gh_message.png" width="800" height="115" />
+  <img src="images/bubble_deploy_wait_gh_message.png" width="800" height="106" />
 </p>
 
 - The shareable URL for your new bubble will be displayed once ready
 
 <p align="center">
-  <img src="images/bubble_deploy_success_gh_message.png" width="800" height="115" />
+  <img src="images/bubble_deploy_success_gh_message.png" width="800" height="124" />
 </p>
 
 - You may also view the build logs of bubble deployment and removal workflows in the Actions tab of your GitHub repository
