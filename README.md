@@ -21,7 +21,7 @@ To learn more, please read our [case study](<link to case study>).
 - [Integrate Bubble With Your Application](#integrate-bubble-with-your-application)
 - [Workflow](#workflow)
 - [Commands](#commands)
-- [Troubleshooting](#faqs-and-troubleshooting)
+- [FAQs and Troubleshooting](#faqs-and-troubleshooting)
 
 # Prerequisites
 
@@ -42,7 +42,7 @@ To learn more, please read our [case study](<link to case study>).
 
 ##### _For Example:_
 
-- If your app requires connection to a database, the connection must be made via external API. In this case, you may likely wish to store your URI connection string and database name as environment variables for more security
+- If your app requires connection to a database, the connection must be made via external API. In this situation, you may likely wish to store your URI connection string and database name as environment variables for greater security
 - An example of what the `next.config.js` file in your application may look like:
 
 ```
@@ -54,15 +54,15 @@ module.exports = {
 };
 ```
 
-- You would thus navigate to your GitHub repository secrets, and save one secret named `DB_URI` and another named `DB_NAME` with the appropriate values. These secrets will be provided to a `.env` file when your preview apps are being built and deployed.
+- Navigate to your GitHub repository secrets, and save one secret named `DB_URI` and another named `DB_NAME` with the appropriate values. These secrets will be provided to a `.env` file when your preview apps are being built and deployed
 
 # Bubble Lingo
 
 - Before we get started, a quick rundown on Bubble lingo you will encounter while using our framework:
-  - Bubble = a preview app
+  - Bubble = a single preview app
   - Bubble Bath = all preview apps across your repo
-  - Blowing a Bubble = deploying a preview app
-  - Popping a Bubble = tearing down a preview app
+  - Blowing a Bubble = deploying a single preview app
+  - Popping a Bubble = tearing down a single preview app
 - And that's it! You're all set to start filling up your bubble bath! :wink:
 
 # Installation
@@ -108,18 +108,18 @@ module.exports = {
 
 # Workflow
 
-- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble-generated workflow will blow a new bubble for you. Each bubble is provisioned with its own set of AWS resources using your Bubble-created IAM credentials. This includes an S3 bucket to store your application's static assets, Lambda@Edge functions for handling server-side rendered routes, and a CloudFront distribution to serve up the assets from S3 and trigger the Lambdas
-- The first time we blow a new bubble for your project, a `${repo-name}-Lambdas` DynamoDB table will be provisioned with your Bubble-created IAM credentials in order to keep track of Lambdas associated with each bubble. This will be useful when you initiate teardown of your bubbles in the future
+- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble workflow will blow a new bubble for you. Each bubble is provisioned with its own set of AWS resources using your Bubble-created IAM user credentials. This includes an S3 bucket to store your application's static assets, Lambda@Edge functions for handling server-side rendered routes, and a CloudFront distribution to serve up the assets from S3 and trigger the Lambdas
+- The first time we blow a new bubble for your project, a `{repo-name}-Lambdas` DynamoDB table will be provisioned with your Bubble-created IAM credentials in order to keep track of Lambdas associated with each bubble. This will be used when initiating teardown of your bubbles in the future
 - You may view the deployment progress within each Pull Request in your GitHub repository
 
 <p align="center">
-  <img src="images/bubble_deploy_wait_gh_message.png" width="600" height="90" />
+  <img src="images/bubble_deploy_wait_gh_message.png" width="800" height="115" />
 </p>
 
 - The shareable URL for your new bubble will be displayed once ready
 
 <p align="center">
-  <img src="images/bubble_deploy_success_gh_message.png" width="600" height="90" />
+  <img src="images/bubble_deploy_success_gh_message.png" width="800" height="115" />
 </p>
 
 - You may also view the build logs of bubble deployment and removal workflows in the Actions tab of your GitHub repository
@@ -161,8 +161,8 @@ _See code: [src/commands/list.js](https://github.com/jjam-bubble/bubble-framewor
 ### `bubble dashboard`
 
 - Provides a user-friendly interface for most of the functionality of the CLI tool, and allows you to visually manage all your bubbles in one place
-- Upon running this command, you will be provided with a URL at which you can view the dashboard locally (`http://localhost:3000/${repo-name}`). `Cmd/Ctrl` + double-click on the link to open up in the browser
-- You will automatically be taken to a page displaying the commit id, commit message, creation timestamp, and link to all bubbles associated with the repo from which you've run this command. You will also be able to view the build logs from the deployment of each bubble.
+- Upon running this command, you will be provided with a URL at which you can view the dashboard locally (`http://localhost:3000/{repo-name}`). `Cmd/Ctrl` + double-click on the link to open up in the browser
+- You will automatically be taken to a page displaying the commit id, commit message, creation timestamp, and link to all bubbles associated with the repo from which you've run this command. You will also be able to view the build logs from the deployment of each bubble
 - If the bubbles in your repo are still active, you may click the Destroy App button in order to pop all bubbles in the repo. This effectively provides the same functionality as directly executing `bubble destroy` from the terminal
 - If you have already destroyed your repo, you will have the option to Teardown App from the dashboard. This effectively provides the same functionality as directly executing `bubble teardown` from the terminal
 - There will also be a sidebar where you may view all active Bubble-integrated repos, to which you can navigate in order to view and manage those projects' bubbles
@@ -174,10 +174,10 @@ _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-fra
 
 - Tears down resources for all bubbles across your project repository
 - This command will remove:
-  - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed a day or two after `bubble destroy` in order to remove any remaining Lambdas
+  - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda@Edge functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed a day or two after `bubble destroy` in order to remove any remaining Lambdas
   - `{repo-name}-PreviewApps` DynamoDB table that was used to track all the bubbles in your repo
   - Bubble-related workflow files in your local project directory's `.github` folder
-  - You may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository
+- Once this process is complete, you may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository
 
 _See code: [src/commands/destroy.js](https://github.com/jjam-bubble/bubble-framework/blob/main/src/commands/destroy.js)_
 
@@ -185,8 +185,7 @@ _See code: [src/commands/destroy.js](https://github.com/jjam-bubble/bubble-frame
 
 - Tears down remaining Lambdas associated with bubbles, and any final traces of Bubble in your project repository
 - This command will remove:
-
-  - Remaining Lambda functions that were not able to be deleted during `bubble destroy`. During this step, you may receive a message informing you that some Lambdas are still not ready to be deleted yet. If that is the case, the following pieces will not yet be removed, and you should wait at least a few hours before trying `bubble teardown` again
+  - Remaining Lambda functions that were not able to be deleted during `bubble destroy`. During this step, you may receive a message informing you that some Lambdas are still not ready to be deleted yet. If that is the case, the following items will not yet be removed, and you should wait at least a few hours before trying `bubble teardown` again
   - `{repo-name}-Lambdas` DynamoDB table that was used to track all Lambdas for every bubble in your repo
   - Bubble-created AWS IAM user
   - GitHub repository secrets `BUBBLE_GITHUB_TOKEN`, `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY` that were saved by Bubble during the initialization process
@@ -198,12 +197,12 @@ _See code: [src/commands/teardown.js](https://github.com/jjam-bubble/bubble-fram
 
 ### I want to change my GitHub Personal Access Token -- will this affect any of my bubbles?
 
-- Go right ahead! If you delete your old token entirely, however, just make sure to update the value of the `BUBBLE_GITHUB_TOKEN` saved in GitHub secrets for any still-active Bubble-integrated repositories. The ideal time to update your token would be the next time you run `bubble init` on a new project when prompted for the token you'd like to use. Otherwise, you should manually update the token stored in `.bubble/config` in your local home directory.
+- Go right ahead! If you delete your old token entirely, however, please make sure to update the value of the `BUBBLE_GITHUB_TOKEN` saved in GitHub secrets for any still-active Bubble-integrated repositories. The ideal time to update your token would be the next time you run `bubble init` on a new project when prompted for the token you'd like to use. Otherwise, you should manually update the token value stored in `.bubble/config` in your local home directory.
 
 ### I quit `bubble init` in the middle of initializing Bubble into my project repository -- how can I re-start from scratch?
 
 - `bubble init` should only be run once for every new project you'd like to integrate Bubble into. In order to ensure we are able to properly initialize Bubble in your repo before you re-run `bubble init`, perform a few checks to start from a clean Bubble-free slate:
-  - Delete the Bubble-created IAM user `{repo-name}-bubble-user` from your AWS console
+  - Delete the Bubble-created IAM user `{repo-name}-bubble-user` from your AWS management console
   - Delete the `BUBBLE_GITHUB_TOKEN`, `BUBBLE_AWS_ACCESS_KEY_ID` and `BUBBLE_AWS_SECRET_ACCESS_KEY` GitHub repository secrets
   - Delete any lines related to the project in the `.aws/config` and `.aws/credentials` files
   - Delete the `.github` folder in your root project directory
