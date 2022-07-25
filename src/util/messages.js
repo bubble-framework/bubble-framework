@@ -38,7 +38,7 @@ const FOLDER_ALREADY_DELETED = `Looks like your local Bubble-related workflow fi
 const WAIT_TO_TEARDOWN_MSG = `Let's get this bubble bath drained! ${emoji.get('bathtub')} Hope you haven't gotten tired of our jokes yet...\n`;
 const DELETING_BUBBLE_USER_MSG = 'Deleting the Bubble-created IAM user and its Gihub secrets...';
 const NONEXISTENT_BUBBLE_AWS_USER_MSG = 'Looks like no Bubble-created IAM user exists for this repo!';
-const LAMBDA_TEARDOWN_ERROR_MSG = 'We\'ve got a real sudsy bubble bath on our hands! Unfortunately, some Lambdas are not ready to be deleted yet. Please wait at least a few hours before trying again!';
+const LAMBDA_TEARDOWN_ERROR_MSG = 'We\'ve got a real sudsy bubble bath on our hands! Unfortunately, some Lambdas are not ready to be deleted yet. Please wait a few more hours before trying again!';
 const TEARDOWN_DONE_MSG = `\nWoohoo! ${emoji.get('tada')} All remaining AWS resources provisioned for your bubbles have been removed, and any remaining traces of Bubble have been cleared out. It's like we were never here! ${emoji.get('ghost')} As a final step, feel free to remove the \`.github/workflows\` folder from the \`main\` branch of your remote Github repo. See you during your next \`bubble init\`! ${emoji.get('hugging_face')}`;
 
 const DB_WAIT_JOKES = {
@@ -119,7 +119,7 @@ const instructTeardown = (repo) => {
   const clockEmoji = emoji.get('mantelpiece_clock');
   const sudsEmoji = emoji.get('soap');
 
-  return `Sometimes bubbles leave suds, however ${sudsEmoji} These remaining remnants live in your ${repo}-Lambdas DynamoDB table. To ensure these are removed, and to delete the IAM user we created for you during \`bubble init\`, follow up with the \`bubble teardown\` command in a day or two ${clockEmoji}\n`;
+  return `Sometimes bubbles leave suds, however ${sudsEmoji} These remaining remnants live in your ${repo}-Lambdas DynamoDB table. To ensure these are removed, and to delete the IAM user we created for you during \`bubble init\`, follow up with the \`bubble teardown\` command in a few hours ${clockEmoji}\n`;
 };
 
 const dbDeletionError = (repo, name) => (
