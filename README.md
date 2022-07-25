@@ -54,7 +54,7 @@ module.exports = {
 };
 ```
 
-- Navigate to your GitHub repository secrets, and save one secret named `DB_URI` and another named `DB_NAME` with the appropriate values. These secrets will be provided to a `.env` file when your preview apps are being built and deployed
+- Navigate to your GitHub repository secrets, and save one secret named `DB_URI` and another named `DB_NAME` with the appropriate values. These secrets will be exported as environment variables when your preview apps are being built and deployed
 
 # Bubble Lingo
 
@@ -108,7 +108,7 @@ module.exports = {
 
 # Workflow
 
-- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble workflow will blow a new bubble for you. Each bubble is provisioned with its own set of AWS resources using your Bubble-created IAM user credentials. This includes an S3 bucket to store your application's static assets, Lambda@Edge functions for handling server-side rendered routes, and a CloudFront distribution to serve up the assets from S3 and trigger the Lambdas
+- Every time you open a new Pull Request in your GitHub repo, or push a change to an existing Pull Request, the Bubble workflow will blow a new bubble for you. Each bubble is provisioned with its own set of AWS resources using your Bubble-created IAM user credentials. This includes an S3 bucket to store your application's static assets, Lambda@Edge functions for handling server-side rendered routes and API routes, and a CloudFront distribution to serve up the assets from S3 and trigger the Lambdas
 - The first time we blow a new bubble for your project, a `{repo-name}-Lambdas` DynamoDB table will be provisioned with your Bubble-created IAM credentials in order to keep track of Lambdas associated with each bubble. This will be used when initiating teardown of your bubbles in the future
 - You may view the deployment progress within each Pull Request in your GitHub repository
 
@@ -162,7 +162,7 @@ _See code: [src/commands/list.js](https://github.com/jjam-bubble/bubble-framewor
 
 - Provides a user-friendly interface for most of the functionality of the CLI tool, and allows you to visually manage all your bubbles in one place
 - Upon running this command, you will be provided with a URL at which you can view the dashboard locally (`http://localhost:3000/{repo-name}`). `Cmd/Ctrl` + double-click on the link to open up in the browser
-- You will automatically be taken to a page displaying the commit id, commit message, creation timestamp, and link to all bubbles associated with the repo from which you've run this command. You will also be able to view the build logs from the deployment of each bubble
+- You will automatically be taken to a page displaying the commit id, commit message, creation timestamp, and link to all bubbles associated with the repo from which you've run this command. You will also be able to navigate to the build logs from the deployment of each bubble
 - If the bubbles in your repo are still active, you may click the Destroy App button in order to pop all bubbles in the repo. This effectively provides the same functionality as directly executing `bubble destroy` from the terminal
 - If you have already destroyed your repo, you will have the option to Teardown App from the dashboard. This effectively provides the same functionality as directly executing `bubble teardown` from the terminal
 - There will also be a sidebar where you may view all active Bubble-integrated repos, to which you can navigate in order to view and manage those projects' bubbles
@@ -174,7 +174,7 @@ _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-fra
 
 - Tears down resources for all bubbles across your project repository
 - This command will remove:
-  - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda@Edge functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed a day or two after `bubble destroy` in order to remove any remaining Lambdas
+  - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda@Edge functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed at least a few hours after `bubble destroy` in order to remove any remaining Lambdas
   - `{repo-name}-PreviewApps` DynamoDB table that was used to track all the bubbles in your repo
   - Bubble-related workflow files in your local project directory's `.github` folder
 - Once this process is complete, you may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository

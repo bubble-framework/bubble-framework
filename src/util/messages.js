@@ -28,7 +28,7 @@ const PREVIEWS_TABLE_DELETED_MSG = 'Looks like your bubble-tracking DynamoDB tab
 const NO_PREVIEW_DETAILS_RETRIEVED_MSG = 'Sorry, we couldn\'t get the details for your bubbles!';
 
 const DASHBOARD_STARTUP_MSG = 'Bubblin\' up your dashboard...\n';
-const DASHBOARD_HOLDUP_MSG = "Looks like the dashboard's taking a while to start up. Bubbles sure can be pesky sometimes! Try re-running the command!";
+const DASHBOARD_HOLDUP_MSG = 'Looks like the dashboard is taking a while to start up. Bubbles sure can be pesky sometimes! Try re-running the command!';
 const RUN_FROM_NONBUBBLE_MSG = 'You can only run Bubble commands from repos that have had Bubble initialized and that have not yet been torn down!';
 
 const WAIT_TO_DESTROY_MSG = `We'll get started popping all active bubbles in your repo! Grab a bubble tea ${emoji.get('bubble_tea')} and chew on this bubble-related pun while you wait...\n`;
@@ -38,7 +38,7 @@ const FOLDER_ALREADY_DELETED = `Looks like your local Bubble-related workflow fi
 const WAIT_TO_TEARDOWN_MSG = `Let's get this bubble bath drained! ${emoji.get('bathtub')} Hope you haven't gotten tired of our jokes yet...\n`;
 const DELETING_BUBBLE_USER_MSG = 'Deleting the Bubble-created IAM user and its Gihub secrets...';
 const NONEXISTENT_BUBBLE_AWS_USER_MSG = 'Looks like no Bubble-created IAM user exists for this repo!';
-const LAMBDA_TEARDOWN_ERROR_MSG = 'We\'ve got a real sudsy bubble bath on our hands! Unfortunately, some Lambdas are not ready to be deleted yet. Please wait at least a few hours before trying again!';
+const LAMBDA_TEARDOWN_ERROR_MSG = 'We\'ve got a real sudsy bubble bath on our hands! Unfortunately, some Lambdas are not ready to be deleted yet. Please wait a few more hours before trying again!';
 const TEARDOWN_DONE_MSG = `\nWoohoo! ${emoji.get('tada')} All remaining AWS resources provisioned for your bubbles have been removed, and any remaining traces of Bubble have been cleared out. It's like we were never here! ${emoji.get('ghost')} As a final step, feel free to remove the \`.github/workflows\` folder from the \`main\` branch of your remote Github repo. See you during your next \`bubble init\`! ${emoji.get('hugging_face')}`;
 
 const DB_WAIT_JOKES = {
@@ -119,7 +119,7 @@ const instructTeardown = (repo) => {
   const clockEmoji = emoji.get('mantelpiece_clock');
   const sudsEmoji = emoji.get('soap');
 
-  return `Sometimes bubbles leave suds, however ${sudsEmoji} These remaining remnants live in your ${repo}-Lambdas DynamoDB table. To ensure these are removed, and to delete the IAM user we created for you during \`bubble init\`, follow up with the \`bubble teardown\` command in a day or two ${clockEmoji}\n`;
+  return `Sometimes bubbles leave suds, however ${sudsEmoji} These remaining remnants live in your ${repo}-Lambdas DynamoDB table. To ensure these are removed, and to delete the IAM user we created for you during \`bubble init\`, follow up with the \`bubble teardown\` command in a few hours ${clockEmoji}\n`;
 };
 
 const dbDeletionError = (repo, name) => (
