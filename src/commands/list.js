@@ -15,6 +15,7 @@ const list = async () => {
     const apps = await getExistingApps();
     if (apps.length > 0) {
       const commitMessages = apps.map((app) => app.commit_message);
+      commitMessages.push("Cancel");
       const selectList = {
         type: 'select',
         name: 'commitMessage',
@@ -24,7 +25,9 @@ const list = async () => {
 
       const result = await prompts(selectList);
       const choice = commitMessages[result.commitMessage];
-
+      if (choice === 'Cancel') {
+        return;
+      }
       const domain = apps.find((app) => app.commit_message === choice).url;
       open(domain);
     } else {
