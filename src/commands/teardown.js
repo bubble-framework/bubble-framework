@@ -48,6 +48,7 @@ const teardown = async () => {
 
     bubblePunchline(`\n${waitForJokePunchline(randomJoke, 'TEARDOWN')}`, 2);
 
+    await deleteDatabase('PreviewApps');
     await deleteDatabase('Lambdas');
     await deleteUserAll();
 

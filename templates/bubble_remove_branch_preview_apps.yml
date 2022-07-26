@@ -109,8 +109,3 @@ jobs:
       - name: Soft Delete PR Data in DynamoDB
         run: |
           aws dynamodb update-item --table-name ${{ env.REPO_NAME }}-PreviewApps --key '{ "PullRequestId": {"N": "${{ env.PR_NUMBER }}"}}' --update-expression "SET IsActive = :val" --expression-attribute-values '{":val":{"BOOL":false}}' --return-values ALL_NEW
-
-      - name: Delete DB for Bubble Destroy command
-        run: |
-          aws dynamodb delete-table --table-name ${{ env.REPO_NAME }}-PreviewApps
-        if: ${{ inputs.pr-number }}
