@@ -13,21 +13,25 @@ const list = async () => {
     }
 
     const apps = await getExistingApps();
+
     if (apps.length > 0) {
-      const commitMessages = apps.map((app) => app.commit_message);
-      commitMessages.push("Cancel");
+      const choices = apps.map((app) => app.commit_message);
+      choices.push('Cancel');
+
       const selectList = {
+        choices,
         type: 'select',
-        name: 'commitMessage',
+        name: 'choiceSelected',
         message: 'Select a preview app bubble to go to its url',
-        choices: commitMessages,
       };
 
       const result = await prompts(selectList);
-      const choice = commitMessages[result.commitMessage];
+      const choice = choices[result.choiceSelected];
+
       if (choice === 'Cancel') {
         return;
       }
+
       const domain = apps.find((app) => app.commit_message === choice).url;
       open(domain);
     } else {
