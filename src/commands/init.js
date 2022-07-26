@@ -36,6 +36,7 @@ import {
   bubblePunchline,
   bubbleConclusionPrimary,
   bubbleConclusionSecondary,
+  asciiLogo,
 } from '../util/logger.js';
 
 import {
@@ -79,6 +80,8 @@ const init = async () => {
       bubbleWarn(`${duplicateBubbleInit(repo)}`);
       return;
     }
+
+    await asciiLogo();
 
     bubbleWelcome(WELCOME_MSG);
     bubbleHelp(PREREQ_MSG);

@@ -1,5 +1,7 @@
 import ora from 'ora';
 import chalk from 'chalk';
+import figlet from 'figlet';
+import lolcatjs from 'lolcatjs';
 
 const reset = '\x1b[0m';
 
@@ -67,4 +69,26 @@ export const bubbleWarn = (text) => {
 
 export const bubbleSecrets = (text) => {
   console.log(chalk.hex('#00d6f9')(text));
+};
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+export const asciiLogo = async () => {
+  figlet.text('Bubble', {
+    font: 'ANSI Shadow',
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 100,
+    whitespaceBreak: true
+  }, function(err, data) {
+    if (err) {
+      return err;
+    }
+    lolcatjs.options.animate = true;
+    lolcatjs.options.speed = 10;
+    lolcatjs.options.seed = 1900;
+    lolcatjs.options.freq = 0.2;
+    lolcatjs.fromString(data);
+  });
+  await sleep(5000);
 };
