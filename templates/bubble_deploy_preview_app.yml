@@ -150,7 +150,7 @@ jobs:
             core.setOutput('timestamp', timestamp)
 
       - name: Get Commit Message
-        run: echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})" >> $GITHUB_ENV
+        run: echo "COMMIT_MESSAGE=$(git log --pretty="format:%s" -n 1)" >> $GITHUB_ENV
 
       - name: Get Bubble data from DynamoDB
         uses: mathiasvr/command-output@v1
