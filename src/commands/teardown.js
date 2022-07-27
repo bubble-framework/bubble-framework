@@ -3,6 +3,8 @@ import { existsSync } from 'fs';
 import deleteLambdas from '../util/deleteLambdas.js';
 import deleteDatabase from '../util/deleteDatabase.js';
 import { deleteUserAll, existingAwsUser } from '../util/deleteUser.js';
+import doesTableExist from '../util/doesTableExist.js';
+
 import { getRepoInfo } from '../constants.js';
 
 import { removeFromActiveReposFile } from '../util/fs.js';
@@ -37,6 +39,12 @@ const teardown = async () => {
     bubbleIntro(WAIT_TO_TEARDOWN_MSG, 2);
     const randomJoke = randomJokeSetup('TEARDOWN');
     bubbleSetup(waitForJokeSetup(randomJoke), 2);
+
+    const previewTableExists = await doesTableExist(repo, 'PreviewApps');
+
+    if (previewTableExists) {
+      await deleteDatabase('PreviewApps');
+    }
 
     try {
       await deleteLambdas();

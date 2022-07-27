@@ -12,9 +12,9 @@ const deleteLambdas = async () => {
   let functionNames = await Promise.all(prefixes.map((prefix) => (
     wrapExecCmd(awsService.getLambdaFunctions(prefix, repo))
   )));
-
+    
   functionNames = functionNames
-    .map((functionName) => functionName.trim())
+    .flatMap((functionName) => functionName.split(/\s/))
     .filter((functionName) => !!functionName);
 
   try {
