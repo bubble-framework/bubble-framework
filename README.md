@@ -175,7 +175,6 @@ _See code: [src/commands/dashboard.js](https://github.com/jjam-bubble/bubble-fra
 - Tears down resources for all bubbles across your project repository
 - This command will remove:
   - AWS infrastructure, including the CloudFront distributions, S3 buckets, and Lambdas provisioned for each bubble. Lambda@Edge functions often require additional wait time before they are able to be deleted, so the `bubble teardown` command should be executed at least a few hours after `bubble destroy` in order to remove any remaining Lambdas
-  - `{repo-name}-PreviewApps` DynamoDB table that was used to track all the bubbles in your repo
   - Bubble-related workflow files in your local project directory's `.github` folder
 - Once this process is complete, you may now also choose to manually remove the `.github` folder from the `main` branch of your GitHub repository
 
@@ -185,6 +184,7 @@ _See code: [src/commands/destroy.js](https://github.com/jjam-bubble/bubble-frame
 
 - Tears down remaining Lambdas associated with bubbles, and any final traces of Bubble in your project repository
 - This command will remove:
+  - `{repo-name}-PreviewApps` DynamoDB table that was used to track all the bubbles in your repo
   - Remaining Lambda functions that were not able to be deleted during `bubble destroy`. During this step, you may receive a message informing you that some Lambdas are still not ready to be deleted yet. If that is the case, the following items will not yet be removed, and you should wait at least a few hours before trying `bubble teardown` again
   - `{repo-name}-Lambdas` DynamoDB table that was used to track all Lambdas for every bubble in your repo
   - Bubble-created AWS IAM user
