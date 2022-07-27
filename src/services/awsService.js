@@ -57,6 +57,10 @@ const awsService = {
   getUserAccessKey: (repo) => (
     `aws iam list-access-keys --user-name ${repo}-bubble-user`
   ),
+
+  getTableList: (repo) => (
+    `aws dynamodb list-tables --profile ${repo}-bubble-user`
+  ),
 };
 
 export default awsService;
