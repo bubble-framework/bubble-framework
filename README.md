@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="<link to logo image when ready>" width="500" height="200" />
+  <img src="../images/bubble-logo-full-light.png" width="500" height="200" />
 </p>
 
 <h1 align="center">:large_blue_circle: Bubble: Automated open-source solution for deploying dynamic frontend preview apps :large_blue_circle:</h1>
