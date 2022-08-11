@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/images/bubble-logo-full-light.png" width="500" height="auto" />
+  <img src="/images/bubble-logo-full-light.png" alt="Bubble logo" width="500" height="auto" />
 </p>
 
 <h1 align="center">:large_blue_circle: Bubble: Automated open-source solution for deploying dynamic frontend preview apps :large_blue_circle:</h1>
@@ -7,7 +7,7 @@
 
 Bubble is an open-source solution that provides preview apps for applications built with the Next.js framework. We automate the provisioning, management, and teardown of preview app resources on your own AWS account, allowing you to maintain full control over your source code and self-hosted infrastructure.
 
-To learn more, please read our [case study](<link to case study>).
+To learn more, please read our [case study](https://jjam-bubble.github.io/).
 
 [![Version](https://img.shields.io/npm/v/fleet-cli.svg)](https://www.npmjs.com/package/jjam-bubble)
 
@@ -113,13 +113,13 @@ module.exports = {
 - You may view the deployment progress within each Pull Request in your GitHub repository
 
 <p align="center">
-  <img src="images/bubble_deploy_wait_gh_message.png" width="800" height="106" />
+  <img src="images/bubble_deploy_wait_gh_message.png" alt="Bubble deployment wait message" width="800" height="106" />
 </p>
 
 - The shareable URL for your new bubble will be displayed once ready
 
 <p align="center">
-  <img src="images/bubble_deploy_success_gh_message.png" width="800" height="124" />
+  <img src="images/bubble_deploy_success_gh_message.png" alt="Bubble deployment success message" width="800" height="124" />
 </p>
 
 - You may also view the build logs of bubble deployment and removal workflows in the Actions tab of your GitHub repository
