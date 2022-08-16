@@ -7,7 +7,7 @@
 
 Bubble is an open-source solution that provides preview apps for applications built with the Next.js framework. We automate the provisioning, management, and teardown of preview app resources on your own AWS account, allowing you to maintain full control over your source code and self-hosted infrastructure.
 
-To learn more, please read our [case study](https://jjam-bubble.github.io/).
+To learn more, please read our [case study](https://bubble-framework.github.io/).
 
 [![Version](https://img.shields.io/npm/v/fleet-cli.svg)](https://www.npmjs.com/package/jjam-bubble)
 
